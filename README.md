@@ -1,4 +1,4 @@
-# About this tool
+# About this tool (Tool Under Construction)
 
 This web application allows you to combine and download multiple [LiveSplit](https://livesplit.org/) files for different speedruns into one big set of splits with multiple customization options in mind. You can use this for multi-game speedruns, main board marathons, and for longer categories that consist of multiple smaller ones.
 
