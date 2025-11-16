@@ -4,7 +4,7 @@ import { Item } from './Item'
 import styles from './style.module.css'
 
 let SPLITS = []
-export const List = () => {
+export const ListContainer = () => {
     const [files, setFiles] = useState(SPLITS)
     const [fileAmount, setFileAmount] = useState(0);
 
@@ -56,7 +56,7 @@ export const List = () => {
     //Prompt to clear list
     const clearFileList = useCallback(
         () => {
-            if(confirm("Are you sure you want to clear all of your splits?")){
+            if(confirm("Are you sure you want to clear all of your split entries?")){
                 setFiles(files => {
                     const updatedFiles = [...files]
                     updatedFiles.length = 0
@@ -74,9 +74,9 @@ export const List = () => {
             {/* List operations */}
             <p>First entry: {(fileAmount!=0 ? files[0].name : "N/A")}</p>
             <button type="button" onClick={addFileListItem}>Add to List</button>
-            <button type="button" onClick={clearFileList} disabled={fileAmount==0}>Clear List</button>
+            <button type="button" disabled={fileAmount==0}>Download Merged Splits</button>
             
-            {/* List entires */}
+            {/* List entries */}
             <div className={styles.entry}>{files.map((file, index) => (
                 <Item
                     key={file.id}
@@ -89,6 +89,11 @@ export const List = () => {
                 />
             ))}
             </div>
+
+            {/* List operations */}
+            <p>Entries: {fileAmount}</p>
+            <button type="button" onClick={clearFileList} disabled={fileAmount==0}>Clear List</button>
+
         </React.Fragment>
     )
 }
