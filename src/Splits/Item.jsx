@@ -72,7 +72,7 @@ export const Item = ({  index, listSize, name, text, moveListItem, removeListIte
     const opacity = isDragging ? 0 : 1
     return (
         <React.Fragment>
-            <div onClick={!isModalOpen && openModal} ref={dragDropRef} id={isModalOpen ? styles.defaultCursor : styles.moveCursor } className={styles.entry} style={{ ...styles, opacity }}>
+            <div onClick={!isModalOpen ? openModal : undefined} ref={dragDropRef} id={isModalOpen ? styles.defaultCursor : styles.moveCursor } className={styles.entry} style={{ ...styles, opacity }}>
                 {name}
                 <button type ='button' onClick={moveItemUp} disabled={index==0}>Move Up</button>
                 <button type ='button' onClick={moveItemDown} disabled={index==listSize-1}>Move Down</button>

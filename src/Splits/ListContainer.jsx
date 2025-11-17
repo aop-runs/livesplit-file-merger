@@ -1,6 +1,7 @@
 //Based on: https://medium.com/@liadshiran92/easy-drag-and-drop-in-react-22778b30ba37
 import React, { useState, useCallback } from 'react'
 import { Item } from './Item'
+import { ItemUpload } from './ItemUpload'
 import styles from './style.module.css'
 
 let SPLITS = []
@@ -26,13 +27,13 @@ export const ListContainer = () => {
 
     //Add entry to list
     const addFileListItem = useCallback(
-        () => {
+        (filename) => {
             setFiles(files => {
                 const updatedFiles = [...files]
-                updatedFiles.push({id: files.length+1, name: 'Item: ' + (files.length+1).toString(), text: 'Contents: ' + (files.length+1).toString()})
+                updatedFiles.push({id: files.length+1, name: 'Item: ' + filename, text: 'Contents: ' + (files.length+1).toString()})
                 return updatedFiles
             })
-            setFileAmount(fileAmount+1)
+            setFileAmount(fileAmount => fileAmount + 1)
         },
         [files],
     )
@@ -48,7 +49,7 @@ export const ListContainer = () => {
                 }
                 return updatedFiles
             })
-            setFileAmount(fileAmount-1)
+            setFileAmount(fileAmount => fileAmount - 1)
         },
         [files],
     )
@@ -62,7 +63,7 @@ export const ListContainer = () => {
                     updatedFiles.length = 0
                     return updatedFiles
                 })
-                setFileAmount(0)
+                setFileAmount(fileAmount => 0)
             }
         },
         [files],
@@ -72,10 +73,13 @@ export const ListContainer = () => {
         <React.Fragment>
             
             {/* List operations */}
+            <p>Entries: {fileAmount}</p>
             <p>First entry: {(fileAmount!=0 ? files[0].name : "N/A")}</p>
-            <button type="button" onClick={addFileListItem}>Add to List</button>
-            <button type="button" disabled={fileAmount==0}>Download Merged Splits</button>
-            
+            <button type="button" onClick={clearFileList} disabled={fileAmount==0}>Clear List</button>
+            <ItemUpload
+                addListItem={addFileListItem}
+            />
+
             {/* List entries */}
             <div className={styles.entry}>{files.map((file, index) => (
                 <Item
@@ -89,10 +93,7 @@ export const ListContainer = () => {
                 />
             ))}
             </div>
-
-            {/* List operations */}
-            <p>Entries: {fileAmount}</p>
-            <button type="button" onClick={clearFileList} disabled={fileAmount==0}>Clear List</button>
+            <button type="button" disabled={fileAmount==0}>Download Merged Splits</button>
 
         </React.Fragment>
     )
