@@ -1,6 +1,6 @@
 //Based on: https://www.geeksforgeeks.org/reactjs/drag-and-drop-file-upload-component-with-react-hooks/ & https://medium.com/@dprincecoder/creating-a-drag-and-drop-file-upload-component-in-react-a-step-by-step-guide-4d93b6cc21e0
 import React, { useRef } from 'react';
-import styles from './style.module.css'
+import styles from '../../styles/style.module.css'
 
 export const ItemUpload = ({ addListItem }) => {
 
@@ -15,6 +15,7 @@ export const ItemUpload = ({ addListItem }) => {
     const onDrop = (e) => {
         wrapperRef.current.classList.remove('dragover');
         e.preventDefault()
+        console.log(e.dataTransfer.files);
         for(let newFile of e.dataTransfer.files){
             if(newFile) {
                 addListItem(newFile.name)
@@ -22,6 +23,7 @@ export const ItemUpload = ({ addListItem }) => {
         }
     }
     const onFileDrop = (e) => {
+        console.log(e.target.files);
         for(let newFile of e.target.files){
             if(newFile) {
                 addListItem(newFile.name)
@@ -29,7 +31,6 @@ export const ItemUpload = ({ addListItem }) => {
         }
     }
     
-
     return (
         <React.Fragment>
             <div ref={wrapperRef} className={styles.upload} onDragEnter={onDragEnter} onDragLeave={onDragLeave} onDrop={onDrop}>

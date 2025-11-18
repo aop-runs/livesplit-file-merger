@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import styles from './style.module.css'
+import styles from '../../styles/style.module.css'
 
 export const ItemModal = ({  name, text, closeModal }) => {
     

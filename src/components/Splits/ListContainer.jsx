@@ -2,7 +2,7 @@
 import React, { useState, useCallback } from 'react'
 import { Item } from './Item'
 import { ItemUpload } from './ItemUpload'
-import styles from './style.module.css'
+import styles from '../../styles/style.module.css'
 
 let SPLITS = []
 export const ListContainer = () => {

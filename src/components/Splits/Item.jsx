@@ -1,8 +1,8 @@
 //Based on: https://medium.com/@liadshiran92/easy-drag-and-drop-in-react-22778b30ba37
 import React, { useState, useRef } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
-import styles from './style.module.css'
 import { ItemModal } from './ItemModal'
+import styles from '../../styles/style.module.css'
 
 export const Item = ({  index, listSize, name, text, moveListItem, removeListItem }) => {
 
