@@ -4,9 +4,8 @@ import { Item } from './Item'
 import { ItemUpload } from './ItemUpload'
 import styles from '../../styles/style.module.css'
 
-let SPLITS = []
 export const ListContainer = () => {
-    const [files, setFiles] = useState(SPLITS)
+    const [files, setFiles] = useState([])
     const [fileAmount, setFileAmount] = useState(0);
 
     // Pre-included move function
@@ -30,7 +29,11 @@ export const ListContainer = () => {
         (filename) => {
             setFiles(files => {
                 const updatedFiles = [...files]
-                updatedFiles.push({id: files.length+1, name: 'Item: ' + filename, text: 'Contents: ' + (files.length+1).toString()})
+                updatedFiles.push({
+                    id: files.length+1,
+                    name: filename,
+                    text: (files.length+1).toString()
+                })
                 return updatedFiles
             })
             setFileAmount(fileAmount => fileAmount + 1)

@@ -12,19 +12,16 @@ export const ItemUpload = ({ addListItem }) => {
         wrapperRef.current.classList.remove('dragover');
     
     //Add files upon dropping them in browser or by uplaod dialog
-    const onDrop = (e) => {
+    const onFileDrop = (e) => {
         wrapperRef.current.classList.remove('dragover');
         e.preventDefault()
-        console.log(e.dataTransfer.files);
-        for(let newFile of e.dataTransfer.files){
-            if(newFile) {
-                addListItem(newFile.name)
-            }
-        }
+        uploadFiles(e.dataTransfer.files)
     }
-    const onFileDrop = (e) => {
-        console.log(e.target.files);
-        for(let newFile of e.target.files){
+    const onFileSelect = (e) => {
+        uploadFiles(e.target.files)
+    }
+    const uploadFiles = (selectedFiles) => {
+        for(let newFile of selectedFiles){
             if(newFile) {
                 addListItem(newFile.name)
             }
@@ -33,9 +30,9 @@ export const ItemUpload = ({ addListItem }) => {
     
     return (
         <React.Fragment>
-            <div ref={wrapperRef} className={styles.upload} onDragEnter={onDragEnter} onDragLeave={onDragLeave} onDrop={onDrop}>
+            <div ref={wrapperRef} className={styles.upload} onDragEnter={onDragEnter} onDragLeave={onDragLeave} onDrop={onFileDrop}>
                 <p>Drag & Drop your files here</p>
-                <input type="file" onChange={onFileDrop} multiple/>
+                <input type="file" value = "" onChange={onFileSelect} multiple/>
             </div>
         </React.Fragment>
     );

@@ -8,8 +8,8 @@ export const ItemModal = ({  name, text, closeModal }) => {
             <React.Fragment>
                 <div className = {styles.modal}>
                     <div className={styles.entry}>
-                        <h2>{name}</h2>
-                        <p>{text}</p>
+                        <h2>Filename: {name}</h2>
+                        <p>Contents: {text}</p>
                         <button type ='button' onClick={closeModal}>Close Modal</button>
                     </div>
                 </div>
