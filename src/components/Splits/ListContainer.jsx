@@ -26,13 +26,13 @@ export const ListContainer = () => {
 
     //Add entry to list
     const addFileListItem = useCallback(
-        (filename) => {
+        (filename, contents) => {
             setFiles(files => {
                 const updatedFiles = [...files]
                 updatedFiles.push({
                     id: files.length+1,
                     name: filename,
-                    text: (files.length+1).toString()
+                    text: contents
                 })
                 return updatedFiles
             })
@@ -96,6 +96,8 @@ export const ListContainer = () => {
                 />
             ))}
             </div>
+
+            {/* Download merged contents */}
             <button type="button" disabled={fileAmount==0}>Download Merged Splits</button>
 
         </React.Fragment>

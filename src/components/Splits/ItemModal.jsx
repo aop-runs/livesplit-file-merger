@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React from 'react'
 import styles from '../../styles/style.module.css'
 
 export const ItemModal = ({  name, text, closeModal }) => {
