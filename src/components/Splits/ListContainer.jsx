@@ -1,12 +1,12 @@
 //Based on: https://medium.com/@liadshiran92/easy-drag-and-drop-in-react-22778b30ba37
 import React, { useState, useCallback } from 'react'
 import { Item } from './Item'
+import { ItemDownload } from './ItemDownload'
 import { ItemUpload } from './ItemUpload'
 import styles from '../../styles/style.module.css'
 
 export const ListContainer = () => {
     const [files, setFiles] = useState([])
-    const [fileAmount, setFileAmount] = useState(0);
 
     // Pre-included move function
     const moveFileListItem = useCallback(
@@ -36,7 +36,6 @@ export const ListContainer = () => {
                 })
                 return updatedFiles
             })
-            setFileAmount(fileAmount => fileAmount + 1)
         },
         [files],
     )
@@ -52,7 +51,6 @@ export const ListContainer = () => {
                 }
                 return updatedFiles
             })
-            setFileAmount(fileAmount => fileAmount - 1)
         },
         [files],
     )
@@ -66,7 +64,6 @@ export const ListContainer = () => {
                     updatedFiles.length = 0
                     return updatedFiles
                 })
-                setFileAmount(fileAmount => 0)
             }
         },
         [files],
@@ -74,11 +71,11 @@ export const ListContainer = () => {
 
     return (
         <React.Fragment>
-            
+
             {/* List operations */}
-            <p>Entries: {fileAmount}</p>
-            <p>First entry: {(fileAmount!=0 ? files[0].name : "N/A")}</p>
-            <button type="button" onClick={clearFileList} disabled={fileAmount==0}>Clear List</button>
+            <p>Entries: {files.length}</p>
+            <p>First entry: {(files.length!=0 ? files[0].name : "N/A")}</p>
+            <button type="button" onClick={clearFileList} disabled={files.length==0}>Clear List</button>
             <ItemUpload
                 addListItem={addFileListItem}
             />
@@ -88,7 +85,7 @@ export const ListContainer = () => {
                 <Item
                     key={file.id}
                     index={index}
-                    listSize={fileAmount}
+                    listSize={files.length}
                     name={file.name}
                     text={file.text}
                     moveListItem={moveFileListItem}
@@ -98,8 +95,9 @@ export const ListContainer = () => {
             </div>
 
             {/* Download merged contents */}
-            <button type="button" disabled={fileAmount==0}>Download Merged Splits</button>
-
+            <ItemDownload
+                listItems={files}
+            />
         </React.Fragment>
     )
 }

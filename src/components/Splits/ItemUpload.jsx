@@ -28,7 +28,7 @@ export const ItemUpload = ({ addListItem }) => {
             if(newFile) {
                 //Validate and gather contents
                 if(!isAValidFile(newFile.name)){
-                    alert("Invalid file: " + newFile.name + " uploaded")
+                    alert("Invalid file: " + newFile.name + " uploaded.")
                     continue
                 }
                 let fileContents = gatherFileContents(newFile)
@@ -42,7 +42,7 @@ export const ItemUpload = ({ addListItem }) => {
                 //Alert error
                 fileContents.catch(
                     (error) => {
-                        alert("Unable to upload file: " + error)
+                        alert("Unable to upload: " + newFile.name + " - " + error)
                     }
                 );
             }
