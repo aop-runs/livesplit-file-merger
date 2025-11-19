@@ -3,44 +3,27 @@ import { prepareFileOutput, downloadFile, downloadFileAs } from '../../utils/fil
 
 export const ItemDownload = ({ listItems }) => {
     
-    //Gather output and download result to user's system
+    //Gather output and download result to user's system and launch failback for browsers that don't support showSaveFilePicker Ex. Firefox
     const prepareDownload = () => {
         let contents = prepareFileOutput(listItems)
         let filename = "output.txt"
-        let downloadAsPromise = downloadFileAs(contents, filename)      
+        let downloadPromise = typeof window.showSaveFilePicker === 'function' ? downloadFileAs(contents, filename) : downloadFile(contents, filename)
         //Successful download
-        downloadAsPromise.then(
+        downloadPromise.then(
             (message) => {
                 alert(message)
             }
         );
 
         //Alert error
-        downloadAsPromise.catch(
+        downloadPromise.catch(
             (error) => {
                 //If user closes file dialog without saving anything
                 if(error.name == "AbortError"){
                     alert("Abort Error (Ignore)")
                 }
-                //Any other error except TypeError
-                else if(error.name != "TypeError"){
-                    alert("Unable to download: " + filename + " - " + error)
-                }
-                //TypeError (Launch failback for browsers that don't support showSaveFilePicker Ex. Firefox)
                 else{
-                    let downloadPromise = downloadFile(contents, filename)      
-                    //Successful download
-                    downloadPromise.then(
-                        (message) => {
-                            alert(message)
-                        }
-                    );
-                    //Alert error
-                    downloadPromise.catch(
-                        (error) => {
-                            alert("Unable to download: " + filename + " - " + error)
-                        }
-                    );
+                    alert("Unable to download: " + filename + " - " + error)
                 }
             }
         );
