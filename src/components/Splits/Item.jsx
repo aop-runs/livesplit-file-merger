@@ -2,7 +2,7 @@
 import React, { useState, useRef } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 import { ItemModal } from './ItemModal'
-import styles from '../../styles/style.module.css'
+import '../../styles/style.css'
 
 export const Item = ({  index, listSize, name, text, moveListItem, removeListItem }) => {
 
@@ -68,11 +68,15 @@ export const Item = ({  index, listSize, name, text, moveListItem, removeListIte
     const ref = useRef(null)
     const dragDropRef = dragRef(dropRef(ref))
 
-    // Make items being dragged transparent, so it's easier to see where we drop them
-    const opacity = isDragging ? 0 : 1
     return (
         <React.Fragment>
-            <div onClick={!isModalOpen ? openModal : undefined} ref={dragDropRef} id={isModalOpen ? styles.defaultCursor : styles.moveCursor } className={styles.entry} style={{ ...styles, opacity }}>
+            
+            {/*Make items being dragged transparent, so it's easier to see where we drop them*/}
+            <div onClick={!isModalOpen ? openModal : undefined} ref={dragDropRef} className={[
+                "entry", 
+                isModalOpen ? "defaultCursor" : "moveCursor", 
+                isDragging ? "itemDrag" : "itemNoDrag"
+            ].join(" ")}>
                 {name}
                 <button type ='button' onClick={moveItemUp} disabled={index==0}>Move Up</button>
                 <button type ='button' onClick={moveItemDown} disabled={index==listSize-1}>Move Down</button>

@@ -4,12 +4,20 @@
   padding: 0.5rem 1rem;
 }
 
-#moveCursor {
+.moveCursor {
   cursor: move;
 }
 
-#defaultCursor {
+.defaultCursor {
   cursor: default;
+}
+
+.itemDrag {
+    opacity: 0
+}
+
+.itemNoDrag {
+    opacity: 1
 }
 
 .modal {

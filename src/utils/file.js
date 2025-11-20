@@ -1,5 +1,5 @@
 //Constants
-const validSpecifier = {
+export const validSpecifier = {
     extension: ".txt",
     streamType: 'text/plain',
     dialogLabel: "Text Files (*.txt)"
@@ -12,7 +12,7 @@ export function isAValidFile(filename){
 
 // Gather contents from file via Promise
 export async function gatherFileContents(filename){
-    let filePromise = new Promise(function(resolve, reject) {
+    return await new Promise(function(resolve, reject) {
         //Gather file contents
         try{
             let fileReader = new FileReader()
@@ -25,7 +25,6 @@ export async function gatherFileContents(filename){
             reject(error)
         }
     });
-    return await filePromise
 }
 
 //Prepare output for download
@@ -35,11 +34,11 @@ export function prepareFileOutput(items){
 
 //Download file (Failback function that downloads output to Downloads folder)
 export async function downloadFile(contents, filename){
-    let filePromise = new Promise(function(resolve, reject) {
+    return await new Promise(function(resolve, reject) {
         //File downloader
         try{
             if(!isAValidFile(filename)){
-                throw new Error(filename + " is not a valid filename.");
+                throw new Error(filename + " is not a valid filename");
             }
             const link = document.createElement("a");
             link.href = URL.createObjectURL(new Blob([contents], { type: validSpecifier.streamType }));
@@ -52,12 +51,11 @@ export async function downloadFile(contents, filename){
             reject(error)
         }
     });
-    return await filePromise
 }
 
 //Download file as
 export async function downloadFileAs(contents, filename){
-    let filePromise = new Promise(function(resolve, reject) {
+    return await new Promise(function(resolve, reject) {
         async function launchPromise() {
             //File picker
             try{
@@ -75,7 +73,7 @@ export async function downloadFileAs(contents, filename){
                 });
                 //Writable stream
                 if(!isAValidFile(fileHandle.name)){
-                    throw new Error(fileHandle.name + " is not a valid filename.");
+                    throw new Error(fileHandle.name + " from file dialog is not a valid filename");
                 }
                 const writableFileStream = await fileHandle.createWritable();
                 await writableFileStream.write(new Blob([contents], { type: validSpecifier.streamType }));
@@ -88,5 +86,4 @@ export async function downloadFileAs(contents, filename){
         }
         launchPromise();
     });
-    return await filePromise
 }
