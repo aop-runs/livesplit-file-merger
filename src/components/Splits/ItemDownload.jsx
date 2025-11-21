@@ -82,8 +82,8 @@ export const ItemDownload = ({ listItems }) => {
                 hideStatus={resetStatus}
             />}
             <label>Output filename: </label>
-            <input type="text" disabled={listItems.length < 2} placeholder={"output"} value={listItems.length >= 2 ? filename : ""} onChange={(e) => updateFilename(e.target.value)}></input>
-            <button type="button" disabled={filename.length == 0 || listItems.length < 2} onClick={() => updateFilename("")}>Clear Filename</button>
+            <input type="text" disabled={listItems.length < 2} placeholder={"output"} value={filename} onChange={(e) => updateFilename(e.target.value)}></input>
+            <button type="button" disabled={filename.length == 0} onClick={() => updateFilename("")}>Clear Filename</button>
             <button type="button" disabled={listItems.length < 2 || filename.length == 0 || !filenameValid} onClick={() => prepareDownload(filename.replace(validSpecifier.extension, ""))}>Download Merged Splits</button>
         </React.Fragment>
     );

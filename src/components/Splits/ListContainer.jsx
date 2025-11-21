@@ -58,7 +58,7 @@ export const ListContainer = () => {
     //Prompt to clear list
     const clearFileList = useCallback(
         () => {
-            if(confirm("Are you sure you want to reset eveything back to default?")){
+            if(confirm("Are you sure you want to clear your list entries?")){
                 setFiles(files => {
                     const updatedFiles = [...files]
                     updatedFiles.length = 0
@@ -75,7 +75,7 @@ export const ListContainer = () => {
             {/* List operations */}
             <p>Entries: {files.length}</p>
             <p>First entry: {(files.length!=0 ? files[0].name : "N/A")}</p>
-            <button type="button" onClick={clearFileList} disabled={files.length==0}>Reset Application</button>
+            <button type="button" onClick={clearFileList} disabled={files.length==0}>Clear Entries</button>
             <ItemUpload
                 addListItem={addFileListItem}
                 listSize={files.length}
