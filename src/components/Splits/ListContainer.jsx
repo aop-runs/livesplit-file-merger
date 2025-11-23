@@ -9,7 +9,14 @@ export const ListContainer = () => {
     
     //Shared states
     const [files, setFiles] = useState([])
+    const [uploadLabel, setUploadLabel] = useState("your")
     const [outputName, setOutputName] = useState("");
+
+    //Alert user if they make any changes before refreshing or unloading website
+    const alertUser = (event) => {
+        event.preventDefault()
+    }
+    window.addEventListener("beforeunload", alertUser);
 
     // Pre-included move function
     const moveFileListItem = useCallback(
@@ -35,7 +42,7 @@ export const ListContainer = () => {
                 updatedFiles.push({
                     id: files.length+1,
                     name: filename,
-                    text: contents
+                    contents: contents
                 })
                 return updatedFiles
             })
@@ -61,13 +68,14 @@ export const ListContainer = () => {
     //Prompt to reset application
     const resetApplication = useCallback(
         () => {
-            if(confirm("Are you sure you want to reset eveything back to default??")){
+            if(confirm("Are you sure you want to reset eveything back to default?")){
                 setFiles(files => {
                     const updatedFiles = [...files]
                     updatedFiles.length = 0
                     return updatedFiles
                 })
                 setOutputName("")
+                setUploadLabel("your")
             }
         },
         [files],
@@ -77,12 +85,13 @@ export const ListContainer = () => {
         <React.Fragment>
 
             {/* List operations */}
-            <p>Entries: {files.length}</p>
             <p>First entry: {(files.length!=0 ? files[0].name : "N/A")}</p>
+            <p>Entries: {files.length}</p>
             <button type="button" onClick={resetApplication} disabled={files.length==0}>Reset Application</button>
             <ItemUpload
                 addListItem={addFileListItem}
-                listSize={files.length}
+                uploadLabel={uploadLabel}
+                setUploadLabel={setUploadLabel}
             />
 
             {/* List entries */}
@@ -92,7 +101,7 @@ export const ListContainer = () => {
                     index={index}
                     listSize={files.length}
                     name={file.name}
-                    text={file.text}
+                    contents={file.contents}
                     moveListItem={moveFileListItem}
                     removeListItem={removeFileListItem}
                 />

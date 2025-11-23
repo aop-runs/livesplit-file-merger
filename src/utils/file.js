@@ -1,8 +1,9 @@
 //Constants
+export const layoutExtension = ".lsl"
 export const validSpecifier = {
-    extension: ".txt",
-    streamType: 'text/plain',
-    dialogLabel: "Text Files (*.txt)"
+    extension: ".lss",
+    streamType: 'text/xml',
+    dialogLabel: "LiveSplit Splits (*.lss)"
 }
 
 // Ensure only valid files are being uploaded
@@ -27,9 +28,11 @@ export async function gatherFileContents(filename){
     });
 }
 
-//Prepare output for download
-export function prepareFileOutput(items){
-    return (items).map(item => item.text).join("\n")
+export function openContentsInNewTab(contents){
+    console.log(contents)
+    let url = URL.createObjectURL(new Blob([contents], {type: validSpecifier.streamType}));
+    window.open(url);
+    URL.revokeObjectURL(url);
 }
 
 //Download file (Failback function that downloads output to Downloads folder)

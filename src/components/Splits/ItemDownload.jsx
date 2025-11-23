@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { StatusBox } from './StatusBox'
-import { prepareFileOutput, downloadFile, downloadFileAs, validSpecifier, isAValidFile } from '../../utils/file.js'
+import { downloadFile, downloadFileAs, validSpecifier, isAValidFile } from '../../utils/file.js'
 
 export const ItemDownload = ({ listItems, outputName, setOutputName }) => {
 
@@ -14,14 +14,14 @@ export const ItemDownload = ({ listItems, outputName, setOutputName }) => {
         setStatus(initialStatus)
     }
 
-    //Track outputName and ensure result is valid
+    //Track filename and ensure result is valid
     const [outputNameValid, setOutputNameValid] = useState(true);
     const updateFilename = (name) => {
         setOutputName(name)
         checkFilename(name)
     }
     const checkFilename = (name) => {
-        //No unsupported outputName characters
+        //No unsupported filename characters
         let hasInvalid = false
         for(let char of ["<", ">", ":", "\"", "'", "/", "\\", "|", "?", "*", "&"]) {
             if(name.includes(char)){
@@ -46,7 +46,7 @@ export const ItemDownload = ({ listItems, outputName, setOutputName }) => {
 
     //Gather output and download result to user's system and launch failback for browsers that don't support showSaveFilePicker Ex. Firefox
     const prepareDownload = (name) => {
-        let contents = prepareFileOutput(listItems)
+        let contents = "Test"
         let downloadPromise = typeof window.showSaveFilePicker === 'function' ? downloadFileAs(contents, name + validSpecifier.extension) : downloadFile(contents, name + validSpecifier.extension)
         //Successful download
         downloadPromise.then(
@@ -78,7 +78,7 @@ export const ItemDownload = ({ listItems, outputName, setOutputName }) => {
     return (
         //File download button
         <React.Fragment>
-            {(status.header.length > 0 && listItems.length != 0) && <StatusBox
+            {(status.header.length > 0 && outputName.length != 0) && <StatusBox
                 header={status.header}
                 message={status.message}
                 hideStatus={resetStatus}

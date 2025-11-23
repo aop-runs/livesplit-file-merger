@@ -4,7 +4,7 @@ import { StatusBox } from './StatusBox'
 import { isAValidFile, gatherFileContents, validSpecifier } from '../../utils/file.js'
 import '../../styles/style.css'
 
-export const ItemUpload = ({ addListItem, listSize }) => {
+export const ItemUpload = ({ addListItem, uploadLabel, setUploadLabel }) => {
 
     //Pre-included wrappers
     const wrapperRef = useRef(null);
@@ -13,7 +13,7 @@ export const ItemUpload = ({ addListItem, listSize }) => {
     const onDragLeave = (e) => 
         wrapperRef.current.classList.remove('dragover');
     
-    //Add files upon dropping them in browser or by uplaod dialog
+    //Add files upon dropping them in browser or by upload dialog
     const onFileDrop = (e) => {
         wrapperRef.current.classList.remove('dragover');
         e.preventDefault()
@@ -59,6 +59,7 @@ export const ItemUpload = ({ addListItem, listSize }) => {
                 );
             }
         }
+        setUploadLabel("some more")
 
         //Update status based on upload success
         if(badFiles.length != 0){
@@ -78,13 +79,13 @@ export const ItemUpload = ({ addListItem, listSize }) => {
     return (
         //File upload box
         <React.Fragment>
-            {(status.header.length > 0 && listSize != 0) && <StatusBox
+            {(status.header.length > 0 && uploadLabel == "some more") && <StatusBox
                 header={status.header}
                 message={status.message}
                 hideStatus={resetStatus}
             />}
             <div ref={wrapperRef} className="upload" onDragEnter={onDragEnter} onDragLeave={onDragLeave} onDrop={onFileDrop}>
-                <p>Drag & Drop your {validSpecifier.extension} files here</p>
+                <p>Drag & Drop {uploadLabel} {validSpecifier.extension} files here</p>
                 <input type="file" value= "" accept={validSpecifier.extension} onChange={onFileSelect} multiple/>
             </div>
         </React.Fragment>
