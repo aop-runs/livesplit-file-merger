@@ -6,7 +6,10 @@ import { ItemUpload } from './ItemUpload'
 import '../../styles/style.css'
 
 export const ListContainer = () => {
+    
+    //Shared states
     const [files, setFiles] = useState([])
+    const [outputName, setOutputName] = useState("");
 
     // Pre-included move function
     const moveFileListItem = useCallback(
@@ -55,15 +58,16 @@ export const ListContainer = () => {
         [files],
     )
 
-    //Prompt to clear list
-    const clearFileList = useCallback(
+    //Prompt to reset application
+    const resetApplication = useCallback(
         () => {
-            if(confirm("Are you sure you want to clear your list entries?")){
+            if(confirm("Are you sure you want to reset eveything back to default??")){
                 setFiles(files => {
                     const updatedFiles = [...files]
                     updatedFiles.length = 0
                     return updatedFiles
                 })
+                setOutputName("")
             }
         },
         [files],
@@ -75,7 +79,7 @@ export const ListContainer = () => {
             {/* List operations */}
             <p>Entries: {files.length}</p>
             <p>First entry: {(files.length!=0 ? files[0].name : "N/A")}</p>
-            <button type="button" onClick={clearFileList} disabled={files.length==0}>Clear Entries</button>
+            <button type="button" onClick={resetApplication} disabled={files.length==0}>Reset Application</button>
             <ItemUpload
                 addListItem={addFileListItem}
                 listSize={files.length}
@@ -98,6 +102,8 @@ export const ListContainer = () => {
             {/* Download merged contents */}
             <ItemDownload
                 listItems={files}
+                outputName={outputName}
+                setOutputName={setOutputName}
             />
         </React.Fragment>
     )

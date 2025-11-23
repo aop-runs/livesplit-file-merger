@@ -6,8 +6,8 @@ export const validSpecifier = {
 }
 
 // Ensure only valid files are being uploaded
-export function isAValidFile(filename){
-    return filename.endsWith(validSpecifier.extension)
+export function isAValidFile(filename, extension){
+    return filename.endsWith(extension)
 }
 
 // Gather contents from file via Promise
@@ -37,7 +37,7 @@ export async function downloadFile(contents, filename){
     return await new Promise(function(resolve, reject) {
         //File downloader
         try{
-            if(!isAValidFile(filename)){
+            if(!isAValidFile(filename, validSpecifier.extension)){
                 throw new Error(filename + " is not a valid filename");
             }
             const link = document.createElement("a");
@@ -72,7 +72,7 @@ export async function downloadFileAs(contents, filename){
                     ],
                 });
                 //Writable stream
-                if(!isAValidFile(fileHandle.name)){
+                if(!isAValidFile(fileHandle.name, validSpecifier.extension)){
                     throw new Error(fileHandle.name + " from file dialog is not a valid filename");
                 }
                 const writableFileStream = await fileHandle.createWritable();

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StatusBox } from './StatusBox'
 import { prepareFileOutput, downloadFile, downloadFileAs, validSpecifier, isAValidFile } from '../../utils/file.js'
 
-export const ItemDownload = ({ listItems }) => {
+export const ItemDownload = ({ listItems, outputName, setOutputName }) => {
 
     //Status box tracking
     const initialStatus = {
@@ -14,12 +14,14 @@ export const ItemDownload = ({ listItems }) => {
         setStatus(initialStatus)
     }
 
-    //Track filename and ensure result is valid
-    const [filename, setFilename] = useState("");
-    const [filenameValid, setFilenameValid] = useState(true);
+    //Track outputName and ensure result is valid
+    const [outputNameValid, setOutputNameValid] = useState(true);
     const updateFilename = (name) => {
-        setFilename(name)
-        //No unsupported filename characters
+        setOutputName(name)
+        checkFilename(name)
+    }
+    const checkFilename = (name) => {
+        //No unsupported outputName characters
         let hasInvalid = false
         for(let char of ["<", ">", ":", "\"", "'", "/", "\\", "|", "?", "*", "&"]) {
             if(name.includes(char)){
@@ -29,15 +31,15 @@ export const ItemDownload = ({ listItems }) => {
         }
         
         //Extension is relevant if provided
-        if(hasInvalid || (name.includes(".") && !isAValidFile(name))){
-            setFilenameValid(false)
+        if(hasInvalid || (name.includes(".") && !isAValidFile(name, validSpecifier.extension))){
+            setOutputNameValid(false)
             setStatus({
                 header: "Error",
                 message: [name + " is not a valid filename"]
             })
         }
         else{
-            setFilenameValid(true)
+            setOutputNameValid(true)
             resetStatus()
         }
     }
@@ -51,7 +53,7 @@ export const ItemDownload = ({ listItems }) => {
             (head) => {
                 setStatus({
                     header: "Success",
-                    message: ["Download for " + filename + " successful"]
+                    message: ["Download for " + outputName + " successful"]
                 })
             }
         );
@@ -66,7 +68,7 @@ export const ItemDownload = ({ listItems }) => {
                 else{
                     setStatus({
                         header: "Error",
-                        message: ["Unable to download: " + filename + " - " + error]
+                        message: ["Unable to download: " + outputName + " - " + error]
                     })
                 }
             }
@@ -82,9 +84,9 @@ export const ItemDownload = ({ listItems }) => {
                 hideStatus={resetStatus}
             />}
             <label>Output filename: </label>
-            <input type="text" disabled={listItems.length < 2} placeholder={"output"} value={filename} onChange={(e) => updateFilename(e.target.value)}></input>
-            <button type="button" disabled={filename.length == 0} onClick={() => updateFilename("")}>Clear Filename</button>
-            <button type="button" disabled={listItems.length < 2 || filename.length == 0 || !filenameValid} onClick={() => prepareDownload(filename.replace(validSpecifier.extension, ""))}>Download Merged Splits</button>
+            <input type="text" disabled={listItems.length < 2} placeholder={"output"} value={outputName} onChange={(e) => updateFilename(e.target.value)}></input>
+            <button type="button" disabled={outputName.length == 0} onClick={() => updateFilename("")}>Clear Filename</button>
+            <button type="button" disabled={listItems.length < 2 || outputName.length == 0 || !outputNameValid} onClick={() => prepareDownload(outputName.replace(validSpecifier.extension, ""))}>Download Merged Splits</button>
         </React.Fragment>
     );
 }

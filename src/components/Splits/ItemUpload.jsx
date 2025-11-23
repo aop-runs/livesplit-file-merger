@@ -39,7 +39,7 @@ export const ItemUpload = ({ addListItem, listSize }) => {
         for(let newFile of selectedFiles){
             if(newFile) {
                 //Validate and gather contents
-                if(!isAValidFile(newFile.name)){
+                if(!isAValidFile(newFile.name, validSpecifier.extension)){
                     badFiles.push("Invalid file: " + newFile.name + " uploaded")
                     continue
                 }
