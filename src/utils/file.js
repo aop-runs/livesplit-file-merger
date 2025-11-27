@@ -16,6 +16,9 @@ export async function gatherFileContents(filename){
     return await new Promise(function(resolve, reject) {
         //Gather file contents
         try{
+            if(!isAValidFile(filename.name, validSpecifier.extension)){
+                throw new Error("Invalid file: " + filename.name + " uploaded")
+            }
             let fileReader = new FileReader()
             fileReader.onloadend = (e) => {
                 resolve(fileReader.result);
@@ -28,8 +31,8 @@ export async function gatherFileContents(filename){
     });
 }
 
+//Open LiveSplit XML in new tab
 export function openContentsInNewTab(contents){
-    console.log(contents)
     let url = URL.createObjectURL(new Blob([contents], {type: validSpecifier.streamType}));
     window.open(url);
     URL.revokeObjectURL(url);

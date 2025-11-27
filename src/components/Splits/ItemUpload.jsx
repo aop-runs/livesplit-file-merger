@@ -2,6 +2,7 @@
 import React, { useRef, useState } from 'react';
 import { StatusBox } from './StatusBox'
 import { isAValidFile, gatherFileContents, validSpecifier } from '../../utils/file.js'
+import { removeIconData, gatherRunName, gatherSplitsDataByTag } from '../../utils/livesplit.js'
 import '../../styles/style.css'
 
 export const ItemUpload = ({ addListItem, uploadLabel, setUploadLabel }) => {
@@ -38,42 +39,43 @@ export const ItemUpload = ({ addListItem, uploadLabel, setUploadLabel }) => {
         let badFiles = []
         for(let newFile of selectedFiles){
             if(newFile) {
-                //Validate and gather contents
-                if(!isAValidFile(newFile.name, validSpecifier.extension)){
-                    badFiles.push("Invalid file: " + newFile.name + " uploaded")
-                    continue
-                }
                 let fileContents = gatherFileContents(newFile)
                 
                 //Add contents to list
                 fileContents.then(
                     (contents) => {
-                        addListItem(newFile.name, contents)
+                        try{
+                            contents = removeIconData(contents)
+                            addListItem(
+                                gatherRunName(contents),
+                                newFile.name, 
+                                contents)
+                        } catch (error) {
+                            badFiles.push("Unable to upload: " + newFile.name + " - " + error)
+                            setStatus({
+                                header: "Error",
+                                message: badFiles
+                            })
+                        }
                     }
                 );
                 //Alert error
                 fileContents.catch(
                     (error) => {
                         badFiles.push("Unable to upload: " + newFile.name + " - " + error)
+                        setStatus({
+                            header: "Error",
+                            message: badFiles
+                        })
                     }
                 );
             }
         }
         setUploadLabel("some more")
-
-        //Update status based on upload success
-        if(badFiles.length != 0){
-            setStatus({
-                header: "Error",
-                message: badFiles
-            })
-        }
-        else{
-            setStatus({
-                header: "Success",
-                message: [selectedFiles.length.toString() + " file" + (selectedFiles.length != 1 ? "s" : "") + " added to entries"]
-            })
-        }
+        setStatus({
+            header: "Success",
+            message: [selectedFiles.length.toString() + " file" + (selectedFiles.length != 1 ? "s" : "") + " added to entries"]
+        })
     }
     
     return (

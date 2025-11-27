@@ -36,12 +36,13 @@ export const ListContainer = () => {
 
     //Add entry to list
     const addFileListItem = useCallback(
-        (filename, contents) => {
+        (runName, filename, contents) => {
             setFiles(files => {
                 const updatedFiles = [...files]
                 updatedFiles.push({
                     id: files.length+1,
-                    name: filename,
+                    runName: runName,
+                    filename: filename,
                     contents: contents
                 })
                 return updatedFiles
@@ -85,7 +86,7 @@ export const ListContainer = () => {
         <React.Fragment>
 
             {/* List operations */}
-            <p>First entry: {(files.length!=0 ? files[0].name : "N/A")}</p>
+            <p>First entry: {(files.length!=0 ? files[0].runName : "N/A")}</p>
             <p>Entries: {files.length}</p>
             <button type="button" onClick={resetApplication} disabled={files.length==0}>Reset Application</button>
             <ItemUpload
@@ -95,12 +96,14 @@ export const ListContainer = () => {
             />
 
             {/* List entries */}
+            <br />
             <div className="entry">{files.map((file, index) => (
                 <Item
                     key={file.id}
                     index={index}
                     listSize={files.length}
-                    name={file.name}
+                    runName={file.runName}
+                    filename={file.filename}
                     contents={file.contents}
                     moveListItem={moveFileListItem}
                     removeListItem={removeFileListItem}

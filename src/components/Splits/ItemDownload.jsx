@@ -62,7 +62,7 @@ export const ItemDownload = ({ listItems, outputName, setOutputName }) => {
         downloadPromise.catch(
             (error) => {
                 //If user closes file dialog without saving anything
-                if(error.name != "AbortError"){
+                if(error.name == "AbortError"){
                     return
                 }
                 else{
