@@ -1,5 +1,8 @@
 import { validSpecifier } from "./file";
 
+//Cache list
+export let iconCache = [];
+
 // Splits template
 export function gatherFullTemplate(){
     return `
@@ -28,7 +31,7 @@ export function gatherFullTemplate(){
         </Segments>
         <AutoSplitterSettings />
         </Run>
-    `
+    `;
 }
 
 // Segment template
@@ -44,36 +47,55 @@ export function gatherSegmentTemplate(){
         <BestSegmentTime />
         <SegmentHistory />
         </Segment>
-    `
+    `;
 }
 
 //Gather data from specific tag
 export function gatherSplitsDataByTag(contents, tag){
     let splits = new DOMParser().parseFromString(contents, validSpecifier.streamType);
-    return splits.getElementsByTagName(tag)[0].textContent.trim()
+    return splits.getElementsByTagName(tag)[0].textContent.trim();
 }
 
 //Gather full run name from splits
 export function gatherRunName(contents){
-    let nameValues = []
+    let nameValues = [];
     for(let tag of ["GameName", "CategoryName"]){
-        let value = gatherSplitsDataByTag(contents, tag)
+        let value = gatherSplitsDataByTag(contents, tag);
         if(value){
-            nameValues.push(value)
+            nameValues.push(value);
         }
     }
     if(nameValues.length == 0){
-        return "Untitled"
+        return "Untitled";
     }
-    return nameValues.join(" - ")
+    return nameValues.join(" - ");
 }
 
-//Remove icon data from splits file for quicker DOM parsing
-export function removeIconData(contents){
+//Clean splits file to remove irrelevant data for quicker DOM parsing and add reusable segment icons to cache
+export function cleanSplitsFile(contents){
     let splits = new DOMParser().parseFromString(contents, validSpecifier.streamType);
-    splits.getElementsByTagName("GameIcon")[0].textContent = ""
-    for(let i = 0; i < splits.getElementsByTagName("Segment").length; i++){
-        splits.getElementsByTagName("Segment")[i].getElementsByTagName("Icon")[0].textContent = ""
+
+    //Game Icon and Attempt History
+    splits.getElementsByTagName("GameIcon")[0].textContent = "";
+    while(splits.getElementsByTagName("AttemptHistory")[0].getElementsByTagName("Attempt").length != 0){
+        splits.getElementsByTagName("AttemptHistory")[0].removeChild(splits.getElementsByTagName("AttemptHistory")[0].getElementsByTagName("Attempt")[0])
     }
-    return new XMLSerializer().serializeToString(splits)
+
+    //Segment Icons and History
+    for(let i = 0; i < splits.getElementsByTagName("Segment").length; i++){
+        let iconData = splits.getElementsByTagName("Segment")[i].getElementsByTagName("Icon")[0].textContent.trim();
+        if(iconData.length != 0){
+            if(!iconCache.includes(iconData)){
+                iconCache.push(iconData);
+                splits.getElementsByTagName("Segment")[i].getElementsByTagName("Icon")[0].textContent = iconCache.length;
+            }
+            else{
+                splits.getElementsByTagName("Segment")[i].getElementsByTagName("Icon")[0].textContent = iconCache.indexOf(iconData) + 1
+            }
+        }
+        while(splits.getElementsByTagName("SegmentHistory")[i].getElementsByTagName("Time").length != 0){
+            splits.getElementsByTagName("SegmentHistory")[i].removeChild(splits.getElementsByTagName("SegmentHistory")[i].getElementsByTagName("Time")[0])
+        }
+    }
+    return new XMLSerializer().serializeToString(splits);
 }

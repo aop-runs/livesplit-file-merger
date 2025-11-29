@@ -1,5 +1,5 @@
 import React from 'react'
-import '../../styles/style.css'
+import '../styles/style.css'
 
 export const StatusBox = ({ header, message, hideStatus }) => {
     

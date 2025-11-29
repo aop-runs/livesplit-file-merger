@@ -36,14 +36,12 @@ export const ListContainer = () => {
 
     //Add entry to list
     const addFileListItem = useCallback(
-        (runName, filename, contents) => {
+        (itemData) => {
             setFiles(files => {
                 const updatedFiles = [...files]
                 updatedFiles.push({
-                    id: files.length+1,
-                    runName: runName,
-                    filename: filename,
-                    contents: contents
+                    ...{id: files.length+1},
+                    ...itemData
                 })
                 return updatedFiles
             })
@@ -87,7 +85,6 @@ export const ListContainer = () => {
 
             {/* List operations */}
             <p>First entry: {(files.length!=0 ? files[0].runName : "N/A")}</p>
-            <p>Entries: {files.length}</p>
             <button type="button" onClick={resetApplication} disabled={files.length==0}>Reset Application</button>
             <ItemUpload
                 addListItem={addFileListItem}
@@ -102,9 +99,7 @@ export const ListContainer = () => {
                     key={file.id}
                     index={index}
                     listSize={files.length}
-                    runName={file.runName}
-                    filename={file.filename}
-                    contents={file.contents}
+                    itemData={file}
                     moveListItem={moveFileListItem}
                     removeListItem={removeFileListItem}
                 />
@@ -112,6 +107,7 @@ export const ListContainer = () => {
             </div>
 
             {/* Download merged contents */}
+            <p>Entries: {files.length}</p>
             <ItemDownload
                 listItems={files}
                 outputName={outputName}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StatusBox } from './StatusBox'
+import { StatusBox } from '../StatusBox.jsx'
 import { downloadFile, downloadFileAs, validSpecifier, isAValidFile } from '../../utils/file.js'
 
 export const ItemDownload = ({ listItems, outputName, setOutputName }) => {

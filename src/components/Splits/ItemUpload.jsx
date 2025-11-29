@@ -1,8 +1,8 @@
 //Based on: https://www.geeksforgeeks.org/reactjs/drag-and-drop-file-upload-component-with-react-hooks/ & https://medium.com/@dprincecoder/creating-a-drag-and-drop-file-upload-component-in-react-a-step-by-step-guide-4d93b6cc21e0
 import React, { useRef, useState } from 'react';
-import { StatusBox } from './StatusBox'
-import { isAValidFile, gatherFileContents, validSpecifier } from '../../utils/file.js'
-import { removeIconData, gatherRunName, gatherSplitsDataByTag } from '../../utils/livesplit.js'
+import { StatusBox } from '../StatusBox.jsx'
+import { gatherFileContents, validSpecifier } from '../../utils/file.js'
+import { cleanSplitsFile, gatherRunName, gatherSplitsDataByTag } from '../../utils/livesplit.js'
 import '../../styles/style.css'
 
 export const ItemUpload = ({ addListItem, uploadLabel, setUploadLabel }) => {
@@ -36,46 +36,58 @@ export const ItemUpload = ({ addListItem, uploadLabel, setUploadLabel }) => {
 
     //Validate and add files to list
     const uploadFiles = (selectedFiles) => {
-        let badFiles = []
-        for(let newFile of selectedFiles){
-            if(newFile) {
-                let fileContents = gatherFileContents(newFile)
+        setStatus({
+            header: "Loading...",
+            message: ["Adding " + selectedFiles.length.toString() + " file" + (selectedFiles.length != 1 ? "s" : "")]
+        })
+        let uploadErrors = []
+        let fileAmount = selectedFiles.length
+        for(let newFile of Array.from(selectedFiles).entries()){
+            if(newFile[1]) {
+                let fileContents = gatherFileContents(newFile[1])
                 
                 //Add contents to list
                 fileContents.then(
                     (contents) => {
-                        try{
-                            contents = removeIconData(contents)
-                            addListItem(
-                                gatherRunName(contents),
-                                newFile.name, 
-                                contents)
+                        try {
+                            contents = cleanSplitsFile(contents)
+                            addListItem({
+                                runName: gatherRunName(contents),
+                                filename: newFile[1].name,
+                                layoutPath: gatherSplitsDataByTag(contents, "LayoutPath"),
+                                offset: gatherSplitsDataByTag(contents, "Offset"),
+                                contents: contents
+                            })
                         } catch (error) {
-                            badFiles.push("Unable to upload: " + newFile.name + " - " + error)
+                            uploadErrors.push("Unable to upload: " + newFile[1].name + " - " + error)
                             setStatus({
                                 header: "Error",
-                                message: badFiles
+                                message: uploadErrors
+                            })
+                        }
+                        //All items uploaded successfully
+                        if(newFile[0] == fileAmount-1 && uploadErrors.length == 0){
+                            setStatus({
+                                header: "Success",
+                                message: [fileAmount.toString() + " file" + (fileAmount != 1 ? "s" : "") + " added to entries"]
                             })
                         }
                     }
                 );
+
                 //Alert error
                 fileContents.catch(
                     (error) => {
-                        badFiles.push("Unable to upload: " + newFile.name + " - " + error)
+                        uploadErrors.push("Unable to upload: " + newFile[1].name + " - " + error)
                         setStatus({
                             header: "Error",
-                            message: badFiles
+                            message: uploadErrors
                         })
                     }
                 );
             }
         }
         setUploadLabel("some more")
-        setStatus({
-            header: "Success",
-            message: [selectedFiles.length.toString() + " file" + (selectedFiles.length != 1 ? "s" : "") + " added to entries"]
-        })
     }
     
     return (

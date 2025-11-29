@@ -1,14 +1,14 @@
 //Constants
-export const layoutExtension = ".lsl"
+export const layoutExtension = ".lsl";
 export const validSpecifier = {
     extension: ".lss",
     streamType: 'text/xml',
     dialogLabel: "LiveSplit Splits (*.lss)"
-}
+};
 
 // Ensure only valid files are being uploaded
 export function isAValidFile(filename, extension){
-    return filename.endsWith(extension)
+    return filename.endsWith(extension);
 }
 
 // Gather contents from file via Promise
@@ -17,16 +17,16 @@ export async function gatherFileContents(filename){
         //Gather file contents
         try{
             if(!isAValidFile(filename.name, validSpecifier.extension)){
-                throw new Error("Invalid file: " + filename.name + " uploaded")
+                throw new Error("Invalid file: " + filename.name + " uploaded");
             }
-            let fileReader = new FileReader()
+            let fileReader = new FileReader();
             fileReader.onloadend = (e) => {
                 resolve(fileReader.result);
             }
-            fileReader.readAsText(filename)
+            fileReader.readAsText(filename);
         //Catch error
         } catch (error) {
-            reject(error)
+            reject(error);
         }
     });
 }
@@ -54,7 +54,7 @@ export async function downloadFile(contents, filename){
             resolve("Success");
         //Catch error
         } catch (error) {
-            reject(error)
+            reject(error);
         }
     });
 }
@@ -87,7 +87,7 @@ export async function downloadFileAs(contents, filename){
                 resolve("Success");
             //Catch error
             } catch (error) {
-                reject(error)
+                reject(error);
             }
         }
         launchPromise();
