@@ -4,7 +4,7 @@ import { useDrag, useDrop } from 'react-dnd'
 import { ItemModal } from './ItemModal'
 import '../../styles/style.css'
 
-export const Item = ({ index, listSize, itemData, moveListItem, removeListItem }) => {
+export const Item = ({ index, listSize, itemData, unmaskPaths, moveListItem, removeListItem }) => {
 
     // useDrag - the list item is draggable
     const [isDraggingEnabled, setIsDraggingEnabled] = useState(true);
@@ -83,6 +83,7 @@ export const Item = ({ index, listSize, itemData, moveListItem, removeListItem }
                 <button type ='button' onClick={removeItem}>Remove</button>
                 {isModalOpen && <ItemModal
                     itemData={itemData}
+                    unmaskPaths={unmaskPaths}
                     closeModal={closeModal}
                 />}
             </div>

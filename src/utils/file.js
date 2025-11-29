@@ -1,3 +1,5 @@
+import { replaceSplitsDataByTag } from "./livesplit";
+
 //Constants
 export const layoutExtension = ".lsl";
 export const validSpecifier = {
@@ -32,7 +34,10 @@ export async function gatherFileContents(filename){
 }
 
 //Open LiveSplit XML in new tab
-export function openContentsInNewTab(contents){
+export function openContentsInNewTab(contents, layoutPath, maskLayoutPath){
+    if(maskLayoutPath){
+        contents = replaceSplitsDataByTag(contents, "LayoutPath", "*".repeat(layoutPath.length));
+    }
     let url = URL.createObjectURL(new Blob([contents], {type: validSpecifier.streamType}));
     window.open(url);
     URL.revokeObjectURL(url);

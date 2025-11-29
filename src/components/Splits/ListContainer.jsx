@@ -1,14 +1,15 @@
 //Based on: https://medium.com/@liadshiran92/easy-drag-and-drop-in-react-22778b30ba37
 import React, { useState, useCallback } from 'react'
+import { FileDownload } from './FileDownload'
+import { FileUpload } from './FileUpload'
 import { Item } from './Item'
-import { ItemDownload } from './ItemDownload'
-import { ItemUpload } from './ItemUpload'
 import '../../styles/style.css'
 
 export const ListContainer = () => {
     
     //Shared states
     const [files, setFiles] = useState([])
+    const [unmaskPaths, setUnmaskPaths] = useState(false)
     const [uploadLabel, setUploadLabel] = useState("your")
     const [outputName, setOutputName] = useState("");
 
@@ -73,8 +74,9 @@ export const ListContainer = () => {
                     updatedFiles.length = 0
                     return updatedFiles
                 })
-                setOutputName("")
+                setUnmaskPaths(false)
                 setUploadLabel("your")
+                setOutputName("")
             }
         },
         [files],
@@ -84,9 +86,11 @@ export const ListContainer = () => {
         <React.Fragment>
 
             {/* List operations */}
-            <p>First entry: {(files.length!=0 ? files[0].runName : "N/A")}</p>
+            <p>Starting Layout: {(files.length!=0 && files[0].layoutPath.length!=0 ? (unmaskPaths ? files[0].layoutPath : "*".repeat(files[0].layoutPath.length)) : "N/A")}</p>
+            <p>Starting Offset: {(files.length!=0 ? files[0].offset : "N/A")}</p>
+            <label id="unmask">Unmask Filepaths: <input type="checkbox" for="unmask" checked={unmaskPaths} onChange={(e) => setUnmaskPaths(e.target.checked)}/></label>
             <button type="button" onClick={resetApplication} disabled={files.length==0}>Reset Application</button>
-            <ItemUpload
+            <FileUpload
                 addListItem={addFileListItem}
                 uploadLabel={uploadLabel}
                 setUploadLabel={setUploadLabel}
@@ -99,6 +103,7 @@ export const ListContainer = () => {
                     key={file.id}
                     index={index}
                     listSize={files.length}
+                    unmaskPaths={unmaskPaths}
                     itemData={file}
                     moveListItem={moveFileListItem}
                     removeListItem={removeFileListItem}
@@ -108,7 +113,7 @@ export const ListContainer = () => {
 
             {/* Download merged contents */}
             <p>Entries: {files.length}</p>
-            <ItemDownload
+            <FileDownload
                 listItems={files}
                 outputName={outputName}
                 setOutputName={setOutputName}

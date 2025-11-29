@@ -56,6 +56,13 @@ export function gatherSplitsDataByTag(contents, tag){
     return splits.getElementsByTagName(tag)[0].textContent.trim();
 }
 
+//Replace splits data from specific tag
+export function replaceSplitsDataByTag(contents, tag, newValue){
+    let splits = new DOMParser().parseFromString(contents, validSpecifier.streamType);
+    splits.getElementsByTagName(tag)[0].textContent = newValue;
+    return new XMLSerializer().serializeToString(splits);
+}
+
 //Gather full run name from splits
 export function gatherRunName(contents){
     let nameValues = [];

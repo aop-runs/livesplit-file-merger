@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StatusBox } from '../StatusBox.jsx'
 import { downloadFile, downloadFileAs, validSpecifier, isAValidFile } from '../../utils/file.js'
 
-export const ItemDownload = ({ listItems, outputName, setOutputName }) => {
+export const FileDownload = ({ listItems, outputName, setOutputName }) => {
 
     //Status box tracking
     const initialStatus = {
