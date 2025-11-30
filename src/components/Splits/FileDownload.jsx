@@ -84,9 +84,7 @@ export const FileDownload = ({ listItems, outputName, setOutputName }) => {
                 hideStatus={resetStatus}
             />}
             <div title="Filename for output splits file">
-                <label>
-                    Output filename: 
-                </label>
+                <label>Output filename: </label>
                 <input type="text" disabled={listItems.length < 2} placeholder={"output"} value={outputName} onChange={(e) => updateFilename(e.target.value)}/>
             </div>
             <button type="button" disabled={outputName.length == 0} onClick={() => updateFilename("")} title="Clear textfield for output's filename">

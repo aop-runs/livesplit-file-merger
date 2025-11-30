@@ -3,6 +3,7 @@ import React, { useState, useCallback } from 'react'
 import { FileDownload } from './FileDownload'
 import { FileUpload } from './FileUpload'
 import { Item } from './Item'
+import { OutputSettings } from './OutputSettings'
 import { iconCache } from "../../utils/livesplit.js";
 import '../../styles/style.css'
 
@@ -13,6 +14,11 @@ export const ListContainer = () => {
     const [unmaskPaths, setUnmaskPaths] = useState(false)
     const [uploadLabel, setUploadLabel] = useState("your")
     const [outputName, setOutputName] = useState("");
+    const [useFirstInfo, setUseFirstInfo] = useState(true)
+    const [customInfo, setCustomInfo] = useState({
+        layout: "",
+        offset: ""
+    })
 
     //Alert user if they make any changes before refreshing or unloading website
     const alertUser = (event) => {
@@ -78,6 +84,11 @@ export const ListContainer = () => {
                 setUnmaskPaths(false)
                 setUploadLabel("your")
                 setOutputName("")
+                setUseFirstInfo(true)
+                setCustomInfo({
+                    layout: "",
+                    offset: ""
+                })
                 iconCache.length = 0
             }
         },
@@ -88,8 +99,8 @@ export const ListContainer = () => {
         <React.Fragment>
 
             {/* List operations */}
-            <label id="unmask" title="Unhide absolute filepath names for LiveSplit layouts">
-                Unmask Filepaths: <input type="checkbox" for="unmask" checked={unmaskPaths} onChange={(e) => setUnmaskPaths(e.target.checked)}/>
+            <label id="unmask" title="Choose whether to unhide absolute filepath names for LiveSplit layouts">
+                Unmask Filepaths: <input type="checkbox" htmlFor="unmask" checked={unmaskPaths} onChange={(e) => setUnmaskPaths(e.target.checked)}/>
             </label>
             <button type="button" onClick={resetApplication} disabled={files.length==0} title="Remove all entries and revert all settings to default">
                 Reset Application
@@ -101,7 +112,7 @@ export const ListContainer = () => {
             />
 
             {/* List entries */}
-            <br />
+            <br/>
             <div className="entry" title="All entries for LiveSplit files that will be included for your output splits in order">{files.map((file, index) => (
                 <Item
                     key={file.id}
@@ -116,15 +127,17 @@ export const ListContainer = () => {
             </div>
 
             {/* Download merged contents */}
-            <p title="Number of files used for output splits">
+            <label title="Number of files used for output splits">
                 Entries: {files.length}
-            </p>
-            <p title="The layout LiveSplit will use for your output splits">
-                Starting Layout: {(files.length!=0 && files[0].layoutPath.length!=0 ? (unmaskPaths ? files[0].layoutPath : "*".repeat(files[0].layoutPath.length)) : "N/A")}
-            </p>
-            <p title="The offset LiveSplit will use for your output splits">
-                Starting Offset: {(files.length!=0 ? files[0].offset : "N/A")}
-            </p>
+            </label><br/><br/>
+            <OutputSettings
+                listItems={files}
+                unmaskPaths={unmaskPaths}
+                useFirstInfo={useFirstInfo}
+                setUseFirstInfo={setUseFirstInfo}
+                customInfo={customInfo}
+                setCustomInfo={setCustomInfo}
+            /><br/>
             <FileDownload
                 listItems={files}
                 outputName={outputName}
