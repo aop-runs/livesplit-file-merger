@@ -83,10 +83,18 @@ export const FileDownload = ({ listItems, outputName, setOutputName }) => {
                 message={status.message}
                 hideStatus={resetStatus}
             />}
-            <label>Output filename: </label>
-            <input type="text" disabled={listItems.length < 2} placeholder={"output"} value={outputName} onChange={(e) => updateFilename(e.target.value)}></input>
-            <button type="button" disabled={outputName.length == 0} onClick={() => updateFilename("")}>Clear Filename</button>
-            <button type="button" disabled={listItems.length < 2 || outputName.length == 0 || !outputNameValid} onClick={() => prepareDownload(outputName.replace(validSpecifier.extension, ""))}>Download Merged Splits</button>
+            <div title="Filename for output splits file">
+                <label>
+                    Output filename: 
+                </label>
+                <input type="text" disabled={listItems.length < 2} placeholder={"output"} value={outputName} onChange={(e) => updateFilename(e.target.value)}/>
+            </div>
+            <button type="button" disabled={outputName.length == 0} onClick={() => updateFilename("")} title="Clear textfield for output's filename">
+                Clear Filename
+            </button>
+            <button type="button" disabled={listItems.length < 2 || outputName.length == 0 || !outputNameValid} onClick={() => prepareDownload(outputName.replace(validSpecifier.extension, ""))} title="Download new output file for combined splits">
+                Download Merged Splits
+            </button>
         </React.Fragment>
     );
 }

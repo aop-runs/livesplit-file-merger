@@ -98,8 +98,10 @@ export const FileUpload = ({ addListItem, uploadLabel, setUploadLabel }) => {
                 message={status.message}
                 hideStatus={resetStatus}
             />}
-            <div ref={wrapperRef} className="upload" onDragEnter={onDragEnter} onDragLeave={onDragLeave} onDrop={onFileDrop}>
-                <p>Drag & Drop {uploadLabel} {validSpecifier.extension} files here</p>
+            <div ref={wrapperRef} className="upload" onDragEnter={onDragEnter} onDragLeave={onDragLeave} onDrop={onFileDrop} title="Box where you you click to upload LiveSplit files or drag &drop them">
+                <p>
+                    Drag & Drop {uploadLabel} {validSpecifier.extension} files here
+                </p>
                 <input type="file" value= "" accept={validSpecifier.extension} onChange={onFileSelect} multiple/>
             </div>
         </React.Fragment>

@@ -3,6 +3,7 @@ import React, { useState, useCallback } from 'react'
 import { FileDownload } from './FileDownload'
 import { FileUpload } from './FileUpload'
 import { Item } from './Item'
+import { iconCache } from "../../utils/livesplit.js";
 import '../../styles/style.css'
 
 export const ListContainer = () => {
@@ -77,6 +78,7 @@ export const ListContainer = () => {
                 setUnmaskPaths(false)
                 setUploadLabel("your")
                 setOutputName("")
+                iconCache.length = 0
             }
         },
         [files],
@@ -86,10 +88,12 @@ export const ListContainer = () => {
         <React.Fragment>
 
             {/* List operations */}
-            <p>Starting Layout: {(files.length!=0 && files[0].layoutPath.length!=0 ? (unmaskPaths ? files[0].layoutPath : "*".repeat(files[0].layoutPath.length)) : "N/A")}</p>
-            <p>Starting Offset: {(files.length!=0 ? files[0].offset : "N/A")}</p>
-            <label id="unmask">Unmask Filepaths: <input type="checkbox" for="unmask" checked={unmaskPaths} onChange={(e) => setUnmaskPaths(e.target.checked)}/></label>
-            <button type="button" onClick={resetApplication} disabled={files.length==0}>Reset Application</button>
+            <label id="unmask" title="Unhide absolute filepath names for LiveSplit layouts">
+                Unmask Filepaths: <input type="checkbox" for="unmask" checked={unmaskPaths} onChange={(e) => setUnmaskPaths(e.target.checked)}/>
+            </label>
+            <button type="button" onClick={resetApplication} disabled={files.length==0} title="Remove all entries and revert all settings to default">
+                Reset Application
+            </button>
             <FileUpload
                 addListItem={addFileListItem}
                 uploadLabel={uploadLabel}
@@ -98,7 +102,7 @@ export const ListContainer = () => {
 
             {/* List entries */}
             <br />
-            <div className="entry">{files.map((file, index) => (
+            <div className="entry" title="All entries for LiveSplit files that will be included for your output splits in order">{files.map((file, index) => (
                 <Item
                     key={file.id}
                     index={index}
@@ -112,7 +116,15 @@ export const ListContainer = () => {
             </div>
 
             {/* Download merged contents */}
-            <p>Entries: {files.length}</p>
+            <p title="Number of files used for output splits">
+                Entries: {files.length}
+            </p>
+            <p title="The layout LiveSplit will use for your output splits">
+                Starting Layout: {(files.length!=0 && files[0].layoutPath.length!=0 ? (unmaskPaths ? files[0].layoutPath : "*".repeat(files[0].layoutPath.length)) : "N/A")}
+            </p>
+            <p title="The offset LiveSplit will use for your output splits">
+                Starting Offset: {(files.length!=0 ? files[0].offset : "N/A")}
+            </p>
             <FileDownload
                 listItems={files}
                 outputName={outputName}

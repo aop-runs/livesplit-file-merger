@@ -76,11 +76,17 @@ export const Item = ({ index, listSize, itemData, unmaskPaths, moveListItem, rem
                 "entry", 
                 isModalOpen ? "defaultCursor" : "moveCursor", 
                 isDragging ? "itemDrag" : "itemNoDrag"
-            ].join(" ")}>
+            ].join(" ")} title="Click here to open contents for this entry">
                 {itemData.runName}
-                <button type ='button' onClick={moveItemUp} disabled={index==0}>Move Up</button>
-                <button type ='button' onClick={moveItemDown} disabled={index==listSize-1}>Move Down</button>
-                <button type ='button' onClick={removeItem}>Remove</button>
+                <button type ='button' onClick={moveItemUp} disabled={index==0} title="Move this file up one spot in your entries">
+                    Move Up
+                </button>
+                <button type ='button' onClick={moveItemDown} disabled={index==listSize-1} title="Move this file down one spot in your entries">
+                    Move Down
+                </button>
+                <button type ='button' onClick={removeItem} title="Remove this file from your entries">
+                    Remove
+                </button>
                 {isModalOpen && <ItemModal
                     itemData={itemData}
                     unmaskPaths={unmaskPaths}
