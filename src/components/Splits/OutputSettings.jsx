@@ -42,7 +42,7 @@ export const OutputSettings = ({ listItems, unmaskPaths, useFirstInfo, setUseFir
         }
     }
     const checkLayout = (value) => {
-        //No unsupported filename characters
+        //No unsupported layout path characters
         let hasInvalid = false
         for(let char of ["<", ">", "\"", "'", "/", "|", "?", "*", "&"]) {
             if(value.includes(char)){
@@ -52,7 +52,7 @@ export const OutputSettings = ({ listItems, unmaskPaths, useFirstInfo, setUseFir
         }
         
         //Extension is relevant if provided
-        if(hasInvalid || !isAValidFile(value, layoutExtension)){
+        if(value.length != 0 && (hasInvalid || !isAValidFile(value, layoutExtension))){
             setLayoutValid(false)
             setLayoutStatus({
                 header: "Error",
@@ -125,7 +125,7 @@ export const OutputSettings = ({ listItems, unmaskPaths, useFirstInfo, setUseFir
                 <label id="usefirst" title="Choose whether to use the first LiveSplit file's layout filepath and timer offset or custom specified ones">
                     Use Properties from First Entry: <input type="checkbox" htmlFor="unfirst" checked={useFirstInfo} onChange={(e) => toggleFirstInfo(e.target.checked)}/>
                 </label><br/>
-                
+
             </React.Fragment>
         )
     }
