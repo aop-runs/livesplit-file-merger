@@ -4,7 +4,7 @@ import { FileDownload } from './FileDownload'
 import { FileUpload } from './FileUpload'
 import { Item } from './Item'
 import { OutputSettings } from './OutputSettings'
-import { iconCache } from "../../utils/livesplit.js";
+import { defaultSetup, iconCache } from "../../utils/livesplit.js";
 import '../../styles/style.css'
 
 export const ListContainer = () => {
@@ -15,6 +15,7 @@ export const ListContainer = () => {
     const [uploadLabel, setUploadLabel] = useState("your")
     const [outputName, setOutputName] = useState("");
     const [useFirstInfo, setUseFirstInfo] = useState(true)
+    const [setupTime, setSetupTime] = useState(defaultSetup);
     const [customInfo, setCustomInfo] = useState({
         layout: "",
         offset: ""
@@ -123,6 +124,7 @@ export const ListContainer = () => {
                 setUploadLabel("your")
                 setOutputName("")
                 setUseFirstInfo(true)
+                setSetupTime(defaultSetup)
                 setCustomInfo({
                     layout: "",
                     offset: ""
@@ -176,6 +178,7 @@ export const ListContainer = () => {
             <button type="button" onClick={() => sortEntries(true)} disabled={files.length==0} title="Sort all of your entries Z-A">
                 Sort Entries Z-A
             </button>
+
             {/* Download merged contents */}
             <br/><br/>
             <OutputSettings
@@ -185,6 +188,8 @@ export const ListContainer = () => {
                 setUseFirstInfo={setUseFirstInfo}
                 customInfo={customInfo}
                 setCustomInfo={setCustomInfo}
+                setupTime={setupTime}
+                setSetupTime={setSetupTime}
                 initialStatus={initialStatus}
             /><br/>
             <FileDownload

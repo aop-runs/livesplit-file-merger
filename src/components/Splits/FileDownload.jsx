@@ -77,8 +77,8 @@ export const FileDownload = ({ listItems, outputName, setOutputName, initialStat
                 hideStatus={() => setDownloadStatus(initialStatus)}
             />}
             <div title="Filename for output splits file">
-                <label>Output filename: </label>
-                <input type="text" disabled={listItems.length < 2} placeholder={"output"} value={outputName} onChange={(e) => updateFilename(e.target.value)}/>
+                <label>Output Filename: </label>
+                <input type="text" disabled={listItems.length < 2} placeholder={"filename.lss"} value={outputName} onChange={(e) => updateFilename(e.target.value)}/>
             </div>
             <button type="button" disabled={outputName.length == 0} onClick={() => updateFilename("")} title="Clear textfield for output's filename">
                 Clear Filename

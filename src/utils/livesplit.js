@@ -1,5 +1,8 @@
 import { validSpecifier } from "./file";
 
+//Constants
+export const defaultSetup = "00:00:30.0000000"
+
 //Cache list
 export let iconCache = [];
 
