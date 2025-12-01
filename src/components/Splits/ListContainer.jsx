@@ -9,7 +9,7 @@ import '../../styles/style.css'
 
 export const ListContainer = () => {
     
-    //Shared states
+    //Shared states and variables
     const [files, setFiles] = useState([])
     const [unmaskPaths, setUnmaskPaths] = useState(false)
     const [uploadLabel, setUploadLabel] = useState("your")
@@ -19,6 +19,10 @@ export const ListContainer = () => {
         layout: "",
         offset: ""
     })
+    const initialStatus = {
+        header: "",
+        message: [""]
+    }
 
     //Alert user if they make any changes before refreshing or unloading website
     const alertUser = (event) => {
@@ -72,6 +76,40 @@ export const ListContainer = () => {
         [files],
     )
 
+    //Reverse entries
+    const reverseEntries = useCallback(
+        () => {
+            setFiles(files => {
+                const updatedFiles = [...files]
+                updatedFiles.reverse()
+                for(let i = 0; i < updatedFiles.length; i++) {
+                    updatedFiles[i].id = i+1;
+                }
+                return updatedFiles
+            })
+        },
+        [files],
+    )
+
+    //Sort entries
+    const sortEntries = useCallback(
+        (reversed) => {
+            setFiles(files => {
+                const updatedFiles = [...files]
+                const { compare } = Intl.Collator('en-US');
+                updatedFiles.sort((a, b) => compare(a.runName, b.runName));
+                if(reversed){
+                    updatedFiles.reverse()
+                }
+                for(let i = 0; i < updatedFiles.length; i++) {
+                    updatedFiles[i].id = i+1;
+                }
+                return updatedFiles
+            })
+        },
+        [files],
+    )
+
     //Prompt to reset application
     const resetApplication = useCallback(
         () => {
@@ -109,6 +147,7 @@ export const ListContainer = () => {
                 addListItem={addFileListItem}
                 uploadLabel={uploadLabel}
                 setUploadLabel={setUploadLabel}
+                initialStatus={initialStatus}
             />
 
             {/* List entries */}
@@ -125,11 +164,20 @@ export const ListContainer = () => {
                 />
             ))}
             </div>
-
-            {/* Download merged contents */}
             <label title="Number of files used for output splits">
                 Entries: {files.length}
-            </label><br/><br/>
+            </label>
+            <button type="button" onClick={reverseEntries} disabled={files.length==0} title="Reverses the order of all of your entries">
+                Reverse Entries
+            </button>
+            <button type="button" onClick={() => sortEntries(false)} disabled={files.length==0} title="Sort all of your entries A-Z">
+                Sort Entries A-Z
+            </button>
+            <button type="button" onClick={() => sortEntries(true)} disabled={files.length==0} title="Sort all of your entries Z-A">
+                Sort Entries Z-A
+            </button>
+            {/* Download merged contents */}
+            <br/><br/>
             <OutputSettings
                 listItems={files}
                 unmaskPaths={unmaskPaths}
@@ -137,11 +185,13 @@ export const ListContainer = () => {
                 setUseFirstInfo={setUseFirstInfo}
                 customInfo={customInfo}
                 setCustomInfo={setCustomInfo}
+                initialStatus={initialStatus}
             /><br/>
             <FileDownload
                 listItems={files}
                 outputName={outputName}
                 setOutputName={setOutputName}
+                initialStatus={initialStatus}
             />
         </React.Fragment>
     )

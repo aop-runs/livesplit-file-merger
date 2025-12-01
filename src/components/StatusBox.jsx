@@ -6,10 +6,10 @@ export const StatusBox = ({ header, message, hideStatus }) => {
     return (
             //Modal div upon item click
             <React.Fragment>
-                <div className="entry" title="Status tab">
-                    <h3 title="Status header">
+                <div className="status" title="Status tab">
+                    <h4 title="Status header">
                         {header}
-                    </h3>
+                    </h4>
                     {message.map((line, index) => (
                         <p title="Status text"key={index}>
                             {line}

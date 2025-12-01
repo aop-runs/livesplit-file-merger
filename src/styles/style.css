@@ -4,6 +4,12 @@
   padding: 0.5rem 1rem;
 }
 
+.status {
+  border: 1px dashed gray;
+  background-color: white;
+  padding: 0rem 0.5rem;
+}
+
 .moveCursor {
   cursor: move;
 }
@@ -52,4 +58,8 @@
 .upload:hover,
 .upload.dragover {
     opacity: 0.6;
+}
+
+.layoutUpload {
+  display: none;
 }
