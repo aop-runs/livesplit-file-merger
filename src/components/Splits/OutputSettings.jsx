@@ -1,6 +1,8 @@
+//Based on: https://medium.com/@aren.talb00/creating-a-custom-file-input-using-react-and-useref-233f5d4abfc9
 import React, { useRef, useState } from 'react'
 import { StatusBox } from '../StatusBox.jsx'
 import { isAValidFile, layoutExtension } from '../../utils/file.js'
+import { defaultSetup } from "../../utils/livesplit.js";
 
 export const OutputSettings = ({ listItems, unmaskPaths, useFirstInfo, setUseFirstInfo, customInfo, setCustomInfo, setupTime, setSetupTime, initialStatus }) => {
     
@@ -153,6 +155,15 @@ export const OutputSettings = ({ listItems, unmaskPaths, useFirstInfo, setUseFir
 
     //Check setup split time
     const checkSetup = (value) => {
+        if(value.length == 0){
+            setSetupValid(false)
+            setSetupStatus({
+                header: "Error",
+                message: ["No setup split time provided"]
+            })
+            return
+        }
+        
         //If first is a number
         let hasInvalid = false
         if(!["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"].includes(value.charAt(0))){
@@ -193,7 +204,7 @@ export const OutputSettings = ({ listItems, unmaskPaths, useFirstInfo, setUseFir
                 hasInvalid = true
             }
         }
-        if(value.length != 0 && hasInvalid){
+        if(hasInvalid){
             setSetupValid(false)
             setSetupStatus({
                 header: "Error",
@@ -258,7 +269,7 @@ export const OutputSettings = ({ listItems, unmaskPaths, useFirstInfo, setUseFir
                 </label><br/>
 
                 {/* Setup Split Time */}
-                {(setupStatus.header.length > 0 && listItems.length >= 2 && setupTime.length > 0) && <StatusBox
+                {(setupStatus.header.length > 0 && listItems.length >= 2) && <StatusBox
                     header={setupStatus.header}
                     message={setupStatus.message}
                     hideStatus={() => setSetupStatus(initialStatus)}
@@ -268,6 +279,9 @@ export const OutputSettings = ({ listItems, unmaskPaths, useFirstInfo, setUseFir
                     <input type="text" disabled={listItems.length < 2} placeholder={"0.00:00:00.0000000"} value={setupTime} onChange={(e) => updateSetupTime(e.target.value)}/>
                     <button type="button" disabled={listItems.length < 2 || setupTime.length == 0} onClick={() => setSetupTime("")} title="Clear textfield for setup split time">
                         Clear Setup Split Time
+                    </button>
+                    <button type="button" disabled={listItems.length < 2} onClick={() => updateSetupTime(defaultSetup)} title="Revert back to default setup split time">
+                        Use Default Setup Time
                     </button>
                 </div>
             </React.Fragment>
