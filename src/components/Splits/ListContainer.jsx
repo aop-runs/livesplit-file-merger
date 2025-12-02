@@ -1,8 +1,8 @@
 //Based on: https://medium.com/@liadshiran92/easy-drag-and-drop-in-react-22778b30ba37
 import React, { useState, useCallback } from 'react'
-import { FileDownload } from './FileDownload'
-import { FileUpload } from './FileUpload'
-import { Item } from './Item'
+import { FileDownload } from './FileDownload.jsx'
+import { FileUpload } from './FileUpload.jsx'
+import { ItemList } from './ItemList.jsx'
 import { OutputFileTime } from './OutputFileTime.jsx'
 import { OutputSplitSettings } from './OutputSplitSettings.jsx'
 import { defaultSetup, iconCache } from "../../utils/livesplit.js";
@@ -169,30 +169,14 @@ export const ListContainer = () => {
 
             {/* List entries */}
             <br/>
-            <div className="entry" title="All entries for LiveSplit files that will be included for your output splits in order">{files.map((file, index) => (
-                <Item
-                    key={file.id}
-                    index={index}
-                    listSize={files.length}
-                    unmaskPaths={unmaskPaths}
-                    itemData={file}
-                    moveListItem={moveFileListItem}
-                    removeListItem={removeFileListItem}
-                />
-            ))}
-            </div>
-            <label title="Number of files used for output splits">
-                Entries: {files.length}
-            </label>
-            <button type="button" onClick={reverseEntries} disabled={files.length==0} title="Reverses the order of all of your entries">
-                Reverse Entries
-            </button>
-            <button type="button" onClick={() => sortEntries(false)} disabled={files.length==0} title="Sort all of your entries A-Z">
-                Sort Entries A-Z
-            </button>
-            <button type="button" onClick={() => sortEntries(true)} disabled={files.length==0} title="Sort all of your entries Z-A">
-                Sort Entries Z-A
-            </button>
+            <ItemList
+                listItems={files}
+                unmaskPaths={unmaskPaths}
+                moveListItem={moveFileListItem}
+                removeListItem={removeFileListItem}
+                reverseEntries={reverseEntries}
+                sortEntries={sortEntries}
+            />
 
             {/* Output Settings */}
             <br/><br/>
