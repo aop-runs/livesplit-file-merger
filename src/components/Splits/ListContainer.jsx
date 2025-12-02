@@ -17,25 +17,10 @@ export const ListContainer = () => {
     const [outputName, setOutputName] = useState("");
     const [useFirstInfo, setUseFirstInfo] = useState(true)
     const [setupTime, setSetupTime] = useState(defaultSetup);
-    const [customInfo, setCustomInfo] = useState({
-        layout: "",
-        offset: ""
-    })
-    const [templateText, setTemplateText] = useState({
-        setup: "",
-        final: ""
-    })
-    const [runName, setRunName] = useState({
-        game: "",
-        category: ""
-    })
-    const [toggleSettings, setToggleSettings] = useState({
-        pb: true,
-        sob: true,
-        comp: true,
-        icon: true,
-        subs: true
-    })
+    const [customInfo, setCustomInfo] = useState({layout: "", offset: ""})
+    const [templateText, setTemplateText] = useState({setup: "", final: ""})
+    const [runName, setRunName] = useState({game: "", category: ""})
+    const [toggleSettings, setToggleSettings] = useState({pb: true, sob: true, comp: true, icon: true, subs: true})
     const initialStatus = {
         header: "",
         message: [""]
@@ -141,25 +126,10 @@ export const ListContainer = () => {
                 setOutputName("")
                 setUseFirstInfo(true)
                 setSetupTime(defaultSetup)
-                setCustomInfo({
-                    layout: "",
-                    offset: ""
-                })
-                setTemplateText({
-                    setup: "",
-                    final: ""
-                })
-                setRunName({
-                    game: "",
-                    category: ""
-                })
-                setToggleSettings({
-                    pb: true,
-                    sob: true,
-                    comp: true,
-                    icon: true,
-                    subs: true
-                })
+                setCustomInfo({layout: "", offset: ""})
+                setTemplateText({setup: "", final: ""})
+                setRunName({game: "", category: ""})
+                setToggleSettings({pb: true, sob: true, comp: true, icon: true, subs: true})
                 iconCache.length = 0
             }
         },

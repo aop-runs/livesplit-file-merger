@@ -16,6 +16,11 @@ export const OutputSplitSettings = ({ listItems, toggleSettings, setToggleSettin
             changeTemplateText("final", "")
         }
     }
+    const toggleAllCheckboxes = (value) => {
+        for(let key of Object.keys(toggleSettings)){
+            toggleCheckbox(key, value)
+        }
+    }
 
     //Update template text
     const changeTemplateText = (key, value) => {
@@ -60,8 +65,15 @@ export const OutputSplitSettings = ({ listItems, toggleSettings, setToggleSettin
                 <label id="subsbox" title="Choose whether to create new subsplits for each game (Note: This setting will remove existing subsplits from your splits files if toggled on)">
                     Create Subsplits for Each Game: <input type="checkbox" htmlFor="subsbox" checked={toggleSettings["subs"]} onChange={(e) => toggleCheckbox("subs", e.target.checked)}/>
                 </label><br/>
+                <button type="button" disabled={Array.from(new Set(Object.values(toggleSettings)))[0] == true && new Set(Object.values(toggleSettings)).size == 1} onClick={() => toggleAllCheckboxes(true)} title="Toogle all above checkbox settings on">
+                    Toggle Above Settings On
+                </button>
+                <button type="button" disabled={Array.from(new Set(Object.values(toggleSettings)))[0] == false && new Set(Object.values(toggleSettings)).size == 1} onClick={() => toggleAllCheckboxes(false)} title="Toogle all above checkbox settings off">
+                    Toggle Above Settings Off
+                </button>
 
                 {/* Splits Templates */}
+                <br/><br/>
                 <div title="The template that will be used for every setup split in between games">
                     <label>Setup Split Template: </label>
                     <input type="text" disabled={listItems.length < 2} placeholder={"Template Text"} value={templateText["setup"]} onChange={(e) => changeTemplateText("setup", e.target.value)}/>
