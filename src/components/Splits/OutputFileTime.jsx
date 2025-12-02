@@ -4,7 +4,7 @@ import { StatusBox } from '../StatusBox.jsx'
 import { isAValidFile, layoutExtension } from '../../utils/file.js'
 import { defaultSetup } from "../../utils/livesplit.js";
 
-export const OutputSettings = ({ listItems, unmaskPaths, useFirstInfo, setUseFirstInfo, customInfo, setCustomInfo, setupTime, setSetupTime, initialStatus }) => {
+export const OutputFileTime = ({ listItems, unmaskPaths, useFirstInfo, setUseFirstInfo, customInfo, setCustomInfo, setupTime, setSetupTime, initialStatus }) => {
     
     //Status box tracking
     const [layoutStatus, setLayoutStatus] = useState(initialStatus);
@@ -277,7 +277,7 @@ export const OutputSettings = ({ listItems, unmaskPaths, useFirstInfo, setUseFir
                 <div title="The time allotted for setup splits for split calculations">
                     <label>Setup Split Time: </label>
                     <input type="text" disabled={listItems.length < 2} placeholder={"0.00:00:00.0000000"} value={setupTime} onChange={(e) => updateSetupTime(e.target.value)}/>
-                    <button type="button" disabled={listItems.length < 2 || setupTime.length == 0} onClick={() => setSetupTime("")} title="Clear textfield for setup split time">
+                    <button type="button" disabled={listItems.length < 2 || setupTime.length == 0} onClick={() => updateSetupTime("")} title="Clear textfield for setup split time">
                         Clear Setup Split Time
                     </button>
                     <button type="button" disabled={listItems.length < 2} onClick={() => updateSetupTime(defaultSetup)} title="Revert back to default setup split time">

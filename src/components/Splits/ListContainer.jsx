@@ -3,7 +3,7 @@ import React, { useState, useCallback } from 'react'
 import { FileDownload } from './FileDownload'
 import { FileUpload } from './FileUpload'
 import { Item } from './Item'
-import { OutputSettings } from './OutputSettings'
+import { OutputFileTime } from './OutputFileTime.jsx'
 import { defaultSetup, iconCache } from "../../utils/livesplit.js";
 import '../../styles/style.css'
 
@@ -179,9 +179,9 @@ export const ListContainer = () => {
                 Sort Entries Z-A
             </button>
 
-            {/* Download merged contents */}
+            {/* Output Settings */}
             <br/><br/>
-            <OutputSettings
+            <OutputFileTime
                 listItems={files}
                 unmaskPaths={unmaskPaths}
                 useFirstInfo={useFirstInfo}
@@ -192,6 +192,8 @@ export const ListContainer = () => {
                 setSetupTime={setSetupTime}
                 initialStatus={initialStatus}
             /><br/>
+
+            {/* Download merged contents */}
             <FileDownload
                 listItems={files}
                 outputName={outputName}
