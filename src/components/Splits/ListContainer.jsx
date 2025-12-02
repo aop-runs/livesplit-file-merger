@@ -25,6 +25,10 @@ export const ListContainer = () => {
         setup: "",
         final: ""
     })
+    const [runName, setRunName] = useState({
+        game: "",
+        category: ""
+    })
     const [toggleSettings, setToggleSettings] = useState({
         pb: true,
         sob: true,
@@ -145,6 +149,10 @@ export const ListContainer = () => {
                     setup: "",
                     final: ""
                 })
+                setRunName({
+                    game: "",
+                    category: ""
+                })
                 setToggleSettings({
                     pb: true,
                     sob: true,
@@ -205,6 +213,8 @@ export const ListContainer = () => {
                 setToggleSettings={setToggleSettings}
                 templateText={templateText}
                 setTemplateText={setTemplateText}
+                runName={runName}
+                setRunName={setRunName}
                 initialStatus={initialStatus}
             /><br/>
 
@@ -213,6 +223,7 @@ export const ListContainer = () => {
                 listItems={files}
                 outputName={outputName}
                 setOutputName={setOutputName}
+                runName={runName}
                 initialStatus={initialStatus}
             />
         </React.Fragment>

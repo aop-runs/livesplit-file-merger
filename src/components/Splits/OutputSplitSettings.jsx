@@ -1,7 +1,9 @@
+//Based on: https://www.geeksforgeeks.org/reactjs/axios-in-react-a-guide-for-beginners/
+
 import React, {  } from 'react'
 import { templateParameters } from "../../utils/livesplit.js";
 
-export const OutputSplitSettings = ({ listItems, toggleSettings, setToggleSettings, templateText, setTemplateText, initialStatus }) => {
+export const OutputSplitSettings = ({ listItems, toggleSettings, setToggleSettings, templateText, setTemplateText, runName, setRunName, initialStatus }) => {
 
     //Toggle checkbox
     const toggleCheckbox = (key, value) => {
@@ -27,6 +29,15 @@ export const OutputSplitSettings = ({ listItems, toggleSettings, setToggleSettin
     //Add paramater to text from select box
     const addParamaterToText = (key, value) => {
         changeTemplateText(key, templateText[key] + value)
+    }
+
+    //Update run name
+    const changeRunName = (key, value) => {
+        setRunName(runName => {
+            const updatedRunName = {...runName}
+            updatedRunName[key] = value
+            return updatedRunName
+        })
     }
 
     return (
@@ -57,7 +68,7 @@ export const OutputSplitSettings = ({ listItems, toggleSettings, setToggleSettin
                     <button type="button" disabled={listItems.length < 2 || templateText["setup"].length == 0} onClick={() => changeTemplateText("setup", "")} title="Clear textfield for setup split template">
                         Clear Setup Split Template
                     </button>
-                    <select value="" disabled={listItems.length < 2} onChange={(e) => addParamaterToText("setup", e.target.value)}>
+                    <select value="" disabled={listItems.length < 2} onChange={(e) => addParamaterToText("setup", e.target.value)} title="Select parameters to add to the setup split template">
                         <option value="">Add Parameter to Template</option>
                         {templateParameters.map((p, index) => {
                             return (
@@ -75,7 +86,7 @@ export const OutputSplitSettings = ({ listItems, toggleSettings, setToggleSettin
                         <button type="button" disabled={listItems.length < 2 || templateText["final"].length == 0} onClick={() => changeTemplateText("final", "")} title="Clear textfield for game's final subsplit template">
                             Clear Final Subsplit Template
                         </button>
-                        <select value="" disabled={listItems.length < 2} onChange={(e) => addParamaterToText("final", e.target.value)}>
+                        <select value="" disabled={listItems.length < 2} onChange={(e) => addParamaterToText("final", e.target.value)} title="Select parameters to add to the game's final subsplit template">
                             <option value="">Add Parameter to Template</option>
                             {templateParameters.map((p, index) => {
                                 return (
@@ -87,6 +98,23 @@ export const OutputSplitSettings = ({ listItems, toggleSettings, setToggleSettin
                         </select>
                     </div>
                 }
+
+                {/* Run Name */}
+                <br/>
+                <div title="The name of the game for the output splits file">
+                    <label>Output Game Name: </label>
+                    <input type="text" disabled={listItems.length < 2} placeholder={"Game Name"} value={runName["game"]} onChange={(e) => changeRunName("game", e.target.value)}/>
+                    <button type="button" disabled={listItems.length < 2 || runName["game"].length == 0} onClick={() => changeRunName("game", "")} title="Clear text field for the output's game name">
+                        Clear Game Name
+                    </button>
+                </div>
+                <div title="The name of the category for the output splits file">
+                    <label>Output Category Name: </label>
+                    <input type="text" disabled={listItems.length < 2} placeholder={"Category Name"} value={runName["category"]} onChange={(e) => changeRunName("category", e.target.value)}/>
+                    <button type="button" disabled={listItems.length < 2 || runName["category"].length == 0} onClick={() => changeRunName("category", "")} title="Clear text field for the output's category name">
+                        Clear Category Name
+                    </button>
+                </div>
 
             </React.Fragment>
         )
