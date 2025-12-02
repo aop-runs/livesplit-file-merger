@@ -21,6 +21,10 @@ export const ListContainer = () => {
         layout: "",
         offset: ""
     })
+    const [templateText, setTemplateText] = useState({
+        setup: "",
+        final: ""
+    })
     const [toggleSettings, setToggleSettings] = useState({
         pb: true,
         sob: true,
@@ -137,6 +141,10 @@ export const ListContainer = () => {
                     layout: "",
                     offset: ""
                 })
+                setTemplateText({
+                    setup: "",
+                    final: ""
+                })
                 setToggleSettings({
                     pb: true,
                     sob: true,
@@ -195,6 +203,8 @@ export const ListContainer = () => {
                 listItems={files}
                 toggleSettings={toggleSettings}
                 setToggleSettings={setToggleSettings}
+                templateText={templateText}
+                setTemplateText={setTemplateText}
                 initialStatus={initialStatus}
             /><br/>
 

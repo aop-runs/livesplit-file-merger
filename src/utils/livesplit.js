@@ -2,6 +2,12 @@ import { validSpecifier } from "./file";
 
 //Constants
 export const defaultSetup = "00:00:30.0000000"
+export const templateParameters = [
+    {param: "%NG%", name: "Game Name"},
+    {param: "%NC%", name: "Category Name"},
+    {param: "%GC%", name: "Total Game Count"},
+    {param: "%GN%", name: "Current Game Number"}
+]
 
 //Cache list
 export let iconCache = [];
