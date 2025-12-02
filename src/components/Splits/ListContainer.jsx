@@ -4,6 +4,7 @@ import { FileDownload } from './FileDownload'
 import { FileUpload } from './FileUpload'
 import { Item } from './Item'
 import { OutputFileTime } from './OutputFileTime.jsx'
+import { OutputSplitSettings } from './OutputSplitSettings.jsx'
 import { defaultSetup, iconCache } from "../../utils/livesplit.js";
 import '../../styles/style.css'
 
@@ -19,6 +20,13 @@ export const ListContainer = () => {
     const [customInfo, setCustomInfo] = useState({
         layout: "",
         offset: ""
+    })
+    const [toggleSettings, setToggleSettings] = useState({
+        pb: true,
+        sob: true,
+        comp: true,
+        icon: true,
+        subs: true
     })
     const initialStatus = {
         header: "",
@@ -129,6 +137,13 @@ export const ListContainer = () => {
                     layout: "",
                     offset: ""
                 })
+                setToggleSettings({
+                    pb: true,
+                    sob: true,
+                    comp: true,
+                    icon: true,
+                    subs: true
+                })
                 iconCache.length = 0
             }
         },
@@ -142,7 +157,7 @@ export const ListContainer = () => {
             <label id="unmask" title="Choose whether to unhide absolute filepath names for LiveSplit layouts">
                 Unmask Filepaths: <input type="checkbox" htmlFor="unmask" checked={unmaskPaths} onChange={(e) => setUnmaskPaths(e.target.checked)}/>
             </label>
-            <button type="button" onClick={resetApplication} disabled={files.length==0} title="Remove all entries and revert all settings to default">
+            <button type="button" onClick={resetApplication} title="Remove all entries and revert all settings to default">
                 Reset Application
             </button>
             <FileUpload
@@ -190,6 +205,12 @@ export const ListContainer = () => {
                 setCustomInfo={setCustomInfo}
                 setupTime={setupTime}
                 setSetupTime={setSetupTime}
+                initialStatus={initialStatus}
+            /><br/>
+            <OutputSplitSettings
+                listItems={files}
+                toggleSettings={toggleSettings}
+                setToggleSettings={setToggleSettings}
                 initialStatus={initialStatus}
             /><br/>
 

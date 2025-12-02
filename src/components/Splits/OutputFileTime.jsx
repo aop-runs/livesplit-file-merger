@@ -218,7 +218,7 @@ export const OutputFileTime = ({ listItems, unmaskPaths, useFirstInfo, setUseFir
     }
 
     return (
-            //Settings for output splits file
+            //Settings for output layout, offset, and setup split times
             <React.Fragment>
                 
                 {/* Custom Layout */}
