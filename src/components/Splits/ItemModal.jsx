@@ -2,7 +2,7 @@ import React from 'react'
 import { openContentsInNewTab } from '../../utils/file.js'
 import '../../styles/style.css'
 
-export const ItemModal = ({ itemData, unmaskPaths, closeModal }) => {
+export const ItemModal = ({ itemData, index, unmaskPaths, closeModal }) => {
     
     return (
             //Modal div upon item click
@@ -10,7 +10,7 @@ export const ItemModal = ({ itemData, unmaskPaths, closeModal }) => {
                 <div className="modal" title="Important information tracked from this LiveSplit file">
                     <div className="entry">
                         <h3 title="Full run name for this entry">
-                            {itemData.runName}
+                            {(index + 1).toString() + ". " + itemData.runName}
                         </h3>
                         <p title="Splits filename for this entry">
                             Filename: {itemData.filename}

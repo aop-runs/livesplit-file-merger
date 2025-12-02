@@ -89,6 +89,7 @@ export const Item = ({ index, listSize, itemData, unmaskPaths, moveListItem, rem
                 </button>
                 {isModalOpen && <ItemModal
                     itemData={itemData}
+                    index={index}
                     unmaskPaths={unmaskPaths}
                     closeModal={closeModal}
                 />}
