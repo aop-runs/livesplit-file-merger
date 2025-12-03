@@ -94,7 +94,7 @@ export function cleanSplitsFile(contents){
     //Game Icon and Attempt History
     splits.getElementsByTagName("GameIcon")[0].textContent = "";
     while(splits.getElementsByTagName("AttemptHistory")[0].getElementsByTagName("Attempt").length != 0){
-        splits.getElementsByTagName("AttemptHistory")[0].removeChild(splits.getElementsByTagName("AttemptHistory")[0].getElementsByTagName("Attempt")[0])
+        splits.getElementsByTagName("AttemptHistory")[0].removeChild(splits.getElementsByTagName("AttemptHistory")[0].getElementsByTagName("Attempt")[0]);
     }
 
     //Segment Icons and History
@@ -106,11 +106,11 @@ export function cleanSplitsFile(contents){
                 splits.getElementsByTagName("Segment")[i].getElementsByTagName("Icon")[0].textContent = iconCache.length;
             }
             else{
-                splits.getElementsByTagName("Segment")[i].getElementsByTagName("Icon")[0].textContent = iconCache.indexOf(iconData) + 1
+                splits.getElementsByTagName("Segment")[i].getElementsByTagName("Icon")[0].textContent = iconCache.indexOf(iconData) + 1;
             }
         }
         while(splits.getElementsByTagName("SegmentHistory")[i].getElementsByTagName("Time").length != 0){
-            splits.getElementsByTagName("SegmentHistory")[i].removeChild(splits.getElementsByTagName("SegmentHistory")[i].getElementsByTagName("Time")[0])
+            splits.getElementsByTagName("SegmentHistory")[i].removeChild(splits.getElementsByTagName("SegmentHistory")[i].getElementsByTagName("Time")[0]);
         }
     }
     return new XMLSerializer().serializeToString(splits);

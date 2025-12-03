@@ -1,7 +1,8 @@
 //Based on: https://www.geeksforgeeks.org/reactjs/axios-in-react-a-guide-for-beginners/
-
-import React, {  } from 'react'
+import React, { useState, useEffect } from 'react'
+import { StatusBox } from '../StatusBox.jsx'
 import { templateParameters } from "../../utils/livesplit.js";
+import { fuzzySearchGames, cacheNewData } from "../../utils/srcapi.js";
 
 export const OutputSplitSettings = ({ listItems, toggleSettings, setToggleSettings, templateText, setTemplateText, runName, setRunName, initialStatus }) => {
 
@@ -45,30 +46,79 @@ export const OutputSplitSettings = ({ listItems, toggleSettings, setToggleSettin
         })
     }
 
+    //Change game name from Speedrun.com Request
+    const updateGameName = (name) => {
+        if(name.length != 0){
+            changeRunName("game", name)
+        }
+    }
+
+
+    //Status box tracking and states for requests
+    const [gameRequestStatus, setGameRequestStatus] = useState(initialStatus)
+    const [gameRequestData, setGameRequestData] = useState([])
+
+    //Speedrun.com Request to gather list of fuzzy searched games based on input
+    const fetchGameFromSRC = (game) => {
+        setGameRequestStatus({
+            header: "Loading...",
+            message: ["Seraching for game names matching " + game + " on Speedrun.com"]
+        })
+        const gameQuery = fuzzySearchGames(game)
+        gameQuery.then(
+            (response) => {
+            if(response.data.data.length == 0){
+                setGameRequestStatus({
+                    header: "Error",
+                    message: ["No results were found on Speedrun.com matching " + game]
+                })
+            }
+            else{
+                setGameRequestStatus({
+                    header: "Success",
+                    message: ["Found " + response.data.data.length + " result" + (response.data.data.length != 1 ? "s" : "") + " matching " + game + " from Speedrun.com"]
+                })
+                let games = []
+                for(let foundGame of response.data.data){
+                    games.push({id: foundGame.id, name: foundGame.names.international})
+                }
+                setGameRequestData(games)
+            }
+            cacheNewData("Game", game, response.data)
+        })
+        gameQuery.catch(
+            (error) => {
+            setGameRequestStatus({
+                header: "Error",
+                message: ["Unable to fetch game names from Speedrun.com - " + error]
+            })
+        })
+    }
+
     return (
             //Settings for output splits file
             <React.Fragment>
                 
                 {/* Toggle Settings */}
                 <label id="pbbox" title="Choose whether to carry over your pbs from your split files as a new comparison">
-                    Carry over PBs: <input type="checkbox" htmlFor="pbbox" checked={toggleSettings["pb"]} onChange={(e) => toggleCheckbox("pb", e.target.checked)}/>
+                    Carry over PBs: <input type="checkbox" disabled={listItems.length < 2} htmlFor="pbbox" checked={toggleSettings["pb"]} onChange={(e) => toggleCheckbox("pb", e.target.checked)}/>
                 </label><br/>
                 <label id="sobbox" title="Choose whether to carry over your sum of best segments from your split files">
-                    Carry over Sum of Best Times: <input type="checkbox" htmlFor="sobbox" checked={toggleSettings["sob"]} onChange={(e) => toggleCheckbox("sob", e.target.checked)}/>
+                    Carry over Sum of Best Times: <input type="checkbox" disabled={listItems.length < 2} htmlFor="sobbox" checked={toggleSettings["sob"]} onChange={(e) => toggleCheckbox("sob", e.target.checked)}/>
                 </label><br/>
                 <label id="compbox" title="Choose whether to carry over other comparisons found from your split files">
-                    Carry over Other Comparisons: <input type="checkbox" htmlFor="compbox" checked={toggleSettings["comp"]} onChange={(e) => toggleCheckbox("comp", e.target.checked)}/>
+                    Carry over Other Comparisons: <input type="checkbox" disabled={listItems.length < 2} htmlFor="compbox" checked={toggleSettings["comp"]} onChange={(e) => toggleCheckbox("comp", e.target.checked)}/>
                 </label><br/>
                 <label id="iconbox" title="Choose whether to carry over segment icons from your splits files">
-                    Carry over Segment Icons: <input type="checkbox" htmlFor="iconbox" checked={toggleSettings["icon"]} onChange={(e) => toggleCheckbox("icon", e.target.checked)}/>
+                    Carry over Segment Icons: <input type="checkbox" disabled={listItems.length < 2} htmlFor="iconbox" checked={toggleSettings["icon"]} onChange={(e) => toggleCheckbox("icon", e.target.checked)}/>
                 </label><br/>
                 <label id="subsbox" title="Choose whether to create new subsplits for each game (Note: This setting will remove existing subsplits from your splits files if toggled on)">
-                    Create Subsplits for Each Game: <input type="checkbox" htmlFor="subsbox" checked={toggleSettings["subs"]} onChange={(e) => toggleCheckbox("subs", e.target.checked)}/>
+                    Create Subsplits for Each Game: <input type="checkbox" disabled={listItems.length < 2} htmlFor="subsbox" checked={toggleSettings["subs"]} onChange={(e) => toggleCheckbox("subs", e.target.checked)}/>
                 </label><br/>
-                <button type="button" disabled={Array.from(new Set(Object.values(toggleSettings)))[0] == true && new Set(Object.values(toggleSettings)).size == 1} onClick={() => toggleAllCheckboxes(true)} title="Toogle all above checkbox settings on">
+                <button type="button" disabled={listItems.length < 2 || (Array.from(new Set(Object.values(toggleSettings)))[0] == true && new Set(Object.values(toggleSettings)).size == 1)} onClick={() => toggleAllCheckboxes(true)} title="Toogle all above checkbox settings on">
                     Toggle Above Settings On
                 </button>
-                <button type="button" disabled={Array.from(new Set(Object.values(toggleSettings)))[0] == false && new Set(Object.values(toggleSettings)).size == 1} onClick={() => toggleAllCheckboxes(false)} title="Toogle all above checkbox settings off">
+                <button type="button" disabled={listItems.length < 2 || (Array.from(new Set(Object.values(toggleSettings)))[0] == false && new Set(Object.values(toggleSettings)).size == 1)} onClick={() => toggleAllCheckboxes(false)} title="Toogle all above checkbox settings off">
                     Toggle Above Settings Off
                 </button>
 
@@ -113,9 +163,27 @@ export const OutputSplitSettings = ({ listItems, toggleSettings, setToggleSettin
 
                 {/* Run Name */}
                 <br/>
+                {(gameRequestStatus.header.length > 0) && <StatusBox
+                    header={gameRequestStatus.header}
+                    message={gameRequestStatus.message}
+                    hideStatus={() => setGameRequestStatus(initialStatus)}
+                />}
                 <div title="The name of the game for the output splits file">
                     <label>Output Game Name: </label>
                     <input type="text" disabled={listItems.length < 2} placeholder={"Game Name"} value={runName["game"]} onChange={(e) => changeRunName("game", e.target.value)}/>
+                    <button type="button" disabled={listItems.length < 2 || runName["game"].length == 0} onClick={() => fetchGameFromSRC(runName["game"])} title="Fetches list of games fuzzy searched from Speedrun.com">
+                        Fetch Game from Input
+                    </button>
+                    <select value="" disabled={listItems.length < 2 || gameRequestData.length == 0} onChange={(e) => updateGameName(e.target.value)} title="Select game name for your output splits from Speedrun.com request">
+                        <option value="">Select Game</option>
+                        {gameRequestData.map((g, index) => {
+                            return (
+                                <option key={index} value={g.name}>
+                                    {g.name}
+                                </option>
+                            );
+                        })}
+                    </select>
                     <button type="button" disabled={listItems.length < 2 || runName["game"].length == 0} onClick={() => changeRunName("game", "")} title="Clear text field for the output's game name">
                         Clear Game Name
                     </button>

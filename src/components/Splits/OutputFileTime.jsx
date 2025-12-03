@@ -265,7 +265,7 @@ export const OutputFileTime = ({ listItems, unmaskPaths, useFirstInfo, setUseFir
                     }
                 </label><br/>
                 <label id="usefirst" title="Choose whether to use the first LiveSplit file's layout filepath and timer offset or custom specified ones">
-                    Use Properties from First Entry: <input type="checkbox" htmlFor="unfirst" checked={useFirstInfo} onChange={(e) => toggleFirstInfo(e.target.checked)}/>
+                    Use Properties from First Entry: <input type="checkbox" disabled={listItems.length < 2} htmlFor="unfirst" checked={useFirstInfo} onChange={(e) => toggleFirstInfo(e.target.checked)}/>
                 </label><br/>
 
                 {/* Setup Split Time */}

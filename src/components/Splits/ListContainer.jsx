@@ -16,7 +16,7 @@ export const ListContainer = () => {
     const [uploadLabel, setUploadLabel] = useState("your")
     const [outputName, setOutputName] = useState("");
     const [useFirstInfo, setUseFirstInfo] = useState(true)
-    const [setupTime, setSetupTime] = useState(defaultSetup);
+    const [setupTime, setSetupTime] = useState(defaultSetup)
     const [customInfo, setCustomInfo] = useState({layout: "", offset: ""})
     const [templateText, setTemplateText] = useState({setup: "", final: ""})
     const [runName, setRunName] = useState({game: "", category: ""})
