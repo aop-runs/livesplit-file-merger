@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import { StatusBox } from '../StatusBox.jsx'
 import { templateParameters } from "../../utils/livesplit.js";
-import { fuzzySearchGames, cacheNewData } from "../../utils/srcapi.js";
+import { fuzzySearchGames, searchCategoriesFromGame, cacheNewData } from "../../utils/srcapi.js";
 
 export const OutputSplitSettings = ({ listItems, toggleSettings, setToggleSettings, templateText, setTemplateText, runName, setRunName, initialStatus }) => {
 
@@ -46,27 +46,32 @@ export const OutputSplitSettings = ({ listItems, toggleSettings, setToggleSettin
         })
     }
 
-    //Change game name from Speedrun.com Request
-    const updateGameName = (name) => {
-        if(name.length != 0){
-            changeRunName("game", name)
-        }
-    }
-
-
     //Status box tracking and states for requests
     const [gameRequestStatus, setGameRequestStatus] = useState(initialStatus)
+    const [categoryRequestStatus, setCategoryRequestStatus] = useState(initialStatus)
     const [gameRequestData, setGameRequestData] = useState([])
+    const [categoryRequestData, setCategoryRequestData] = useState([])
+    const [selectedRequestedGame, setSelectedRequestedGame] = useState(null)
+
+    //Change game and category names from Speedrun.com Request
+    const updateGameName = (name) => {
+        changeRunName("game", name)
+        setSelectedRequestedGame(gameRequestData.find(g => g.name == name))
+    }
+    const updateCategoryName = (name) => {
+        changeRunName("category", name)
+    }
 
     //Speedrun.com Request to gather list of fuzzy searched games based on input
     const fetchGameFromSRC = (game) => {
         setGameRequestStatus({
             header: "Loading...",
-            message: ["Seraching for game names matching " + game + " on Speedrun.com"]
+            message: ["Searching for game names matching " + game + " on Speedrun.com"]
         })
         const gameQuery = fuzzySearchGames(game)
         gameQuery.then(
             (response) => {
+            setSelectedRequestedGame(null)
             if(response.data.data.length == 0){
                 setGameRequestStatus({
                     header: "Error",
@@ -74,15 +79,15 @@ export const OutputSplitSettings = ({ listItems, toggleSettings, setToggleSettin
                 })
             }
             else{
-                setGameRequestStatus({
-                    header: "Success",
-                    message: ["Found " + response.data.data.length + " result" + (response.data.data.length != 1 ? "s" : "") + " matching " + game + " from Speedrun.com"]
-                })
                 let games = []
                 for(let foundGame of response.data.data){
                     games.push({id: foundGame.id, name: foundGame.names.international})
                 }
                 setGameRequestData(games)
+                setGameRequestStatus({
+                    header: "Success",
+                    message: ["Found " + games.length + " result" + (games.length != 1 ? "s" : "") + " matching " + game + " from Speedrun.com"]
+                })
             }
             cacheNewData("Game", game, response.data)
         })
@@ -91,6 +96,45 @@ export const OutputSplitSettings = ({ listItems, toggleSettings, setToggleSettin
             setGameRequestStatus({
                 header: "Error",
                 message: ["Unable to fetch game names from Speedrun.com - " + error]
+            })
+        })
+    }
+
+    //Speedrun.com Request to categories from Speedrun.com for currently selected game
+    const fetchCategoriesFromSRC = () => {
+        setCategoryRequestStatus({
+            header: "Loading...",
+            message: ["Searching for categories for " + selectedRequestedGame.name + " on Speedrun.com"]
+        })
+        const categoryQuery = searchCategoriesFromGame(selectedRequestedGame.id)
+        categoryQuery.then(
+            (response) => {
+            if(response.data.data.length == 0){
+                setCategoryRequestStatus({
+                    header: "Error",
+                    message: ["No categories were found on Speedrun.com for " + selectedRequestedGame.name]
+                })
+            }
+            else{
+                let categories = []
+                for(let foundCategory of response.data.data.categories.data){
+                    if(foundCategory.type == "per-game"){
+                        categories.push({name: foundCategory.name})
+                    }
+                }
+                setCategoryRequestData(categories)
+                setCategoryRequestStatus({
+                    header: "Success",
+                    message: ["Found " + categories.length + " categor" + (categories.length != 1 ? "ies" : "y") + " for " + selectedRequestedGame.name + " on Speedrun.com"]
+                })
+            }
+            cacheNewData("Category", selectedRequestedGame.id, response.data)
+        })
+        categoryQuery.catch(
+            (error) => {
+            setCategoryRequestStatus({
+                header: "Error",
+                message: ["Unable to fetch category names from Speedrun.com - " + error]
             })
         })
     }
@@ -124,6 +168,7 @@ export const OutputSplitSettings = ({ listItems, toggleSettings, setToggleSettin
 
                 {/* Splits Templates */}
                 <br/><br/>
+                {/* Setup Template */}
                 <div title="The template that will be used for every setup split in between games">
                     <label>Setup Split Template: </label>
                     <input type="text" disabled={listItems.length < 2} placeholder={"Template Text"} value={templateText["setup"]} onChange={(e) => changeTemplateText("setup", e.target.value)}/>
@@ -141,6 +186,7 @@ export const OutputSplitSettings = ({ listItems, toggleSettings, setToggleSettin
                         })}
                     </select>
                 </div>
+                {/* Subsplit Template */}
                 {toggleSettings["subs"] && 
                     <div title="The template that will be used for that last subsplit in each game">
                         <label>Game's Final Subsplit Template: </label>
@@ -163,6 +209,7 @@ export const OutputSplitSettings = ({ listItems, toggleSettings, setToggleSettin
 
                 {/* Run Name */}
                 <br/>
+                {/* Game Name */}
                 {(gameRequestStatus.header.length > 0) && <StatusBox
                     header={gameRequestStatus.header}
                     message={gameRequestStatus.message}
@@ -188,9 +235,28 @@ export const OutputSplitSettings = ({ listItems, toggleSettings, setToggleSettin
                         Clear Game Name
                     </button>
                 </div>
+                {/* Category Name */}
+                {(categoryRequestStatus.header.length > 0) && <StatusBox
+                    header={categoryRequestStatus.header}
+                    message={categoryRequestStatus.message}
+                    hideStatus={() => setCategoryRequestStatus(initialStatus)}
+                />}
                 <div title="The name of the category for the output splits file">
                     <label>Output Category Name: </label>
                     <input type="text" disabled={listItems.length < 2} placeholder={"Category Name"} value={runName["category"]} onChange={(e) => changeRunName("category", e.target.value)}/>
+                    <button type="button" disabled={listItems.length < 2 || selectedRequestedGame == null} onClick={() => fetchCategoriesFromSRC()} title="Fetches category of a requested game from Speedrun.com">
+                        Fetch Category from Above Request
+                    </button>
+                    <select value="" disabled={listItems.length < 2 || categoryRequestData.length == 0} onChange={(e) => updateCategoryName(e.target.value)} title="Select category name for your output splits from requested Speedrun.com game">
+                        <option value="">Select Category</option>
+                        {categoryRequestData.map((c, index) => {
+                            return (
+                                <option key={index} value={c.name}>
+                                    {c.name}
+                                </option>
+                            );
+                        })}
+                    </select>
                     <button type="button" disabled={listItems.length < 2 || runName["category"].length == 0} onClick={() => changeRunName("category", "")} title="Clear text field for the output's category name">
                         Clear Category Name
                     </button>
