@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
 import { StatusBox } from '../StatusBox.jsx'
-import { downloadFile, downloadFileAs, validSpecifier, isAValidFile } from '../../utils/file.js'
+import { downloadFile, downloadFileAs, validSpecifier, isAValidFile, openContentsInNewTab } from '../../utils/file.js'
+import { gatherSplitsDataByTag } from '../../utils/livesplit.js'
+import '../../styles/style.css'
 
-export const FileDownload = ({ listItems, outputName, setOutputName, runName, appStatuses, updateStatus, initialStatus }) => {
+export const FileDownload = ({ listItems, unmaskPaths, canDownload, updateCanDownload, outputName, setOutputName, finalOutput, setFinalOutput, runName, appStatuses, updateStatus, initialStatus }) => {
 
-    //Track filename and ensure result is valid
-    const [outputNameValid, setOutputNameValid] = useState(true);
+    //Track filename
     const updateFilename = (name) => {
         setOutputName(name)
         checkFilename(name)
     }
+
+    //Gather default name by game and categories
     const getDefaultFilename = () => {
         let defaultName = []
         if(runName.game.length != 0){
@@ -28,6 +31,7 @@ export const FileDownload = ({ listItems, outputName, setOutputName, runName, ap
         return defaultResult
     }
     const checkFilename = (name) => {
+
         //No unsupported filename characters
         let hasInvalid = false
         for(let char of ["<", ">", ":", "\"", "'", "/", "\\", "|", "?", "*", "&"]) {
@@ -38,29 +42,39 @@ export const FileDownload = ({ listItems, outputName, setOutputName, runName, ap
         }
         
         //Extension is relevant if provided
-        if(hasInvalid || (name.includes(".") && !isAValidFile(name, validSpecifier.extension))){
-            setOutputNameValid(false)
-            updateStatus("download", {
+        if(hasInvalid || name == validSpecifier.extension || (name.includes(".") && !isAValidFile(name, validSpecifier.extension))){
+            updateStatus("output", {
                 header: "Error",
                 message: [name + " is not a valid filename"]
             })
+            updateCanDownload("output", false)
         }
         else{
-            setOutputNameValid(true)
-            updateStatus("download", initialStatus)
+            updateStatus("output", initialStatus)
+            updateCanDownload("output", true)
         }
     }
 
+    //Prepares output that can be downloaded to the user's filesystem
+    const prepareOutputSplits = (filename) => {
+        setFinalOutput({name: "", data: ""})
+        setFinalOutput(finalOutput => {
+            const updatedFinalOutput = {...finalOutput}
+            updatedFinalOutput.name = filename + validSpecifier.extension
+            updatedFinalOutput.data = ""
+            return updatedFinalOutput
+        })
+    }
+
     //Gather output and download result to user's system and launch failback for browsers that don't support showSaveFilePicker Ex. Firefox
-    const prepareDownload = (name) => {
-        let contents = "Test"
-        let downloadPromise = typeof window.showSaveFilePicker === 'function' ? downloadFileAs(contents, name + validSpecifier.extension) : downloadFile(contents, name + validSpecifier.extension)
+    const launchDownload = () => {
+        let downloadPromise = typeof window.showSaveFilePicker === 'function' ? downloadFileAs(finalOutput.data, finalOutput.name) : downloadFile(finalOutput.data, finalOutput.name)
         //Successful download
         downloadPromise.then(
             (head) => {
                 updateStatus("download", {
                     header: "Success",
-                    message: ["Download for " + outputName + " successful"]
+                    message: ["Download for " + finalOutput.name + " successful"]
                 })
             }
         );
@@ -75,7 +89,7 @@ export const FileDownload = ({ listItems, outputName, setOutputName, runName, ap
                 else{
                     updateStatus("download", {
                         header: "Error",
-                        message: ["Unable to download: " + outputName + " - " + error]
+                        message: ["Unable to download: " + finalOutput.name + " - " + error]
                     })
                 }
             }
@@ -83,12 +97,13 @@ export const FileDownload = ({ listItems, outputName, setOutputName, runName, ap
     }
 
     return (
-        //File download button
+        
         <React.Fragment>
-            {(appStatuses.download.header.length > 0) && <StatusBox
-                header={appStatuses.download.header}
-                message={appStatuses.download.message}
-                hideStatus={() => updateStatus("download", initialStatus)}
+            {/* File Preparation */}
+            {(appStatuses.output.header.length > 0) && <StatusBox
+                header={appStatuses.output.header}
+                message={appStatuses.output.message}
+                hideStatus={() => updateStatus("output", initialStatus)}
             />}
             <div title="Filename for output splits file">
                 <label>Output Filename: </label>
@@ -99,10 +114,32 @@ export const FileDownload = ({ listItems, outputName, setOutputName, runName, ap
                 <button type="button" disabled={listItems.length < 2} onClick={() => updateFilename(getDefaultFilename())} title="Set default output filename based on the name of the run">
                     Set Default Filename
                 </button>
-                <button type="button" disabled={listItems.length < 2 || outputName.length == 0 || !outputNameValid} onClick={() => prepareDownload(outputName.replace(validSpecifier.extension, ""))} title="Download new output file for combined splits">
-                    Download Merged Splits
+                <button type="button" disabled={listItems.length < 2 || outputName.length == 0 || !(Array.from(new Set(Object.values(canDownload)))[0] == true && new Set(Object.values(canDownload)).size == 1)} onClick={() => prepareOutputSplits(outputName.replace(validSpecifier.extension, ""))} title="Prepares output file for combined splits that can be downloaded">
+                    Prepare Output Splits
                 </button>
             </div>
+
+        {/* File Download */}
+        {finalOutput.name.length != 0 &&
+            <React.Fragment>
+            {(appStatuses.download.header.length > 0) && <StatusBox
+                header={appStatuses.download.header}
+                message={appStatuses.download.message}
+                hideStatus={() => updateStatus("download", initialStatus)}
+            />}
+            <div title="Download link for output splits file">
+                <label>Output Contents: </label>
+                <label className = "pointerCursor" onClick={() => openContentsInNewTab(finalOutput.data, gatherSplitsDataByTag(finalOutput.data, "LayoutPath"), !unmaskPaths)} title = "Click on the filename to view its raw contents before downloading">{finalOutput.name}</label>
+                <button type="button" onClick={launchDownload} title="Prepares download for your output splits file">
+                    Download Splits File
+                </button>
+                <button type="button" onClick={() => setFinalOutput({name: "", data: ""})} title="Clear data from your final output splits">
+                    Clear Download
+                </button>
+            </div>
+            </React.Fragment>
+        }
         </React.Fragment>
+
     );
 }

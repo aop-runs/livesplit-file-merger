@@ -15,6 +15,7 @@ export const ListContainer = () => {
     const [unmaskPaths, setUnmaskPaths] = useState(false)
     const [uploadLabel, setUploadLabel] = useState("your")
     const [outputName, setOutputName] = useState("");
+    const [finalOutput, setFinalOutput] = useState({name: "", data: ""});
     const [useFirstInfo, setUseFirstInfo] = useState(true)
     const [setupTime, setSetupTime] = useState(defaultSetup)
     const [customInfo, setCustomInfo] = useState({layout: "", offset: ""})
@@ -34,19 +35,40 @@ export const ListContainer = () => {
     const initialStatus = {header: "", message: [""]}
     const [appStatuses, setAppStatuses] = useState(() => {
         const obj = {}
-        for(let key of ["upload", "layout", "offset", "setup", "game", "category", "download"]){
+        for(let key of ["upload", "layout", "offset", "setup", "game", "category", "output", "download"]){
             obj[key] = initialStatus
         }
         return obj
     })
     const updateStatus = (key, data) => {
-        setAppStatuses(appSettings => {
-            const updatedAppSettings = {...appSettings}
-            updatedAppSettings[key] = data
-            return updatedAppSettings
+        setAppStatuses(appStatuses => {
+            const updatedAppStatuses = {...appStatuses}
+            updatedAppStatuses[key] = data
+            return updatedAppStatuses
         })
     }
+    const resetStatuses = () => {
+        for(let key of Object.keys(appStatuses)){
+            updateStatus(key, initialStatus)
+        }
+    }
 
+    //Download checks
+    const [canDownload, setCanDownload] = useState(() => {
+        const obj = {}
+        for(let key of ["layout", "offset", "setup", "output"]){
+            obj[key] = true
+        }
+        return obj
+    })
+    const updateCanDownload = (key, value) => {
+        setCanDownload(appStatuses => {
+            const updatedCanDownload = {...appStatuses}
+            updatedCanDownload[key] = value
+            return updatedCanDownload
+        })
+    }
+    
     //Alert user if they make any changes before refreshing or unloading website
     const alertUser = (event) => {
         event.preventDefault()
@@ -141,6 +163,7 @@ export const ListContainer = () => {
                 setUnmaskPaths(false)
                 setUploadLabel("your")
                 setOutputName("")
+                setFinalOutput({name: "", data: ""})
                 setUseFirstInfo(true)
                 setSetupTime(defaultSetup)
                 setCustomInfo({layout: "", offset: ""})
@@ -175,6 +198,9 @@ export const ListContainer = () => {
             <label id="unmask" title="Choose whether to unhide absolute filepath names for LiveSplit layouts">
                 Unmask Filepaths: <input type="checkbox" htmlFor="unmask" checked={unmaskPaths} onChange={(e) => setUnmaskPaths(e.target.checked)}/>
             </label>
+            <button type="button" onClick={resetStatuses} title="Closes any status box currently open on the webpage">
+                Close All Status Boxes
+            </button>
             <button type="button" onClick={resetApplication} title="Remove all entries and revert all settings to default">
                 Reset Application
             </button>
@@ -203,6 +229,7 @@ export const ListContainer = () => {
             <OutputFileTime
                 listItems={files}
                 unmaskPaths={unmaskPaths}
+                updateCanDownload={updateCanDownload}
                 useFirstInfo={useFirstInfo}
                 setUseFirstInfo={setUseFirstInfo}
                 customInfo={customInfo}
@@ -233,8 +260,13 @@ export const ListContainer = () => {
             {/* Download merged contents */}
             <FileDownload
                 listItems={files}
+                unmaskPaths={unmaskPaths}
+                canDownload={canDownload}
+                updateCanDownload={updateCanDownload}
                 outputName={outputName}
                 setOutputName={setOutputName}
+                finalOutput={finalOutput}
+                setFinalOutput={setFinalOutput}
                 runName={runName}
                 appStatuses={appStatuses}
                 updateStatus={updateStatus}

@@ -4,13 +4,8 @@ import { StatusBox } from '../StatusBox.jsx'
 import { isAValidFile, layoutExtension } from '../../utils/file.js'
 import { defaultSetup } from "../../utils/livesplit.js";
 
-export const OutputFileTime = ({ listItems, unmaskPaths, useFirstInfo, setUseFirstInfo, customInfo, setCustomInfo, setupTime, setSetupTime, appStatuses, updateStatus, initialStatus }) => {
+export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, useFirstInfo, setUseFirstInfo, customInfo, setCustomInfo, setupTime, setSetupTime, appStatuses, updateStatus, initialStatus }) => {
     
-    //Status box tracking
-    const [layoutValid, setLayoutValid] = useState(true);
-    const [offsetValid, setOffsetValid] = useState(true);
-    const [setupValid, setSetupValid] = useState(true);
-
     //Toggle whether to use custom layout and filepath or ones from the first LiveSplit file
     const toggleFirstInfo = (value) => {
         setUseFirstInfo(value)
@@ -60,15 +55,15 @@ export const OutputFileTime = ({ listItems, unmaskPaths, useFirstInfo, setUseFir
         
         //Extension is relevant if provided
         if(value.length != 0 && (hasInvalid || value == layoutExtension || !isAValidFile(value, layoutExtension))){
-            setLayoutValid(false)
             updateStatus("layout", {
                 header: "Error",
                 message: [value + " is not a valid layout file"]
             })
+            updateCanDownload("layout", false)
         }
         else{
-            setLayoutValid(true)
             updateStatus("layout", initialStatus)
+            updateCanDownload("layout", true)
         }
     }
     const checkOffset = (value) => {
@@ -117,15 +112,15 @@ export const OutputFileTime = ({ listItems, unmaskPaths, useFirstInfo, setUseFir
             }
         }
         if(value.length != 0 && hasInvalid){
-            setOffsetValid(false)
             updateStatus("offset", {
                 header: "Error",
                 message: [value + " is not a valid timer offset"]
             })
+            updateCanDownload("offset", false)
         }
         else{
-            setOffsetValid(true)
             updateStatus("offset", initialStatus)
+            updateCanDownload("offset", true)
         }
     }
 
@@ -153,11 +148,11 @@ export const OutputFileTime = ({ listItems, unmaskPaths, useFirstInfo, setUseFir
     //Check setup split time
     const checkSetup = (value) => {
         if(value.length == 0){
-            setSetupValid(false)
             updateStatus("setup", {
                 header: "Error",
                 message: ["No setup split time provided"]
             })
+            updateCanDownload("setup", false)
             return
         }
         
@@ -202,15 +197,15 @@ export const OutputFileTime = ({ listItems, unmaskPaths, useFirstInfo, setUseFir
             }
         }
         if(hasInvalid){
-            setSetupValid(false)
             updateStatus("setup", {
                 header: "Error",
                 message: [value + " is not a valid setup split time"]
             })
+            updateCanDownload("setup", false)
         }
         else{
-            setSetupValid(true)
             updateStatus("setup", initialStatus)
+            updateCanDownload("setup", true)
         }
     }
 
