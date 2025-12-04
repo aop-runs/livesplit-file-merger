@@ -17,7 +17,7 @@ export function searchCategoriesFromGame(id){
     if(cache != null){
         return Promise.resolve(cache);
     }
-    return axios.get(encodeURI(`https://www.speedrun.com/api/v1/games/${id}?embed=categories.variables`));
+    return axios.get(encodeURI(`https://www.speedrun.com/api/v1/games/${id}?embed=categories.variables,regions,platforms`));
 }
 
 //Retrieves cache from local storage if one exists

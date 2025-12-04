@@ -20,10 +20,31 @@ export const ListContainer = () => {
     const [customInfo, setCustomInfo] = useState({layout: "", offset: ""})
     const [templateText, setTemplateText] = useState({setup: "", final: ""})
     const [runName, setRunName] = useState({game: "", category: ""})
-    const [toggleSettings, setToggleSettings] = useState({pb: true, sob: true, comp: true, icon: true, subs: true})
-    const initialStatus = {
-        header: "",
-        message: [""]
+    const [toggleSettings, setToggleSettings] = useState(() => {
+        const obj = {}
+        for(let key of ["pb", "sob", "comp", "icon", "subs"]){
+            obj[key] = true
+        }
+        return obj
+    })
+    const [requestData, setRequestData] = useState({game: [], category: []})
+    const [selectedRequestedGame, setSelectedRequestedGame] = useState(null)
+
+    //Status Boxes
+    const initialStatus = {header: "", message: [""]}
+    const [appStatuses, setAppStatuses] = useState(() => {
+        const obj = {}
+        for(let key of ["upload", "layout", "offset", "setup", "game", "category", "download"]){
+            obj[key] = initialStatus
+        }
+        return obj
+    })
+    const updateStatus = (key, data) => {
+        setAppStatuses(appSettings => {
+            const updatedAppSettings = {...appSettings}
+            updatedAppSettings[key] = data
+            return updatedAppSettings
+        })
     }
 
     //Alert user if they make any changes before refreshing or unloading website
@@ -116,11 +137,7 @@ export const ListContainer = () => {
     const resetApplication = useCallback(
         () => {
             if(confirm("Are you sure you want to reset eveything back to default?")){
-                setFiles(files => {
-                    const updatedFiles = [...files]
-                    updatedFiles.length = 0
-                    return updatedFiles
-                })
+                setFiles([])
                 setUnmaskPaths(false)
                 setUploadLabel("your")
                 setOutputName("")
@@ -129,7 +146,22 @@ export const ListContainer = () => {
                 setCustomInfo({layout: "", offset: ""})
                 setTemplateText({setup: "", final: ""})
                 setRunName({game: "", category: ""})
-                setToggleSettings({pb: true, sob: true, comp: true, icon: true, subs: true})
+                setToggleSettings(toggleSettings => {
+                    const updatedToggleSettings = {...toggleSettings}
+                    for(let key of Object.keys(updatedToggleSettings)){
+                        updatedToggleSettings[key] = true
+                    }
+                    return updatedToggleSettings
+                })
+                setRequestData({game: [], category: []})
+                setSelectedRequestedGame(null)
+                setAppStatuses(appStatuses => {
+                    const updatedAppStatuses = {...appStatuses}
+                    for(let key of Object.keys(updatedAppStatuses)){
+                        updatedAppStatuses[key] = initialStatus
+                    }
+                    return updatedAppStatuses
+                })
                 iconCache.length = 0
             }
         },
@@ -150,6 +182,8 @@ export const ListContainer = () => {
                 addListItem={addFileListItem}
                 uploadLabel={uploadLabel}
                 setUploadLabel={setUploadLabel}
+                appStatuses={appStatuses}
+                updateStatus={updateStatus}
                 initialStatus={initialStatus}
             />
 
@@ -175,6 +209,8 @@ export const ListContainer = () => {
                 setCustomInfo={setCustomInfo}
                 setupTime={setupTime}
                 setSetupTime={setSetupTime}
+                appStatuses={appStatuses}
+                updateStatus={updateStatus}
                 initialStatus={initialStatus}
             /><br/>
             <OutputSplitSettings
@@ -185,6 +221,12 @@ export const ListContainer = () => {
                 setTemplateText={setTemplateText}
                 runName={runName}
                 setRunName={setRunName}
+                requestData={requestData}
+                setRequestData={setRequestData}
+                selectedRequestedGame={selectedRequestedGame}
+                setSelectedRequestedGame={setSelectedRequestedGame}
+                appStatuses={appStatuses}
+                updateStatus={updateStatus}
                 initialStatus={initialStatus}
             /><br/>
 
@@ -194,6 +236,8 @@ export const ListContainer = () => {
                 outputName={outputName}
                 setOutputName={setOutputName}
                 runName={runName}
+                appStatuses={appStatuses}
+                updateStatus={updateStatus}
                 initialStatus={initialStatus}
             />
         </React.Fragment>

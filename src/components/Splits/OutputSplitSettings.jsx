@@ -1,10 +1,10 @@
 //Based on: https://www.geeksforgeeks.org/reactjs/axios-in-react-a-guide-for-beginners/
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { StatusBox } from '../StatusBox.jsx'
 import { templateParameters } from "../../utils/livesplit.js";
 import { fuzzySearchGames, searchCategoriesFromGame, cacheNewData } from "../../utils/srcapi.js";
 
-export const OutputSplitSettings = ({ listItems, toggleSettings, setToggleSettings, templateText, setTemplateText, runName, setRunName, initialStatus }) => {
+export const OutputSplitSettings = ({ listItems, toggleSettings, setToggleSettings, templateText, setTemplateText, runName, setRunName, requestData, setRequestData, selectedRequestedGame, setSelectedRequestedGame, appStatuses, updateStatus, initialStatus }) => {
 
     //Toggle checkbox
     const toggleCheckbox = (key, value) => {
@@ -46,25 +46,25 @@ export const OutputSplitSettings = ({ listItems, toggleSettings, setToggleSettin
         })
     }
 
-    //Status box tracking and states for requests
-    const [gameRequestStatus, setGameRequestStatus] = useState(initialStatus)
-    const [categoryRequestStatus, setCategoryRequestStatus] = useState(initialStatus)
-    const [gameRequestData, setGameRequestData] = useState([])
-    const [categoryRequestData, setCategoryRequestData] = useState([])
-    const [selectedRequestedGame, setSelectedRequestedGame] = useState(null)
-
     //Change game and category names from Speedrun.com Request
     const updateGameName = (name) => {
         changeRunName("game", name)
-        setSelectedRequestedGame(gameRequestData.find(g => g.name == name))
+        setSelectedRequestedGame(requestData.game.find(g => g.name == name))
     }
     const updateCategoryName = (name) => {
         changeRunName("category", name)
     }
+    const updateRequestData = (key, value) => {
+        setRequestData(requestData => {
+            const updatedRequestData= {...requestData}
+            updatedRequestData[key] = value
+            return updatedRequestData
+        })
+    }
 
     //Speedrun.com Request to gather list of fuzzy searched games based on input
     const fetchGameFromSRC = (game) => {
-        setGameRequestStatus({
+        updateStatus("game", {
             header: "Loading...",
             message: ["Searching for game names matching " + game + " on Speedrun.com"]
         })
@@ -73,7 +73,7 @@ export const OutputSplitSettings = ({ listItems, toggleSettings, setToggleSettin
             (response) => {
             setSelectedRequestedGame(null)
             if(response.data.data.length == 0){
-                setGameRequestStatus({
+                updateStatus("game", {
                     header: "Error",
                     message: ["No results were found on Speedrun.com matching " + game]
                 })
@@ -83,8 +83,8 @@ export const OutputSplitSettings = ({ listItems, toggleSettings, setToggleSettin
                 for(let foundGame of response.data.data){
                     games.push({id: foundGame.id, name: foundGame.names.international})
                 }
-                setGameRequestData(games)
-                setGameRequestStatus({
+                updateRequestData("game", games)
+                updateStatus("game", {
                     header: "Success",
                     message: ["Found " + games.length + " result" + (games.length != 1 ? "s" : "") + " matching " + game + " from Speedrun.com"]
                 })
@@ -93,7 +93,7 @@ export const OutputSplitSettings = ({ listItems, toggleSettings, setToggleSettin
         })
         gameQuery.catch(
             (error) => {
-            setGameRequestStatus({
+            updateStatus("game", {
                 header: "Error",
                 message: ["Unable to fetch game names from Speedrun.com - " + error]
             })
@@ -102,7 +102,7 @@ export const OutputSplitSettings = ({ listItems, toggleSettings, setToggleSettin
 
     //Speedrun.com Request to categories from Speedrun.com for currently selected game
     const fetchCategoriesFromSRC = () => {
-        setCategoryRequestStatus({
+        updateStatus("category", {
             header: "Loading...",
             message: ["Searching for categories for " + selectedRequestedGame.name + " on Speedrun.com"]
         })
@@ -110,7 +110,7 @@ export const OutputSplitSettings = ({ listItems, toggleSettings, setToggleSettin
         categoryQuery.then(
             (response) => {
             if(response.data.data.length == 0){
-                setCategoryRequestStatus({
+                updateStatus("category", {
                     header: "Error",
                     message: ["No categories were found on Speedrun.com for " + selectedRequestedGame.name]
                 })
@@ -122,8 +122,8 @@ export const OutputSplitSettings = ({ listItems, toggleSettings, setToggleSettin
                         categories.push({name: foundCategory.name})
                     }
                 }
-                setCategoryRequestData(categories)
-                setCategoryRequestStatus({
+                updateRequestData("category", categories)
+                updateStatus("category", {
                     header: "Success",
                     message: ["Found " + categories.length + " categor" + (categories.length != 1 ? "ies" : "y") + " for " + selectedRequestedGame.name + " on Speedrun.com"]
                 })
@@ -132,7 +132,7 @@ export const OutputSplitSettings = ({ listItems, toggleSettings, setToggleSettin
         })
         categoryQuery.catch(
             (error) => {
-            setCategoryRequestStatus({
+            updateStatus("category", {
                 header: "Error",
                 message: ["Unable to fetch category names from Speedrun.com - " + error]
             })
@@ -210,10 +210,10 @@ export const OutputSplitSettings = ({ listItems, toggleSettings, setToggleSettin
                 {/* Run Name */}
                 <br/>
                 {/* Game Name */}
-                {(gameRequestStatus.header.length > 0) && <StatusBox
-                    header={gameRequestStatus.header}
-                    message={gameRequestStatus.message}
-                    hideStatus={() => setGameRequestStatus(initialStatus)}
+                {(appStatuses.game.header.length > 0) && <StatusBox
+                    header={appStatuses.game.header}
+                    message={appStatuses.game.message}
+                    hideStatus={() => updateStatus("game", initialStatus)}
                 />}
                 <div title="The name of the game for the output splits file">
                     <label>Output Game Name: </label>
@@ -221,9 +221,9 @@ export const OutputSplitSettings = ({ listItems, toggleSettings, setToggleSettin
                     <button type="button" disabled={listItems.length < 2 || runName["game"].length == 0} onClick={() => fetchGameFromSRC(runName["game"])} title="Fetches list of games fuzzy searched from Speedrun.com">
                         Fetch Game from Input
                     </button>
-                    <select value="" disabled={listItems.length < 2 || gameRequestData.length == 0} onChange={(e) => updateGameName(e.target.value)} title="Select game name for your output splits from Speedrun.com request">
+                    <select value="" disabled={listItems.length < 2 || requestData.game.length == 0} onChange={(e) => updateGameName(e.target.value)} title="Select game name for your output splits from Speedrun.com request">
                         <option value="">Select Game</option>
-                        {gameRequestData.map((g, index) => {
+                        {requestData.game.map((g, index) => {
                             return (
                                 <option key={index} value={g.name}>
                                     {g.name}
@@ -236,10 +236,10 @@ export const OutputSplitSettings = ({ listItems, toggleSettings, setToggleSettin
                     </button>
                 </div>
                 {/* Category Name */}
-                {(categoryRequestStatus.header.length > 0) && <StatusBox
-                    header={categoryRequestStatus.header}
-                    message={categoryRequestStatus.message}
-                    hideStatus={() => setCategoryRequestStatus(initialStatus)}
+                {(appStatuses.category.header.length > 0) && <StatusBox
+                    header={appStatuses.category.header}
+                    message={appStatuses.category.message}
+                    hideStatus={() => updateStatus("category", initialStatus)}
                 />}
                 <div title="The name of the category for the output splits file">
                     <label>Output Category Name: </label>
@@ -247,9 +247,9 @@ export const OutputSplitSettings = ({ listItems, toggleSettings, setToggleSettin
                     <button type="button" disabled={listItems.length < 2 || selectedRequestedGame == null} onClick={() => fetchCategoriesFromSRC()} title="Fetches category of a requested game from Speedrun.com">
                         Fetch Category from Above Request
                     </button>
-                    <select value="" disabled={listItems.length < 2 || categoryRequestData.length == 0} onChange={(e) => updateCategoryName(e.target.value)} title="Select category name for your output splits from requested Speedrun.com game">
+                    <select value="" disabled={listItems.length < 2 || requestData.category.length == 0} onChange={(e) => updateCategoryName(e.target.value)} title="Select category name for your output splits from requested Speedrun.com game">
                         <option value="">Select Category</option>
-                        {categoryRequestData.map((c, index) => {
+                        {requestData.category.map((c, index) => {
                             return (
                                 <option key={index} value={c.name}>
                                     {c.name}

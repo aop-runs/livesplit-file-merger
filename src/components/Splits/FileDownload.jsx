@@ -2,10 +2,7 @@ import React, { useState } from 'react';
 import { StatusBox } from '../StatusBox.jsx'
 import { downloadFile, downloadFileAs, validSpecifier, isAValidFile } from '../../utils/file.js'
 
-export const FileDownload = ({ listItems, outputName, setOutputName, runName, initialStatus }) => {
-
-    //Status box tracking
-    const [downloadStatus, setDownloadStatus] = useState(initialStatus);
+export const FileDownload = ({ listItems, outputName, setOutputName, runName, appStatuses, updateStatus, initialStatus }) => {
 
     //Track filename and ensure result is valid
     const [outputNameValid, setOutputNameValid] = useState(true);
@@ -43,14 +40,14 @@ export const FileDownload = ({ listItems, outputName, setOutputName, runName, in
         //Extension is relevant if provided
         if(hasInvalid || (name.includes(".") && !isAValidFile(name, validSpecifier.extension))){
             setOutputNameValid(false)
-            setDownloadStatus({
+            updateStatus("download", {
                 header: "Error",
                 message: [name + " is not a valid filename"]
             })
         }
         else{
             setOutputNameValid(true)
-            setDownloadStatus(initialStatus)
+            updateStatus("download", initialStatus)
         }
     }
 
@@ -61,7 +58,7 @@ export const FileDownload = ({ listItems, outputName, setOutputName, runName, in
         //Successful download
         downloadPromise.then(
             (head) => {
-                setDownloadStatus({
+                updateStatus("download", {
                     header: "Success",
                     message: ["Download for " + outputName + " successful"]
                 })
@@ -76,7 +73,7 @@ export const FileDownload = ({ listItems, outputName, setOutputName, runName, in
                     return
                 }
                 else{
-                    setDownloadStatus({
+                    updateStatus("download", {
                         header: "Error",
                         message: ["Unable to download: " + outputName + " - " + error]
                     })
@@ -88,10 +85,10 @@ export const FileDownload = ({ listItems, outputName, setOutputName, runName, in
     return (
         //File download button
         <React.Fragment>
-            {(downloadStatus.header.length > 0 && outputName.length != 0) && <StatusBox
-                header={downloadStatus.header}
-                message={downloadStatus.message}
-                hideStatus={() => setDownloadStatus(initialStatus)}
+            {(appStatuses.download.header.length > 0) && <StatusBox
+                header={appStatuses.download.header}
+                message={appStatuses.download.message}
+                hideStatus={() => updateStatus("download", initialStatus)}
             />}
             <div title="Filename for output splits file">
                 <label>Output Filename: </label>

@@ -5,7 +5,7 @@ import { gatherFileContents, validSpecifier } from '../../utils/file.js'
 import { cleanSplitsFile, gatherRunName, gatherSplitsDataByTag } from '../../utils/livesplit.js'
 import '../../styles/style.css'
 
-export const FileUpload = ({ addListItem, uploadLabel, setUploadLabel, initialStatus }) => {
+export const FileUpload = ({ addListItem, uploadLabel, setUploadLabel, appStatuses, updateStatus, initialStatus }) => {
 
     //Pre-included wrappers
     const wrapperRef = useRef(null);
@@ -24,12 +24,9 @@ export const FileUpload = ({ addListItem, uploadLabel, setUploadLabel, initialSt
         uploadFiles(e.target.files)
     }
 
-    //Status box tracking
-    const [uploadStatus, setUploadStatus] = useState(initialStatus);
-
     //Validate and add files to list
     const uploadFiles = (selectedFiles) => {
-        setUploadStatus({
+        updateStatus("upload", {
             header: "Loading...",
             message: ["Adding " + selectedFiles.length.toString() + " file" + (selectedFiles.length != 1 ? "s" : "")]
         })
@@ -53,14 +50,14 @@ export const FileUpload = ({ addListItem, uploadLabel, setUploadLabel, initialSt
                             })
                         } catch (error) {
                             uploadErrors.push("Unable to upload: " + newFile[1].name + " - " + error)
-                            setUploadStatus({
+                            updateStatus("upload", {
                                 header: "Error",
                                 message: uploadErrors
                             })
                         }
                         //All items uploaded successfully
                         if(newFile[0] == fileAmount-1 && uploadErrors.length == 0){
-                            setUploadStatus({
+                            updateStatus("upload", {
                                 header: "Success",
                                 message: [fileAmount.toString() + " file" + (fileAmount != 1 ? "s" : "") + " added to entries"]
                             })
@@ -72,7 +69,7 @@ export const FileUpload = ({ addListItem, uploadLabel, setUploadLabel, initialSt
                 fileContents.catch(
                     (error) => {
                         uploadErrors.push("Unable to upload: " + newFile[1].name + " - " + error)
-                        setUploadStatus({
+                        updateStatus("upload", {
                             header: "Error",
                             message: uploadErrors
                         })
@@ -86,10 +83,10 @@ export const FileUpload = ({ addListItem, uploadLabel, setUploadLabel, initialSt
     return (
         //File upload box
         <React.Fragment>
-            {(uploadStatus.header.length > 0 && uploadLabel == "some more") && <StatusBox
-                header={uploadStatus.header}
-                message={uploadStatus.message}
-                hideStatus={() => setUploadStatus(initialStatus)}
+            {(appStatuses.upload.header.length > 0) && <StatusBox
+                header={appStatuses.upload.header}
+                message={appStatuses.upload.message}
+                hideStatus={() => updateStatus("upload", initialStatus)}
             />}
             <div ref={wrapperRef} className="upload" onDragEnter={onDragEnter} onDragLeave={onDragLeave} onDrop={onFileDrop} title="Box where you you click to upload LiveSplit files or drag &drop them">
                 <p>

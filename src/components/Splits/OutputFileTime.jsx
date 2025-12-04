@@ -4,14 +4,11 @@ import { StatusBox } from '../StatusBox.jsx'
 import { isAValidFile, layoutExtension } from '../../utils/file.js'
 import { defaultSetup } from "../../utils/livesplit.js";
 
-export const OutputFileTime = ({ listItems, unmaskPaths, useFirstInfo, setUseFirstInfo, customInfo, setCustomInfo, setupTime, setSetupTime, initialStatus }) => {
+export const OutputFileTime = ({ listItems, unmaskPaths, useFirstInfo, setUseFirstInfo, customInfo, setCustomInfo, setupTime, setSetupTime, appStatuses, updateStatus, initialStatus }) => {
     
     //Status box tracking
-    const [layoutStatus, setLayoutStatus] = useState(initialStatus);
     const [layoutValid, setLayoutValid] = useState(true);
-    const [offsetStatus, setOffsetStatus] = useState(initialStatus);
     const [offsetValid, setOffsetValid] = useState(true);
-    const [setupStatus, setSetupStatus] = useState(initialStatus);
     const [setupValid, setSetupValid] = useState(true);
 
     //Toggle whether to use custom layout and filepath or ones from the first LiveSplit file
@@ -22,7 +19,7 @@ export const OutputFileTime = ({ listItems, unmaskPaths, useFirstInfo, setUseFir
                 layout: listItems[0].layoutPath,
                 offset: listItems[0].offset
             })
-            setLayoutStatus({
+            updateStatus("layout", {
                 header: "Caution",
                 message: ["Due to JavaScript restrictions, selecting another layout name through the file picker will assume the new layout is in the same directory as before. You can always copy & paste the full filepath of the new layout too."]
             })
@@ -32,8 +29,8 @@ export const OutputFileTime = ({ listItems, unmaskPaths, useFirstInfo, setUseFir
                 layout: "",
                 offset: ""
             })
-            setLayoutStatus(initialStatus)
-            setOffsetStatus(initialStatus)
+            updateStatus("layout", initialStatus)
+            updateStatus("offset", initialStatus)
         }
     }
 
@@ -62,16 +59,16 @@ export const OutputFileTime = ({ listItems, unmaskPaths, useFirstInfo, setUseFir
         }
         
         //Extension is relevant if provided
-        if(value.length != 0 && (hasInvalid || !isAValidFile(value, layoutExtension))){
+        if(value.length != 0 && (hasInvalid || value == layoutExtension || !isAValidFile(value, layoutExtension))){
             setLayoutValid(false)
-            setLayoutStatus({
+            updateStatus("layout", {
                 header: "Error",
                 message: [value + " is not a valid layout file"]
             })
         }
         else{
             setLayoutValid(true)
-            setLayoutStatus(initialStatus)
+            updateStatus("layout", initialStatus)
         }
     }
     const checkOffset = (value) => {
@@ -121,14 +118,14 @@ export const OutputFileTime = ({ listItems, unmaskPaths, useFirstInfo, setUseFir
         }
         if(value.length != 0 && hasInvalid){
             setOffsetValid(false)
-            setOffsetStatus({
+            updateStatus("offset", {
                 header: "Error",
                 message: [value + " is not a valid timer offset"]
             })
         }
         else{
             setOffsetValid(true)
-            setOffsetStatus(initialStatus)
+            updateStatus("offset", initialStatus)
         }
     }
 
@@ -157,7 +154,7 @@ export const OutputFileTime = ({ listItems, unmaskPaths, useFirstInfo, setUseFir
     const checkSetup = (value) => {
         if(value.length == 0){
             setSetupValid(false)
-            setSetupStatus({
+            updateStatus("setup", {
                 header: "Error",
                 message: ["No setup split time provided"]
             })
@@ -206,14 +203,14 @@ export const OutputFileTime = ({ listItems, unmaskPaths, useFirstInfo, setUseFir
         }
         if(hasInvalid){
             setSetupValid(false)
-            setSetupStatus({
+            updateStatus("setup", {
                 header: "Error",
                 message: [value + " is not a valid setup split time"]
             })
         }
         else{
             setSetupValid(true)
-            setSetupStatus(initialStatus)
+            updateStatus("setup", initialStatus)
         }
     }
 
@@ -222,10 +219,10 @@ export const OutputFileTime = ({ listItems, unmaskPaths, useFirstInfo, setUseFir
             <React.Fragment>
                 
                 {/* Custom Layout */}
-                {(layoutStatus.header.length > 0 && !useFirstInfo) && <StatusBox
-                    header={layoutStatus.header}
-                    message={layoutStatus.message}
-                    hideStatus={() => setLayoutStatus(initialStatus)}
+                {(appStatuses.layout.header.length > 0) && <StatusBox
+                    header={appStatuses.layout.header}
+                    message={appStatuses.layout.message}
+                    hideStatus={() => updateStatus("layout", initialStatus)}
                 />}
                 <label title="The layout LiveSplit will use for your output splits">
                     Starting Layout: {useFirstInfo && 
@@ -246,10 +243,10 @@ export const OutputFileTime = ({ listItems, unmaskPaths, useFirstInfo, setUseFir
                 </label><br/>
 
                 {/* Custom Offset */}
-                {(offsetStatus.header.length > 0 && !useFirstInfo) && <StatusBox
-                    header={offsetStatus.header}
-                    message={offsetStatus.message}
-                    hideStatus={() => setOffsetStatus(initialStatus)}
+                {(appStatuses.offset.header.length > 0) && <StatusBox
+                    header={appStatuses.offset.header}
+                    message={appStatuses.offset.message}
+                    hideStatus={() => updateStatus("offset", initialStatus)}
                 />}
                 <label title="The offset LiveSplit will use for your output splits">
                     Starting Offset: {useFirstInfo && 
@@ -269,10 +266,10 @@ export const OutputFileTime = ({ listItems, unmaskPaths, useFirstInfo, setUseFir
                 </label><br/>
 
                 {/* Setup Split Time */}
-                {(setupStatus.header.length > 0 && listItems.length >= 2) && <StatusBox
-                    header={setupStatus.header}
-                    message={setupStatus.message}
-                    hideStatus={() => setSetupStatus(initialStatus)}
+                {(appStatuses.setup.header.length > 0) && <StatusBox
+                    header={appStatuses.setup.header}
+                    message={appStatuses.setup.message}
+                    hideStatus={() => updateStatus("setup", initialStatus)}
                 />}
                 <div title="The time allotted for setup splits for split calculations">
                     <label>Setup Split Time: </label>
