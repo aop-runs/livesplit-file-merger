@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { StatusBox } from '../StatusBox.jsx'
 import { downloadFile, downloadFileAs, validSpecifier, isAValidFile, openContentsInNewTab } from '../../utils/file.js'
-import { gatherSplitsDataByTag } from '../../utils/livesplit.js'
+import { gatherSplitsDataByTag, createOutputSplits } from '../../utils/livesplit.js'
 import '../../styles/style.css'
 
-export const FileDownload = ({ listItems, unmaskPaths, canDownload, updateCanDownload, outputName, setOutputName, finalOutput, setFinalOutput, runName, appStatuses, updateStatus, initialStatus }) => {
+export const FileDownload = ({ listItems, unmaskPaths, canDownload, updateCanDownload, outputName, setOutputName, finalOutput, setFinalOutput, runName, useFirstInfo, setupTime, customInfo, templateText, toggleSettings, appStatuses, updateStatus, initialStatus }) => {
 
     //Track filename
     const updateFilename = (name) => {
@@ -58,10 +58,13 @@ export const FileDownload = ({ listItems, unmaskPaths, canDownload, updateCanDow
     //Prepares output that can be downloaded to the user's filesystem
     const prepareOutputSplits = (filename) => {
         setFinalOutput({name: "", data: ""})
+        let splitsData = createOutputSplits(listItems, runName, useFirstInfo, setupTime, customInfo, templateText, toggleSettings)
+
+        //Update output data
         setFinalOutput(finalOutput => {
             const updatedFinalOutput = {...finalOutput}
             updatedFinalOutput.name = filename + validSpecifier.extension
-            updatedFinalOutput.data = ""
+            updatedFinalOutput.data = splitsData
             return updatedFinalOutput
         })
     }

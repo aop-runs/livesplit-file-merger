@@ -111,3 +111,15 @@ export function cleanSplitsFile(contents){
     }
     return new XMLSerializer().serializeToString(splits);
 }
+
+//Create multi-game splits based on provided files and applied settings
+export function createOutputSplits(files, runName, useFirstInfo, setupTime, customInfo, templateText, toggleSettings){
+    let finalOutput = new DOMParser().parseFromString(gatherFullTemplate(), validSpecifier.streamType);
+    finalOutput.getElementsByTagName("GameName")[0].textContent = runName.game;
+    finalOutput.getElementsByTagName("CategoryName")[0].textContent = runName.category;
+    let layout = useFirstInfo ? files[0].layoutPath : customInfo.layout
+    let offset = useFirstInfo ? files[0].offset : customInfo.offset
+    finalOutput.getElementsByTagName("LayoutPath")[0].textContent = layout;
+    finalOutput.getElementsByTagName("Offset")[0].textContent = offset;
+    return new XMLSerializer().serializeToString(finalOutput);
+}

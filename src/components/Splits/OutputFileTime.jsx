@@ -1,5 +1,5 @@
 //Based on: https://medium.com/@aren.talb00/creating-a-custom-file-input-using-react-and-useref-233f5d4abfc9
-import React, { useRef, useState } from 'react'
+import React, { useRef } from 'react'
 import { StatusBox } from '../StatusBox.jsx'
 import { isAValidFile, layoutExtension } from '../../utils/file.js'
 import { defaultSetup } from "../../utils/livesplit.js";

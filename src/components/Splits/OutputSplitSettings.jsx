@@ -1,5 +1,5 @@
 //Based on: https://www.geeksforgeeks.org/reactjs/axios-in-react-a-guide-for-beginners/
-import React, { useState } from 'react'
+import React from 'react'
 import { StatusBox } from '../StatusBox.jsx'
 import { templateParameters } from "../../utils/livesplit.js";
 import { fuzzySearchGames, searchCategoriesFromGame, cacheNewData } from "../../utils/srcapi.js";

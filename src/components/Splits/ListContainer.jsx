@@ -268,6 +268,11 @@ export const ListContainer = () => {
                 finalOutput={finalOutput}
                 setFinalOutput={setFinalOutput}
                 runName={runName}
+                useFirstInfo={useFirstInfo}
+                setupTime={setupTime}
+                customInfo={customInfo}
+                templateText={templateText}
+                toggleSettings={toggleSettings}
                 appStatuses={appStatuses}
                 updateStatus={updateStatus}
                 initialStatus={initialStatus}
