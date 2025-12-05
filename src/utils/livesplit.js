@@ -214,8 +214,14 @@ export function createOutputSplits(files, runName, useFirstInfo, setupTime, cust
 
             //Carry over sum of bests for both real time and game time
             if(toggleSettings.sob){
-                newSegment.getElementsByTagName("BestSegmentTime")[0].appendChild(child.getElementsByTagName("BestSegmentTime")[0].getElementsByTagName("RealTime")[0])
-                newSegment.getElementsByTagName("BestSegmentTime")[0].appendChild(child.getElementsByTagName("BestSegmentTime")[0].getElementsByTagName("GameTime")[0])
+                try{
+                    newSegment.getElementsByTagName("BestSegmentTime")[0].appendChild(child.getElementsByTagName("BestSegmentTime")[0].getElementsByTagName("RealTime")[0])
+                }
+                catch{}
+                try{
+                    newSegment.getElementsByTagName("BestSegmentTime")[0].appendChild(child.getElementsByTagName("BestSegmentTime")[0].getElementsByTagName("GameTime")[0])
+                }
+                catch{}
             }
 
             //Carry over pbs as a new comparison for both real time and game time
