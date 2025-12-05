@@ -57,9 +57,26 @@ export const FileDownload = ({ listItems, unmaskPaths, canDownload, updateCanDow
 
     //Prepares output that can be downloaded to the user's filesystem
     const prepareOutputSplits = (filename) => {
+        updateStatus("download", initialStatus)
+        updateStatus("upload", {
+            header: "Loading...",
+            message: ["Creating combined splits file named: " + filename + validSpecifier.extension + " using " + listItems.length.toString() + " entr" + (listItems.length != 1 ? "ies" : "y")]
+        })
         setFinalOutput({name: "", data: ""})
-        let splitsData = createOutputSplits(listItems, runName, useFirstInfo, setupTime, customInfo, templateText, toggleSettings)
-
+        let splitsData = ""
+        try {
+            splitsData = createOutputSplits(listItems, runName, useFirstInfo, setupTime, customInfo, templateText, toggleSettings)
+            updateStatus("output", {
+                header: "Success",
+                message: ["Output splits file named: " + filename + validSpecifier.extension + " is ready to be downloaded below"]
+            })
+        } catch (error){
+            updateStatus("output", {
+                header: "Error",
+                message: ["Unable to create output splits file named: " + filename + validSpecifier.extension + " - " + error]
+            })
+            return
+        }
         //Update output data
         setFinalOutput(finalOutput => {
             const updatedFinalOutput = {...finalOutput}

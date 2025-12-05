@@ -41,8 +41,12 @@ export const FileUpload = ({ addListItem, uploadLabel, setUploadLabel, appStatus
                     (contents) => {
                         try {
                             contents = cleanSplitsFile(contents)
+                            let g = gatherSplitsDataByTag(contents, "GameName")
+                            let c = gatherSplitsDataByTag(contents, "CategoryName")
                             addListItem({
-                                runName: gatherRunName(contents),
+                                runName: gatherRunName(g, c),
+                                game: g,
+                                category: c,
                                 filename: newFile[1].name,
                                 layoutPath: gatherSplitsDataByTag(contents, "LayoutPath"),
                                 offset: gatherSplitsDataByTag(contents, "Offset"),
