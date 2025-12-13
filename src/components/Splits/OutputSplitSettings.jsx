@@ -150,6 +150,9 @@ export const OutputSplitSettings = ({ listItems, toggleSettings, setToggleSettin
                 <label id="sobbox" title="Choose whether to carry over your sum of best segments from your split files">
                     Carry over Sum of Best Times: <input type="checkbox" disabled={listItems.length < 2} htmlFor="sobbox" checked={toggleSettings["sob"]} onChange={(e) => toggleCheckbox("sob", e.target.checked)}/>
                 </label><br/>
+                <label id="compbox" title="Choose whether to carry over other comparisons found from your split files">
+                    Carry over Other Comparisons: <input type="checkbox" disabled={listItems.length < 2} htmlFor="compbox" checked={toggleSettings["comp"]} onChange={(e) => toggleCheckbox("comp", e.target.checked)}/>
+                </label><br/>
                 <label id="iconbox" title="Choose whether to carry over segment icons from your splits files">
                     Carry over Segment Icons: <input type="checkbox" disabled={listItems.length < 2} htmlFor="iconbox" checked={toggleSettings["icon"]} onChange={(e) => toggleCheckbox("icon", e.target.checked)}/>
                 </label><br/>

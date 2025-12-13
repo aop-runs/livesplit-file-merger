@@ -23,7 +23,7 @@ export const ListContainer = () => {
     const [runName, setRunName] = useState({game: "", category: ""})
     const [toggleSettings, setToggleSettings] = useState(() => {
         const obj = {}
-        for(let key of ["pb", "sob", "icon", "subs"]){
+        for(let key of ["pb", "sob", "comp", "icon", "subs"]){
             obj[key] = true
         }
         return obj

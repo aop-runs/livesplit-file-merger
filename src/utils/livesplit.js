@@ -100,7 +100,7 @@ export function cleanSplitsFile(contents){
         splits.getElementsByTagName("AttemptHistory")[0].removeChild(splits.getElementsByTagName("AttemptHistory")[0].getElementsByTagName("Attempt")[0]);
     }
 
-    //Segment Icons, History, and Other Comparisons
+    //Segment Icons and History
     for(let i = 0; i < splits.getElementsByTagName("Segment").length; i++){
         let iconData = splits.getElementsByTagName("Segment")[i].getElementsByTagName("Icon")[0].textContent.trim();
         if(iconData.length != 0){
@@ -110,11 +110,6 @@ export function cleanSplitsFile(contents){
             }
             else{
                 splits.getElementsByTagName("Segment")[i].getElementsByTagName("Icon")[0].textContent = iconCache.indexOf(iconData) + 1;
-            }
-        }
-        for(let comp of splits.getElementsByTagName("SplitTimes")[i].getElementsByTagName("SplitTime")){
-            if(comp.getAttribute("name") != "Personal Best"){
-                splits.getElementsByTagName("SplitTimes")[i].removeChild(comp)
             }
         }
         while(splits.getElementsByTagName("SegmentHistory")[i].getElementsByTagName("Time").length != 0){
