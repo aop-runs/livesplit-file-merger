@@ -42,7 +42,7 @@ export const ListContainer = () => {
         }
         return obj
     })
-    const updateStatus = (key, data) => {
+    const updateStatus = (key, data = initialStatus) => {
         setAppStatuses(appStatuses => {
             const updatedAppStatuses = {...appStatuses}
             updatedAppStatuses[key] = data
@@ -51,7 +51,7 @@ export const ListContainer = () => {
     }
     const resetStatuses = () => {
         for(let key of Object.keys(appStatuses)){
-            updateStatus(key, initialStatus)
+            updateStatus(key)
         }
     }
 
@@ -214,7 +214,6 @@ export const ListContainer = () => {
                 setUploadLabel={setUploadLabel}
                 appStatuses={appStatuses}
                 updateStatus={updateStatus}
-                initialStatus={initialStatus}
             />
 
             {/* List entries */}
@@ -245,7 +244,6 @@ export const ListContainer = () => {
                 setGameComp={setGameComp}
                 appStatuses={appStatuses}
                 updateStatus={updateStatus}
-                initialStatus={initialStatus}
             /><br/>
             <OutputSplitSettings
                 listItems={files}
@@ -265,7 +263,6 @@ export const ListContainer = () => {
                 setSelectedRequestedGame={setSelectedRequestedGame}
                 appStatuses={appStatuses}
                 updateStatus={updateStatus}
-                initialStatus={initialStatus}
             /><br/>
 
             {/* Download merged contents */}
@@ -288,7 +285,6 @@ export const ListContainer = () => {
                 toggleSettings={toggleSettings}
                 appStatuses={appStatuses}
                 updateStatus={updateStatus}
-                initialStatus={initialStatus}
             />
         </React.Fragment>
     )

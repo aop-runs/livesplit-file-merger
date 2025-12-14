@@ -4,7 +4,7 @@ import { downloadFile, downloadFileAs, validSpecifier, isAValidFile, openContent
 import { gatherSplitsDataByTag, createOutputSplits } from '../../utils/livesplit.js'
 import '../../styles/style.css'
 
-export const FileDownload = ({ listItems, unmaskPaths, canDownload, updateCanDownload, outputName, setOutputName, finalOutput, setFinalOutput, runName, useFirstInfo, setupTime, gameComp, customInfo, usedTimings, templateText, toggleSettings, appStatuses, updateStatus, initialStatus }) => {
+export const FileDownload = ({ listItems, unmaskPaths, canDownload, updateCanDownload, outputName, setOutputName, finalOutput, setFinalOutput, runName, useFirstInfo, setupTime, gameComp, customInfo, usedTimings, templateText, toggleSettings, appStatuses, updateStatus }) => {
 
     //Track filename
     const updateFilename = (name) => {
@@ -50,14 +50,14 @@ export const FileDownload = ({ listItems, unmaskPaths, canDownload, updateCanDow
             updateCanDownload("output", false)
         }
         else{
-            updateStatus("output", initialStatus)
+            updateStatus("output")
             updateCanDownload("output", true)
         }
     }
 
     //Prepares output that can be downloaded to the user's filesystem
     const prepareOutputSplits = (filename) => {
-        updateStatus("download", initialStatus)
+        updateStatus("download")
         updateStatus("output", {
             header: "Loading...",
             message: ["Creating combined splits file named: " + filename + validSpecifier.extension + " using " + listItems.length.toString() + " entr" + (listItems.length != 1 ? "ies" : "y")]
@@ -123,7 +123,7 @@ export const FileDownload = ({ listItems, unmaskPaths, canDownload, updateCanDow
             {(appStatuses.output.header.length > 0) && <StatusBox
                 header={appStatuses.output.header}
                 message={appStatuses.output.message}
-                hideStatus={() => updateStatus("output", initialStatus)}
+                hideStatus={() => updateStatus("output")}
             />}
             <div title="Filename for output splits file">
                 <label>Output Filename: </label>
@@ -145,7 +145,7 @@ export const FileDownload = ({ listItems, unmaskPaths, canDownload, updateCanDow
             {(appStatuses.download.header.length > 0) && <StatusBox
                 header={appStatuses.download.header}
                 message={appStatuses.download.message}
-                hideStatus={() => updateStatus("download", initialStatus)}
+                hideStatus={() => updateStatus("download")}
             />}
             <div title="Download link for output splits file">
                 <label>Output Contents: </label>

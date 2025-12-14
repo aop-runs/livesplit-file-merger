@@ -4,7 +4,7 @@ import { StatusBox } from '../StatusBox.jsx'
 import { templateParameters, defaultPBComp } from "../../utils/livesplit.js";
 import { fuzzySearchGames, searchCategoriesFromGame, cacheNewData } from "../../utils/srcapi.js";
 
-export const OutputSplitSettings = ({ listItems, updateCanDownload, setGameComp, usedTimings, setUsedTimings, toggleSettings, setToggleSettings, templateText, setTemplateText, runName, setRunName, requestData, setRequestData, selectedRequestedGame, setSelectedRequestedGame, appStatuses, updateStatus, initialStatus }) => {
+export const OutputSplitSettings = ({ listItems, updateCanDownload, setGameComp, usedTimings, setUsedTimings, toggleSettings, setToggleSettings, templateText, setTemplateText, runName, setRunName, requestData, setRequestData, selectedRequestedGame, setSelectedRequestedGame, appStatuses, updateStatus }) => {
 
     //Used timings
     const updateTimingSelection = (value) => {
@@ -31,7 +31,7 @@ export const OutputSplitSettings = ({ listItems, updateCanDownload, setGameComp,
         }
         else if(key == "pb" && !value){
             setGameComp(defaultPBComp)
-            updateStatus("comp", initialStatus)
+            updateStatus("comp")
             updateCanDownload("comp", true)
         }
     }
@@ -243,7 +243,7 @@ export const OutputSplitSettings = ({ listItems, updateCanDownload, setGameComp,
                 {(appStatuses.game.header.length > 0) && <StatusBox
                     header={appStatuses.game.header}
                     message={appStatuses.game.message}
-                    hideStatus={() => updateStatus("game", initialStatus)}
+                    hideStatus={() => updateStatus("game")}
                 />}
                 <div title="The name of the game for the output splits file">
                     <label>Output Game Name: </label>
@@ -269,7 +269,7 @@ export const OutputSplitSettings = ({ listItems, updateCanDownload, setGameComp,
                 {(appStatuses.category.header.length > 0) && <StatusBox
                     header={appStatuses.category.header}
                     message={appStatuses.category.message}
-                    hideStatus={() => updateStatus("category", initialStatus)}
+                    hideStatus={() => updateStatus("category")}
                 />}
                 <div title="The name of the category for the output splits file">
                     <label>Output Category Name: </label>

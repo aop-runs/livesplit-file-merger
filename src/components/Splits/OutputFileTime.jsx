@@ -4,7 +4,7 @@ import { StatusBox } from '../StatusBox.jsx'
 import { isAValidFile, layoutExtension } from '../../utils/file.js'
 import { defaultSetup, defaultPBComp } from "../../utils/livesplit.js";
 
-export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, toggleSettings, useFirstInfo, setUseFirstInfo, customInfo, setCustomInfo, setupTime, setSetupTime, gameComp, setGameComp, appStatuses, updateStatus, initialStatus }) => {
+export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, toggleSettings, useFirstInfo, setUseFirstInfo, customInfo, setCustomInfo, setupTime, setSetupTime, gameComp, setGameComp, appStatuses, updateStatus }) => {
     
     //Toggle whether to use custom layout and filepath or ones from the first LiveSplit file
     const toggleFirstInfo = (value) => {
@@ -24,8 +24,8 @@ export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, togg
                 layout: "",
                 offset: ""
             })
-            updateStatus("layout", initialStatus)
-            updateStatus("offset", initialStatus)
+            updateStatus("layout")
+            updateStatus("offset")
         }
     }
 
@@ -62,7 +62,7 @@ export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, togg
             updateCanDownload("layout", false)
         }
         else{
-            updateStatus("layout", initialStatus)
+            updateStatus("layout")
             updateCanDownload("layout", true)
         }
     }
@@ -119,7 +119,7 @@ export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, togg
             updateCanDownload("offset", false)
         }
         else{
-            updateStatus("offset", initialStatus)
+            updateStatus("offset")
             updateCanDownload("offset", true)
         }
     }
@@ -149,7 +149,7 @@ export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, togg
     const checkSetup = (value) => {
         if(value.length == 0){
             updateStatus("setup", {
-                header: "Error",
+                header: "Warning",
                 message: ["No setup split time provided"]
             })
             updateCanDownload("setup", false)
@@ -204,7 +204,7 @@ export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, togg
             updateCanDownload("setup", false)
         }
         else{
-            updateStatus("setup", initialStatus)
+            updateStatus("setup")
             updateCanDownload("setup", true)
         }
     }
@@ -219,7 +219,7 @@ export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, togg
     const checkGameComp = (value) => {
         if(value.length == 0){
             updateStatus("comp", {
-                header: "Error",
+                header: "Warning",
                 message: ["No game PB comparison name provided"]
             })
             updateCanDownload("comp", false)
@@ -232,7 +232,7 @@ export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, togg
             updateCanDownload("comp", false)
         }
         else{
-            updateStatus("comp", initialStatus)
+            updateStatus("comp")
             updateCanDownload("comp", true)
         }
     }
@@ -245,7 +245,7 @@ export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, togg
                 {(appStatuses.layout.header.length > 0) && <StatusBox
                     header={appStatuses.layout.header}
                     message={appStatuses.layout.message}
-                    hideStatus={() => updateStatus("layout", initialStatus)}
+                    hideStatus={() => updateStatus("layout")}
                 />}
                 <label title="The layout LiveSplit will use for your output splits">
                     Starting Layout: {useFirstInfo && 
@@ -269,7 +269,7 @@ export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, togg
                 {(appStatuses.offset.header.length > 0) && <StatusBox
                     header={appStatuses.offset.header}
                     message={appStatuses.offset.message}
-                    hideStatus={() => updateStatus("offset", initialStatus)}
+                    hideStatus={() => updateStatus("offset")}
                 />}
                 <label title="The offset LiveSplit will use for your output splits">
                     Starting Offset: {useFirstInfo && 
@@ -292,7 +292,7 @@ export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, togg
                 {(appStatuses.setup.header.length > 0) && <StatusBox
                     header={appStatuses.setup.header}
                     message={appStatuses.setup.message}
-                    hideStatus={() => updateStatus("setup", initialStatus)}
+                    hideStatus={() => updateStatus("setup")}
                 />}
                 <div title="The time allotted for setup splits for split calculations">
                     <label>Setup Split Time: </label>
@@ -311,7 +311,7 @@ export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, togg
                     {(appStatuses.comp.header.length > 0) && <StatusBox
                         header={appStatuses.comp.header}
                         message={appStatuses.comp.message}
-                        hideStatus={() => updateStatus("comp", initialStatus)}
+                        hideStatus={() => updateStatus("comp")}
                     />}
                     <div title="The name of the comparison for current game PBs">
                         <label>Game PB Comparison Name: </label>
