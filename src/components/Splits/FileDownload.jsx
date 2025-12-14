@@ -4,7 +4,7 @@ import { downloadFile, downloadFileAs, validSpecifier, isAValidFile, openContent
 import { gatherSplitsDataByTag, createOutputSplits } from '../../utils/livesplit.js'
 import '../../styles/style.css'
 
-export const FileDownload = ({ listItems, unmaskPaths, canDownload, updateCanDownload, outputName, setOutputName, finalOutput, setFinalOutput, runName, useFirstInfo, setupTime, customInfo, templateText, toggleSettings, appStatuses, updateStatus, initialStatus }) => {
+export const FileDownload = ({ listItems, unmaskPaths, canDownload, updateCanDownload, outputName, setOutputName, finalOutput, setFinalOutput, runName, useFirstInfo, setupTime, gameComp, customInfo, usedTimings, templateText, toggleSettings, appStatuses, updateStatus, initialStatus }) => {
 
     //Track filename
     const updateFilename = (name) => {
@@ -58,14 +58,14 @@ export const FileDownload = ({ listItems, unmaskPaths, canDownload, updateCanDow
     //Prepares output that can be downloaded to the user's filesystem
     const prepareOutputSplits = (filename) => {
         updateStatus("download", initialStatus)
-        updateStatus("upload", {
+        updateStatus("output", {
             header: "Loading...",
             message: ["Creating combined splits file named: " + filename + validSpecifier.extension + " using " + listItems.length.toString() + " entr" + (listItems.length != 1 ? "ies" : "y")]
         })
         setFinalOutput({name: "", data: ""})
         let splitsData = ""
         try {
-            splitsData = createOutputSplits(listItems, runName, useFirstInfo, setupTime, customInfo, templateText, toggleSettings)
+            splitsData = createOutputSplits(listItems, runName, useFirstInfo, setupTime, gameComp, customInfo, usedTimings, templateText, toggleSettings)
             updateStatus("output", {
                 header: "Success",
                 message: ["Output splits file named: " + filename + validSpecifier.extension + " is ready to be downloaded below"]

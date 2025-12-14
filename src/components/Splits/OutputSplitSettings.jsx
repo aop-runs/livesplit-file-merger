@@ -1,10 +1,23 @@
 //Based on: https://www.geeksforgeeks.org/reactjs/axios-in-react-a-guide-for-beginners/
 import React from 'react'
 import { StatusBox } from '../StatusBox.jsx'
-import { templateParameters } from "../../utils/livesplit.js";
+import { templateParameters, defaultPBComp } from "../../utils/livesplit.js";
 import { fuzzySearchGames, searchCategoriesFromGame, cacheNewData } from "../../utils/srcapi.js";
 
-export const OutputSplitSettings = ({ listItems, toggleSettings, setToggleSettings, templateText, setTemplateText, runName, setRunName, requestData, setRequestData, selectedRequestedGame, setSelectedRequestedGame, appStatuses, updateStatus, initialStatus }) => {
+export const OutputSplitSettings = ({ listItems, updateCanDownload, setGameComp, usedTimings, setUsedTimings, toggleSettings, setToggleSettings, templateText, setTemplateText, runName, setRunName, requestData, setRequestData, selectedRequestedGame, setSelectedRequestedGame, appStatuses, updateStatus, initialStatus }) => {
+
+    //Used timings
+    const updateTimingSelection = (value) => {
+        toggleRadioButton("realTime", value.startsWith("real"))
+        toggleRadioButton("gameTime", value.endsWith("game"))
+    }
+    const toggleRadioButton = (key, value) => {
+        setUsedTimings(usedTimings => {
+            const updatedUsedTimings = {...usedTimings}
+            updatedUsedTimings[key] = value
+            return updatedUsedTimings
+        })
+    }
 
     //Toggle checkbox
     const toggleCheckbox = (key, value) => {
@@ -15,6 +28,11 @@ export const OutputSplitSettings = ({ listItems, toggleSettings, setToggleSettin
         })
         if(key == "subs" && !value){
             changeTemplateText("final", "")
+        }
+        else if(key == "pb" && !value){
+            setGameComp(defaultPBComp)
+            updateStatus("comp", initialStatus)
+            updateCanDownload("comp", true)
         }
     }
     const toggleAllCheckboxes = (value) => {
@@ -143,7 +161,19 @@ export const OutputSplitSettings = ({ listItems, toggleSettings, setToggleSettin
             //Settings for output splits file
             <React.Fragment>
                 
+                {/* Timing Types */}
+                <label title="Carry over only real time for segments from your split files">
+                    <input type="radio" name="timings" value="real" disabled={listItems.length < 2} checked={usedTimings.realTime && !usedTimings.gameTime} onChange={(e) => updateTimingSelection(e.target.value)}/>Carry over Real Time
+                </label><br/>
+                <label title="Carry over only game time for segments from your split files">
+                    <input type="radio" name="timings" value="game" disabled={listItems.length < 2} checked={!usedTimings.realTime && usedTimings.gameTime} onChange={(e) => updateTimingSelection(e.target.value)}/>Carry over Game Time
+                </label><br/>
+                <label title="Carry over both real time and game time for segments from your split files">
+                    <input type="radio" name="timings" value="realgame" disabled={listItems.length < 2} checked={usedTimings.realTime && usedTimings.gameTime} onChange={(e) => updateTimingSelection(e.target.value)}/>Carry over Real Time & Game Time
+                </label><br/>
+
                 {/* Toggle Settings */}
+                <br/>
                 <label id="pbbox" title="Choose whether to carry over your pbs from your split files as a new comparison">
                     Carry over PBs: <input type="checkbox" disabled={listItems.length < 2} htmlFor="pbbox" checked={toggleSettings["pb"]} onChange={(e) => toggleCheckbox("pb", e.target.checked)}/>
                 </label><br/>

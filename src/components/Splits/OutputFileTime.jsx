@@ -2,9 +2,9 @@
 import React, { useRef } from 'react'
 import { StatusBox } from '../StatusBox.jsx'
 import { isAValidFile, layoutExtension } from '../../utils/file.js'
-import { defaultSetup } from "../../utils/livesplit.js";
+import { defaultSetup, defaultPBComp } from "../../utils/livesplit.js";
 
-export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, useFirstInfo, setUseFirstInfo, customInfo, setCustomInfo, setupTime, setSetupTime, appStatuses, updateStatus, initialStatus }) => {
+export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, toggleSettings, useFirstInfo, setUseFirstInfo, customInfo, setCustomInfo, setupTime, setSetupTime, gameComp, setGameComp, appStatuses, updateStatus, initialStatus }) => {
     
     //Toggle whether to use custom layout and filepath or ones from the first LiveSplit file
     const toggleFirstInfo = (value) => {
@@ -209,6 +209,34 @@ export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, useF
         }
     }
 
+    //Update game PB comparison name
+    const updateComparisonName = (value) => {
+        setGameComp(value)
+        checkGameComp(value)
+    }
+
+    //Check setup split time
+    const checkGameComp = (value) => {
+        if(value.length == 0){
+            updateStatus("comp", {
+                header: "Error",
+                message: ["No game PB comparison name provided"]
+            })
+            updateCanDownload("comp", false)
+        }
+        else if(value == "Personal Best"){
+            updateStatus("comp", {
+                header: "Error",
+                message: ["Comparison cannot be named \'Personal Best\' as it's the default name for LiveSplit's PB comparison"]
+            })
+            updateCanDownload("comp", false)
+        }
+        else{
+            updateStatus("comp", initialStatus)
+            updateCanDownload("comp", true)
+        }
+    }
+
     return (
             //Settings for output layout, offset, and setup split times
             <React.Fragment>
@@ -276,6 +304,27 @@ export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, useF
                         Use Default Setup Time
                     </button>
                 </div>
+
+                {/* Game Comparison Name */}
+                {toggleSettings["pb"] && 
+                    <React.Fragment>
+                    {(appStatuses.comp.header.length > 0) && <StatusBox
+                        header={appStatuses.comp.header}
+                        message={appStatuses.comp.message}
+                        hideStatus={() => updateStatus("comp", initialStatus)}
+                    />}
+                    <div title="The name of the comparison for current game PBs">
+                        <label>Game PB Comparison Name: </label>
+                        <input type="text" disabled={listItems.length < 2} placeholder={"Comparison Name"} value={gameComp} onChange={(e) => updateComparisonName(e.target.value)}/>
+                        <button type="button" disabled={listItems.length < 2 || gameComp.length == 0} onClick={() => updateComparisonName("")} title="Clear textfield for game PB comparison name">
+                            Clear Comparison Name
+                        </button>
+                        <button type="button" disabled={listItems.length < 2} onClick={() => updateComparisonName(defaultPBComp)} title="Revert back to default game PB comparison name">
+                            Use Default Comparison Name
+                        </button>
+                    </div>
+                    </React.Fragment>
+                }
             </React.Fragment>
         )
     }

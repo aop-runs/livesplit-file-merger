@@ -5,7 +5,7 @@ import { FileUpload } from './FileUpload.jsx'
 import { ItemList } from './ItemList.jsx'
 import { OutputFileTime } from './OutputFileTime.jsx'
 import { OutputSplitSettings } from './OutputSplitSettings.jsx'
-import { defaultSetup, iconCache } from "../../utils/livesplit.js";
+import { defaultSetup, defaultPBComp, iconCache } from "../../utils/livesplit.js";
 import '../../styles/style.css'
 
 export const ListContainer = () => {
@@ -18,7 +18,9 @@ export const ListContainer = () => {
     const [finalOutput, setFinalOutput] = useState({name: "", data: ""});
     const [useFirstInfo, setUseFirstInfo] = useState(true)
     const [setupTime, setSetupTime] = useState(defaultSetup)
+    const [gameComp, setGameComp] = useState(defaultPBComp)
     const [customInfo, setCustomInfo] = useState({layout: "", offset: ""})
+    const [usedTimings, setUsedTimings] = useState({realTime: true, gameTime: false})
     const [templateText, setTemplateText] = useState({setup: "", final: ""})
     const [runName, setRunName] = useState({game: "", category: ""})
     const [toggleSettings, setToggleSettings] = useState(() => {
@@ -35,7 +37,7 @@ export const ListContainer = () => {
     const initialStatus = {header: "", message: [""]}
     const [appStatuses, setAppStatuses] = useState(() => {
         const obj = {}
-        for(let key of ["upload", "layout", "offset", "setup", "game", "category", "output", "download"]){
+        for(let key of ["upload", "layout", "offset", "setup", "comp", "game", "category", "output", "download"]){
             obj[key] = initialStatus
         }
         return obj
@@ -56,7 +58,7 @@ export const ListContainer = () => {
     //Download checks
     const [canDownload, setCanDownload] = useState(() => {
         const obj = {}
-        for(let key of ["layout", "offset", "setup", "output"]){
+        for(let key of ["layout", "offset", "setup", "comp", "output"]){
             obj[key] = true
         }
         return obj
@@ -166,7 +168,9 @@ export const ListContainer = () => {
                 setFinalOutput({name: "", data: ""})
                 setUseFirstInfo(true)
                 setSetupTime(defaultSetup)
+                setGameComp(defaultPBComp)
                 setCustomInfo({layout: "", offset: ""})
+                setUsedTimings({realTime: true, gameTime: false})
                 setTemplateText({setup: "", final: ""})
                 setRunName({game: "", category: ""})
                 setToggleSettings(toggleSettings => {
@@ -230,18 +234,25 @@ export const ListContainer = () => {
                 listItems={files}
                 unmaskPaths={unmaskPaths}
                 updateCanDownload={updateCanDownload}
+                toggleSettings={toggleSettings}
                 useFirstInfo={useFirstInfo}
                 setUseFirstInfo={setUseFirstInfo}
                 customInfo={customInfo}
                 setCustomInfo={setCustomInfo}
                 setupTime={setupTime}
                 setSetupTime={setSetupTime}
+                gameComp={gameComp}
+                setGameComp={setGameComp}
                 appStatuses={appStatuses}
                 updateStatus={updateStatus}
                 initialStatus={initialStatus}
             /><br/>
             <OutputSplitSettings
                 listItems={files}
+                updateCanDownload={updateCanDownload}
+                setGameComp={setGameComp}
+                usedTimings={usedTimings}
+                setUsedTimings={setUsedTimings}
                 toggleSettings={toggleSettings}
                 setToggleSettings={setToggleSettings}
                 templateText={templateText}
@@ -270,7 +281,9 @@ export const ListContainer = () => {
                 runName={runName}
                 useFirstInfo={useFirstInfo}
                 setupTime={setupTime}
+                gameComp={gameComp}
                 customInfo={customInfo}
+                usedTimings={usedTimings}
                 templateText={templateText}
                 toggleSettings={toggleSettings}
                 appStatuses={appStatuses}

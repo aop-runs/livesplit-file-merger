@@ -21,9 +21,6 @@ export const ItemList = ({ listItems, unmaskPaths, moveListItem, removeListItem,
                 />
             ))}
             </div>
-            <label title="Number of files used for output splits">
-                Entries: {listItems.length}
-            </label>
             <button type="button" onClick={reverseEntries} disabled={listItems.length==0} title="Reverses the order of all of your entries">
                 Reverse Entries
             </button>
@@ -33,6 +30,9 @@ export const ItemList = ({ listItems, unmaskPaths, moveListItem, removeListItem,
             <button type="button" onClick={() => sortEntries(true)} disabled={listItems.length==0} title="Sort all of your entries Z-A">
                 Sort Entries Z-A
             </button>
+            <br/><label title="Number of files used for output splits">
+                Entries: {listItems.length}
+            </label>
 
             </React.Fragment>
         )

@@ -2,6 +2,7 @@ import { validSpecifier } from "./file";
 
 //Constants
 export const defaultSetup = "00:00:30.0000000"
+export const defaultPBComp = "Game PBs"
 export const templateParameters = [
     {param: "%NG%", name: "Game Name"},
     {param: "%NC%", name: "Category Name"},
@@ -56,8 +57,8 @@ export function gatherSegmentTemplate(){
 }
 
 // Comparison template for carrying over Game PBs
-function gatherPBsTemplate(){
-    return `<SplitTime name="Game PBs">
+function gatherPBsTemplate(compName){
+    return `<SplitTime name="${compName}">
 <RealTime></RealTime>
 <GameTime></GameTime>
 </SplitTime>`;
@@ -166,7 +167,7 @@ function secondsToTime(time){
 }
 
 //Create multi-game splits based on provided files and applied settings
-export function createOutputSplits(files, runName, useFirstInfo, setupTime, customInfo, templateText, toggleSettings){
+export function createOutputSplits(files, runName, useFirstInfo, setupTime, gameComp, customInfo, usedTimings, templateText, toggleSettings){
     
     //Everything outside segments
     let finalOutput = new DOMParser().parseFromString(gatherFullTemplate(), validSpecifier.streamType);
@@ -209,35 +210,43 @@ export function createOutputSplits(files, runName, useFirstInfo, setupTime, cust
 
             //Carry over sum of bests for both real time and game time
             if(toggleSettings.sob){
-                try{
-                    newSegment.getElementsByTagName("BestSegmentTime")[0].appendChild(child.getElementsByTagName("BestSegmentTime")[0].getElementsByTagName("RealTime")[0])
+                if(usedTimings.realTime){
+                    try{
+                        newSegment.getElementsByTagName("BestSegmentTime")[0].appendChild(child.getElementsByTagName("BestSegmentTime")[0].getElementsByTagName("RealTime")[0])
+                    }
+                    catch{}
                 }
-                catch{}
-                try{
-                    newSegment.getElementsByTagName("BestSegmentTime")[0].appendChild(child.getElementsByTagName("BestSegmentTime")[0].getElementsByTagName("GameTime")[0])
+                if(usedTimings.gameTime){
+                    try{
+                        newSegment.getElementsByTagName("BestSegmentTime")[0].appendChild(child.getElementsByTagName("BestSegmentTime")[0].getElementsByTagName("GameTime")[0])
+                    }
+                    catch{}
                 }
-                catch{}
             }
 
             //Carry over pbs as a new comparison for both real time and game time
             if(toggleSettings.pb){
-                let newSplitTime = new DOMParser().parseFromString(gatherPBsTemplate(), validSpecifier.streamType)
+                let newSplitTime = new DOMParser().parseFromString(gatherPBsTemplate(gameComp), validSpecifier.streamType)
                 newSegment.getElementsByTagName("SplitTimes")[0].appendChild(newSplitTime.documentElement)
-                try{
-                    let time = timeToSeconds(child.getElementsByTagName("SplitTimes")[0].getElementsByTagName("SplitTime")[0].getElementsByTagName("RealTime")[0].textContent)
-                    runningReal += (time - runningReal) + realTimeStamp
-                    newSegment.getElementsByTagName("SplitTimes")[0].getElementsByTagName("SplitTime")[1].getElementsByTagName("RealTime")[0].textContent = secondsToTime(runningReal)
+                if(usedTimings.realTime){
+                    try{
+                        let time = timeToSeconds(child.getElementsByTagName("SplitTimes")[0].getElementsByTagName("SplitTime")[0].getElementsByTagName("RealTime")[0].textContent)
+                        runningReal += (time - runningReal) + realTimeStamp
+                        newSegment.getElementsByTagName("SplitTimes")[0].getElementsByTagName("SplitTime")[1].getElementsByTagName("RealTime")[0].textContent = secondsToTime(runningReal)
+                    }
+                    catch (error){
+                        newSegment.getElementsByTagName("SplitTimes")[0].getElementsByTagName("SplitTime")[1].removeChild(newSegment.getElementsByTagName("SplitTimes")[0].getElementsByTagName("SplitTime")[1].getElementsByTagName("RealTime")[0])
+                    }
                 }
-                catch (error){
-                    newSegment.getElementsByTagName("SplitTimes")[0].getElementsByTagName("SplitTime")[1].removeChild(newSegment.getElementsByTagName("SplitTimes")[0].getElementsByTagName("SplitTime")[1].getElementsByTagName("RealTime")[0])
-                }
-                try{
-                    let time = timeToSeconds(child.getElementsByTagName("SplitTimes")[0].getElementsByTagName("SplitTime")[0].getElementsByTagName("GameTime")[0].textContent)
-                    runningGame += (time - runningGame) + gameTimeStamp
-                    newSegment.getElementsByTagName("SplitTimes")[0].getElementsByTagName("SplitTime")[1].getElementsByTagName("GameTime")[0].textContent = secondsToTime(runningGame)
-                }
-                catch{
-                    newSegment.getElementsByTagName("SplitTimes")[0].getElementsByTagName("SplitTime")[1].removeChild(newSegment.getElementsByTagName("SplitTimes")[0].getElementsByTagName("SplitTime")[1].getElementsByTagName("GameTime")[0])
+                if(usedTimings.gameTime){
+                    try{
+                        let time = timeToSeconds(child.getElementsByTagName("SplitTimes")[0].getElementsByTagName("SplitTime")[0].getElementsByTagName("GameTime")[0].textContent)
+                        runningGame += (time - runningGame) + gameTimeStamp
+                        newSegment.getElementsByTagName("SplitTimes")[0].getElementsByTagName("SplitTime")[1].getElementsByTagName("GameTime")[0].textContent = secondsToTime(runningGame)
+                    }
+                    catch{
+                        newSegment.getElementsByTagName("SplitTimes")[0].getElementsByTagName("SplitTime")[1].removeChild(newSegment.getElementsByTagName("SplitTimes")[0].getElementsByTagName("SplitTime")[1].getElementsByTagName("GameTime")[0])
+                    }
                 }
             }
             finalOutput.getElementsByTagName("Segments")[0].appendChild(newSegment.documentElement);
@@ -247,14 +256,18 @@ export function createOutputSplits(files, runName, useFirstInfo, setupTime, cust
             let newSegment = new DOMParser().parseFromString(gatherSegmentTemplate(), validSpecifier.streamType);
             newSegment.getElementsByTagName("Name")[0].textContent = adjustTemplateText(templateText.setup, files[fileIndex + 1].game, files[fileIndex + 1].category, fileIndex + 2, files.length);
             if(toggleSettings.pb){
-                let newSplitTime = new DOMParser().parseFromString(gatherPBsTemplate(), validSpecifier.streamType)
+                let newSplitTime = new DOMParser().parseFromString(gatherPBsTemplate(gameComp), validSpecifier.streamType)
                 newSegment.getElementsByTagName("SplitTimes")[0].appendChild(newSplitTime.documentElement)
-                runningReal += timeToSeconds(setupTime)
-                realTimeStamp = runningReal
-                newSegment.getElementsByTagName("SplitTimes")[0].getElementsByTagName("SplitTime")[1].getElementsByTagName("RealTime")[0].textContent = secondsToTime(runningReal)
-                runningGame += timeToSeconds(setupTime)
-                gameTimeStamp = runningGame
-                newSegment.getElementsByTagName("SplitTimes")[0].getElementsByTagName("SplitTime")[1].getElementsByTagName("GameTime")[0].textContent = secondsToTime(runningGame)
+                if(usedTimings.realTime){
+                    runningReal += timeToSeconds(setupTime)
+                    realTimeStamp = runningReal
+                    newSegment.getElementsByTagName("SplitTimes")[0].getElementsByTagName("SplitTime")[1].getElementsByTagName("RealTime")[0].textContent = secondsToTime(runningReal)
+                }
+                if(usedTimings.gameTime){
+                    runningGame += timeToSeconds(setupTime)
+                    gameTimeStamp = runningGame
+                    newSegment.getElementsByTagName("SplitTimes")[0].getElementsByTagName("SplitTime")[1].getElementsByTagName("GameTime")[0].textContent = secondsToTime(runningGame)
+                }
             }
             finalOutput.getElementsByTagName("Segments")[0].appendChild(newSegment.documentElement);
         }
