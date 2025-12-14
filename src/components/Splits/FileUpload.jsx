@@ -2,7 +2,7 @@
 import React, { useRef, useState } from 'react';
 import { StatusBox } from '../StatusBox.jsx'
 import { gatherFileContents, validSpecifier } from '../../utils/file.js'
-import { cleanSplitsFile, gatherRunName, gatherSplitsDataByTag } from '../../utils/livesplit.js'
+import { cleanSplitsFile, gatherRunName, findCustomComparisons, gatherSplitsDataByTag } from '../../utils/livesplit.js'
 import '../../styles/style.css'
 
 export const FileUpload = ({ addListItem, uploadLabel, setUploadLabel, appStatuses, updateStatus }) => {
@@ -50,6 +50,7 @@ export const FileUpload = ({ addListItem, uploadLabel, setUploadLabel, appStatus
                                 filename: newFile[1].name,
                                 layoutPath: gatherSplitsDataByTag(contents, "LayoutPath"),
                                 offset: gatherSplitsDataByTag(contents, "Offset"),
+                                comparisons: findCustomComparisons(contents),
                                 contents: contents
                             })
                         } catch (error) {

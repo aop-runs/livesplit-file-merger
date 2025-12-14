@@ -21,6 +21,9 @@ export const ItemModal = ({ itemData, index, unmaskPaths, closeModal }) => {
                         <p title="Starting timer's offset for this entry">
                             Starting Offset: {itemData.offset}
                         </p>
+                        <p title="Every segment comparison found for this entry">
+                            Found Comparisons: {itemData.comparisons.length != 0 ? itemData.comparisons.join(", ") : "N/A"}
+                        </p>
                         <button title="Open raw contents for this entry" type ='button' onClick={() => openContentsInNewTab(itemData.contents, itemData.layoutPath, !unmaskPaths)}>
                             Open Splits Contents
                         </button>
