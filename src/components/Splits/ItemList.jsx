@@ -6,9 +6,9 @@ export const ItemList = ({ listItems, unmaskPaths, moveListItem, removeListItem,
 
     return (
             
-            //List of Items
             <React.Fragment>
-                
+            
+            {/* List of items */}
             <div className="entry" title="All entries for LiveSplit files that will be included for your output splits in order">{listItems.map((file, index) => (
                 <Item
                     key={file.id}
@@ -21,13 +21,15 @@ export const ItemList = ({ listItems, unmaskPaths, moveListItem, removeListItem,
                 />
             ))}
             </div>
-            <button type="button" onClick={reverseEntries} disabled={listItems.length==0} title="Reverses the order of all of your entries">
+
+            {/* Buttons for list reordering */}
+            <button type="button" onClick={reverseEntries} disabled={listItems.length < 2} title="Reverses the order of all of your entries">
                 Reverse Entries
             </button>
-            <button type="button" onClick={() => sortEntries(false)} disabled={listItems.length==0} title="Sort all of your entries A-Z">
+            <button type="button" onClick={() => sortEntries(false)} disabled={listItems.length < 2} title="Sort all of your entries A-Z">
                 Sort Entries A-Z
             </button>
-            <button type="button" onClick={() => sortEntries(true)} disabled={listItems.length==0} title="Sort all of your entries Z-A">
+            <button type="button" onClick={() => sortEntries(true)} disabled={listItems.length < 2} title="Sort all of your entries Z-A">
                 Sort Entries Z-A
             </button>
             <br/><label title="Number of files used for output splits">

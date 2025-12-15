@@ -14,8 +14,9 @@ export const ListContainer = () => {
     const [files, setFiles] = useState([])
     const [unmaskPaths, setUnmaskPaths] = useState(false)
     const [uploadLabel, setUploadLabel] = useState("your")
-    const [outputName, setOutputName] = useState("");
-    const [finalOutput, setFinalOutput] = useState({name: "", data: ""});
+    const [outputName, setOutputName] = useState("")
+    const [presentComparisons, setPresentComparisons] = useState([])
+    const [finalOutput, setFinalOutput] = useState({name: "", data: ""})
     const [useFirstInfo, setUseFirstInfo] = useState(true)
     const [setupTime, setSetupTime] = useState(defaultSetup)
     const [gameComp, setGameComp] = useState(defaultPBComp)
@@ -76,8 +77,25 @@ export const ListContainer = () => {
         event.preventDefault()
     }
     window.addEventListener("beforeunload", alertUser);
+    
+    //Refresh all comparisons after list is modified
+    const refreshComparisons = (files) => {
+        setPresentComparisons(presentComparisons => {
+            let updatedPresentComparisons = [...presentComparisons]
+            let searchedComp = []
+            for(let file of Array.from(files).entries()){
+                searchedComp = file[0] != 0 ? searchedComp.filter(name => file[1].comparisons.includes(name)) : [...file[1].comparisons]
+            }
+            updatedPresentComparisons = searchedComp.map(
+                (comp) => {
+                    return {name: comp, used: presentComparisons.findIndex(c => c.name === comp) != -1 ? presentComparisons[presentComparisons.findIndex(c => c.name === comp)].used : true}
+                }
+            )
+            return updatedPresentComparisons
+        })
+    }
 
-    // Pre-included move function
+    //Pre-included move function
     const moveFileListItem = useCallback(
         (dragIndex, hoverIndex) => {
             const dragItem = files[dragIndex]
@@ -87,6 +105,7 @@ export const ListContainer = () => {
                 const updatedFiles = [...files]
                 updatedFiles[dragIndex] = hoverItem
                 updatedFiles[hoverIndex] = dragItem
+                refreshComparisons(updatedFiles)
                 return updatedFiles
             })
         },
@@ -102,6 +121,7 @@ export const ListContainer = () => {
                     ...{id: files.length+1},
                     ...itemData
                 })
+                refreshComparisons(updatedFiles)
                 return updatedFiles
             })
         },
@@ -117,6 +137,7 @@ export const ListContainer = () => {
                 for(let i = 0; i < updatedFiles.length; i++) {
                     updatedFiles[i].id = i+1;
                 }
+                refreshComparisons(updatedFiles)
                 return updatedFiles
             })
         },
@@ -132,6 +153,7 @@ export const ListContainer = () => {
                 for(let i = 0; i < updatedFiles.length; i++) {
                     updatedFiles[i].id = i+1;
                 }
+                refreshComparisons(updatedFiles)
                 return updatedFiles
             })
         },
@@ -151,6 +173,7 @@ export const ListContainer = () => {
                 for(let i = 0; i < updatedFiles.length; i++) {
                     updatedFiles[i].id = i+1;
                 }
+                refreshComparisons(updatedFiles)
                 return updatedFiles
             })
         },
@@ -165,6 +188,7 @@ export const ListContainer = () => {
                 setUnmaskPaths(false)
                 setUploadLabel("your")
                 setOutputName("")
+                setPresentComparisons([])
                 setFinalOutput({name: "", data: ""})
                 setUseFirstInfo(true)
                 setSetupTime(defaultSetup)
@@ -200,7 +224,8 @@ export const ListContainer = () => {
 
             {/* List operations */}
             <label id="unmask" title="Choose whether to unhide absolute filepath names for LiveSplit layouts">
-                Unmask Filepaths: <input type="checkbox" htmlFor="unmask" checked={unmaskPaths} onChange={(e) => setUnmaskPaths(e.target.checked)}/>
+                <input type="checkbox" htmlFor="unmask" checked={unmaskPaths} onChange={(e) => setUnmaskPaths(e.target.checked)}/>
+                Unmask Filepaths
             </label>
             <button type="button" onClick={resetStatuses} title="Closes any status box currently open on the webpage">
                 Close All Status Boxes
@@ -234,6 +259,8 @@ export const ListContainer = () => {
                 unmaskPaths={unmaskPaths}
                 updateCanDownload={updateCanDownload}
                 toggleSettings={toggleSettings}
+                presentComparisons={presentComparisons}
+                setPresentComparisons={setPresentComparisons}
                 useFirstInfo={useFirstInfo}
                 setUseFirstInfo={setUseFirstInfo}
                 customInfo={customInfo}

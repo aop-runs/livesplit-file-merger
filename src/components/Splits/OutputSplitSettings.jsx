@@ -175,19 +175,24 @@ export const OutputSplitSettings = ({ listItems, updateCanDownload, setGameComp,
                 {/* Toggle Settings */}
                 <br/>
                 <label id="pbbox" title="Choose whether to carry over your pbs from your split files as a new comparison">
-                    Carry over PBs: <input type="checkbox" disabled={listItems.length < 2} htmlFor="pbbox" checked={toggleSettings["pb"]} onChange={(e) => toggleCheckbox("pb", e.target.checked)}/>
+                    <input type="checkbox" disabled={listItems.length < 2} htmlFor="pbbox" checked={toggleSettings["pb"]} onChange={(e) => toggleCheckbox("pb", e.target.checked)}/>
+                    Carry over PBs
                 </label><br/>
                 <label id="sobbox" title="Choose whether to carry over your sum of best segments from your split files">
-                    Carry over Sum of Best Times: <input type="checkbox" disabled={listItems.length < 2} htmlFor="sobbox" checked={toggleSettings["sob"]} onChange={(e) => toggleCheckbox("sob", e.target.checked)}/>
+                    <input type="checkbox" disabled={listItems.length < 2} htmlFor="sobbox" checked={toggleSettings["sob"]} onChange={(e) => toggleCheckbox("sob", e.target.checked)}/>
+                    Carry over Sum of Best Times
                 </label><br/>
                 <label id="compbox" title="Choose whether to carry over other comparisons found from your split files">
-                    Carry over Other Comparisons: <input type="checkbox" disabled={listItems.length < 2} htmlFor="compbox" checked={toggleSettings["comp"]} onChange={(e) => toggleCheckbox("comp", e.target.checked)}/>
+                    <input type="checkbox" disabled={listItems.length < 2} htmlFor="compbox" checked={toggleSettings["comp"]} onChange={(e) => toggleCheckbox("comp", e.target.checked)}/>
+                    Carry over Other Comparisons
                 </label><br/>
                 <label id="iconbox" title="Choose whether to carry over segment icons from your splits files">
-                    Carry over Segment Icons: <input type="checkbox" disabled={listItems.length < 2} htmlFor="iconbox" checked={toggleSettings["icon"]} onChange={(e) => toggleCheckbox("icon", e.target.checked)}/>
+                    <input type="checkbox" disabled={listItems.length < 2} htmlFor="iconbox" checked={toggleSettings["icon"]} onChange={(e) => toggleCheckbox("icon", e.target.checked)}/>
+                    Carry over Segment Icons
                 </label><br/>
                 <label id="subsbox" title="Choose whether to create new subsplits for each game (Note: This setting will remove existing subsplits from your splits files if toggled on)">
-                    Create Subsplits for Each Game: <input type="checkbox" disabled={listItems.length < 2} htmlFor="subsbox" checked={toggleSettings["subs"]} onChange={(e) => toggleCheckbox("subs", e.target.checked)}/>
+                    <input type="checkbox" disabled={listItems.length < 2} htmlFor="subsbox" checked={toggleSettings["subs"]} onChange={(e) => toggleCheckbox("subs", e.target.checked)}/>
+                    Create Subsplits for Each Game
                 </label><br/>
                 <button type="button" disabled={listItems.length < 2 || (Array.from(new Set(Object.values(toggleSettings)))[0] == true && new Set(Object.values(toggleSettings)).size == 1)} onClick={() => toggleAllCheckboxes(true)} title="Toogle all above checkbox settings on">
                     Toggle Above Settings On

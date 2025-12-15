@@ -4,8 +4,26 @@ import { StatusBox } from '../StatusBox.jsx'
 import { isAValidFile, layoutExtension } from '../../utils/file.js'
 import { defaultSetup, defaultPBComp } from "../../utils/livesplit.js";
 
-export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, toggleSettings, useFirstInfo, setUseFirstInfo, customInfo, setCustomInfo, setupTime, setSetupTime, gameComp, setGameComp, appStatuses, updateStatus }) => {
+export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, toggleSettings, presentComparisons, setPresentComparisons, useFirstInfo, setUseFirstInfo, customInfo, setCustomInfo, setupTime, setSetupTime, gameComp, setGameComp, appStatuses, updateStatus }) => {
     
+    //Toggle whether selected comparison should be carried over to output file
+    const toggleComparison = (key, value) => {
+        setPresentComparisons(presentComparisons => {
+            const updatedPresentComparisons = [...presentComparisons]
+            updatedPresentComparisons[updatedPresentComparisons.findIndex(comp => comp.name === key)].used = value
+            return updatedPresentComparisons
+        })
+    }
+    const toggleAllComparisons = (value) => {
+        setPresentComparisons(presentComparisons => {
+            const updatedPresentComparisons = [...presentComparisons]
+            for(let i = 0; i < updatedPresentComparisons.length; i++){
+                updatedPresentComparisons[i].used = value
+            }
+            return updatedPresentComparisons
+        })
+    }
+
     //Toggle whether to use custom layout and filepath or ones from the first LiveSplit file
     const toggleFirstInfo = (value) => {
         setUseFirstInfo(value)
@@ -215,7 +233,7 @@ export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, togg
         checkGameComp(value)
     }
 
-    //Check setup split time
+    //Check game PB comparison name
     const checkGameComp = (value) => {
         if(value.length == 0){
             updateStatus("comp", {
@@ -231,6 +249,13 @@ export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, togg
             })
             updateCanDownload("comp", false)
         }
+        else if(presentComparisons.findIndex(c => c.name === value) != -1){
+            updateStatus("comp", {
+                header: "Error",
+                message: ["Comparison cannot be named after an existing comparison that will be carried over in your output splits"]
+            })
+            updateCanDownload("comp", false)
+        }
         else{
             updateStatus("comp")
             updateCanDownload("comp", true)
@@ -241,6 +266,29 @@ export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, togg
             //Settings for output layout, offset, and setup split times
             <React.Fragment>
                 
+                {/* Comparisons Present in Each Item */}
+                {toggleSettings["comp"] && 
+                <React.Fragment>
+                    <label title="Comparisons present in every file that can be toggled whether they can be carried over to your output splits">
+                        {presentComparisons.map((comp, index) => {
+                            return (
+                                <label id={comp.name} key={index}>
+                                    <input type="checkbox" disabled={listItems.length < 2} htmlFor={comp.name} checked={comp.used} onChange={(e) => toggleComparison(comp.name, e.target.checked)}/>
+                                    Carry over {comp.name} Comparison<br/>
+                                </label>
+                            );
+                        })}
+                    </label>
+                    <button type="button" disabled={listItems.length < 2 || (Array.from(new Set(presentComparisons.map((comp) => {return comp.used})))[0] == true && new Set(presentComparisons.map((comp) => {return comp.used})).size == 1)} onClick={() => toggleAllComparisons(true)} title="Toogle all above comparison settings on">
+                        Toggle All Comparisons On
+                    </button>
+                    <button type="button" disabled={listItems.length < 2 || (Array.from(new Set(presentComparisons.map((comp) => {return comp.used})))[0] == false && new Set(presentComparisons.map((comp) => {return comp.used})).size == 1)} onClick={() => toggleAllComparisons(false)} title="Toogle all above comparison settings off">
+                        Toggle All Comparisons Off
+                    </button>
+                    <br/><br/>
+                </React.Fragment>
+                }
+
                 {/* Custom Layout */}
                 {(appStatuses.layout.header.length > 0) && <StatusBox
                     header={appStatuses.layout.header}
@@ -285,7 +333,8 @@ export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, togg
                     }
                 </label><br/>
                 <label id="usefirst" title="Choose whether to use the first LiveSplit file's layout filepath and timer offset or custom specified ones">
-                    Use Properties from First Entry: <input type="checkbox" disabled={listItems.length < 2} htmlFor="unfirst" checked={useFirstInfo} onChange={(e) => toggleFirstInfo(e.target.checked)}/>
+                    <input type="checkbox" disabled={listItems.length < 2} htmlFor="unfirst" checked={useFirstInfo} onChange={(e) => toggleFirstInfo(e.target.checked)}/>
+                    Use Properties from First Entry
                 </label><br/>
 
                 {/* Setup Split Time */}
