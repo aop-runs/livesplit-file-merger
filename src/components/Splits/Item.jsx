@@ -4,7 +4,7 @@ import { useDrag, useDrop } from 'react-dnd'
 import { ItemModal } from './ItemModal'
 import '../../styles/style.css'
 
-export const Item = ({ index, listSize, itemData, unmaskPaths, moveListItem, removeListItem }) => {
+export const Item = ({ index, listSize, itemData, updateCanDownload, gameComp, unmaskPaths, listItems, moveListItem, removeListItem, updateStatus }) => {
 
     // useDrag - the list item is draggable
     const [isDraggingEnabled, setIsDraggingEnabled] = useState(true);
@@ -50,7 +50,43 @@ export const Item = ({ index, listSize, itemData, unmaskPaths, moveListItem, rem
     }
     const removeItem = (event) => {
         event.stopPropagation()
+        let repeatComparisons = []
+        for(let file of Array.from(listItems).entries()){
+            if(file[0] != index){
+                repeatComparisons = repeatComparisons.length != 0 ? repeatComparisons.filter(name => file[1].comparisons.includes(name)) : file[1].comparisons
+            }
+        }
         removeListItem(index)
+        checkGameComp(repeatComparisons)
+    }
+
+    //Check game PB comparison name
+    const checkGameComp = (repeatComparisons) => {
+        if(gameComp.length == 0){
+            updateStatus("comp", {
+                header: "Warning",
+                message: ["No game PB comparison name provided"]
+            })
+            updateCanDownload("comp", false)
+        }
+        else if(gameComp == "Personal Best"){
+            updateStatus("comp", {
+                header: "Error",
+                message: ["Comparison cannot be named \'Personal Best\' as it's the default name for LiveSplit's PB comparison"]
+            })
+            updateCanDownload("comp", false)
+        }
+        else if(repeatComparisons.includes(gameComp)){
+            updateStatus("comp", {
+                header: "Error",
+                message: ["Comparison cannot be named after an existing comparison that will be carried over in your output splits"]
+            })
+            updateCanDownload("comp", false)
+        }
+        else{
+            updateStatus("comp")
+            updateCanDownload("comp", true)
+        }
     }
 
     //Modal functions that disable dragging

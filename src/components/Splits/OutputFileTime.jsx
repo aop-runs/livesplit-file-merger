@@ -7,21 +7,17 @@ import { defaultSetup, defaultPBComp } from "../../utils/livesplit.js";
 export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, toggleSettings, presentComparisons, setPresentComparisons, useFirstInfo, setUseFirstInfo, customInfo, setCustomInfo, setupTime, setSetupTime, gameComp, setGameComp, appStatuses, updateStatus }) => {
     
     //Toggle whether selected comparison should be carried over to output file
-    const toggleComparison = (key, value) => {
+    const toggleComparison = (index, value) => {
         setPresentComparisons(presentComparisons => {
             const updatedPresentComparisons = [...presentComparisons]
-            updatedPresentComparisons[updatedPresentComparisons.findIndex(comp => comp.name === key)].used = value
+            updatedPresentComparisons[index].used = value
             return updatedPresentComparisons
         })
     }
     const toggleAllComparisons = (value) => {
-        setPresentComparisons(presentComparisons => {
-            const updatedPresentComparisons = [...presentComparisons]
-            for(let i = 0; i < updatedPresentComparisons.length; i++){
-                updatedPresentComparisons[i].used = value
-            }
-            return updatedPresentComparisons
-        })
+        for(let i = 0; i < presentComparisons.length; i++){
+            toggleComparison(i, value)
+        }
     }
 
     //Toggle whether to use custom layout and filepath or ones from the first LiveSplit file
@@ -273,7 +269,7 @@ export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, togg
                         {presentComparisons.map((comp, index) => {
                             return (
                                 <label id={comp.name} key={index}>
-                                    <input type="checkbox" disabled={listItems.length < 2} htmlFor={comp.name} checked={comp.used} onChange={(e) => toggleComparison(comp.name, e.target.checked)}/>
+                                    <input type="checkbox" disabled={listItems.length < 2} htmlFor={comp.name} checked={comp.used} onChange={(e) => toggleComparison(index, e.target.checked)}/>
                                     Carry over {comp.name} Comparison<br/>
                                 </label>
                             );

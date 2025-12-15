@@ -235,6 +235,8 @@ export const ListContainer = () => {
             </button>
             <FileUpload
                 addListItem={addFileListItem}
+                updateCanDownload={updateCanDownload}
+                gameComp={gameComp}
                 uploadLabel={uploadLabel}
                 setUploadLabel={setUploadLabel}
                 appStatuses={appStatuses}
@@ -246,10 +248,13 @@ export const ListContainer = () => {
             <ItemList
                 listItems={files}
                 unmaskPaths={unmaskPaths}
+                updateCanDownload={updateCanDownload}
+                gameComp={gameComp}
                 moveListItem={moveFileListItem}
                 removeListItem={removeFileListItem}
                 reverseEntries={reverseEntries}
                 sortEntries={sortEntries}
+                updateStatus={updateStatus}
             />
 
             {/* Output Settings */}
