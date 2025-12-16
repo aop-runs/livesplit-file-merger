@@ -146,7 +146,7 @@ function adjustTemplateText(template, game, category, currentNumber, totalGames)
 }
 
 //Convert split time to seconds
-function timeToSeconds(time){
+export function timeToSeconds(time){
     let values = time.split(":");
     let hourValues = values[0].split(".");
     let hour = 0;

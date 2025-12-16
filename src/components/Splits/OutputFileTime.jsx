@@ -2,7 +2,7 @@
 import React, { useRef } from 'react'
 import { StatusBox } from '../StatusBox.jsx'
 import { isAValidFile, layoutExtension } from '../../utils/file.js'
-import { defaultSetup, defaultPBComp } from "../../utils/livesplit.js";
+import { defaultSetup, defaultPBComp, timeToSeconds } from "../../utils/livesplit.js";
 
 export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, outputSettings, setOutputSettings, checkGameComp, appStatuses, updateStatus }) => {
     
@@ -217,6 +217,12 @@ export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, outp
                 hasInvalid = true
             }
         }
+
+        //Time provided is not 0
+        if(!hasInvalid && timeToSeconds(value) == 0){
+            hasInvalid = true
+        }
+
         if(hasInvalid){
             updateStatus("setup", {
                 header: "Error",
