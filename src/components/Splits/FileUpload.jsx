@@ -5,7 +5,7 @@ import { gatherFileContents, validSpecifier } from '../../utils/file.js'
 import { cleanSplitsFile, gatherRunName, findCustomComparisons, gatherSplitsDataByTag } from '../../utils/livesplit.js'
 import '../../styles/style.css'
 
-export const FileUpload = ({ addListItem, updateCanDownload, gameComp, uploadLabel, setUploadLabel, appStatuses, updateStatus }) => {
+export const FileUpload = ({ addListItem, updateCanDownload, outputSettings, uploadLabel, setUploadLabel, appStatuses, updateStatus }) => {
 
     //Pre-included wrappers
     const wrapperRef = useRef(null);
@@ -31,7 +31,6 @@ export const FileUpload = ({ addListItem, updateCanDownload, gameComp, uploadLab
             message: ["Adding " + selectedFiles.length.toString() + " file" + (selectedFiles.length != 1 ? "s" : "")]
         })
         let uploadErrors = []
-        let repeatComparisons = []
         let fileAmount = selectedFiles.length
         for(let newFile of Array.from(selectedFiles).entries()){
             if(newFile[1]) {
@@ -44,7 +43,6 @@ export const FileUpload = ({ addListItem, updateCanDownload, gameComp, uploadLab
                             contents = cleanSplitsFile(contents)
                             let g = gatherSplitsDataByTag(contents, "GameName")
                             let c = gatherSplitsDataByTag(contents, "CategoryName")
-                            let comp = findCustomComparisons(contents)
                             addListItem({
                                 runName: gatherRunName(g, c),
                                 game: g,
@@ -52,10 +50,9 @@ export const FileUpload = ({ addListItem, updateCanDownload, gameComp, uploadLab
                                 filename: newFile[1].name,
                                 layoutPath: gatherSplitsDataByTag(contents, "LayoutPath"),
                                 offset: gatherSplitsDataByTag(contents, "Offset"),
-                                comparisons: comp,
+                                comparisons: findCustomComparisons(contents),
                                 contents: contents
                             })
-                            repeatComparisons = repeatComparisons.length != 0 ? repeatComparisons.filter(name => comp.includes(name)) : comp
                         } catch (error) {
                             uploadErrors.push("Unable to upload: " + newFile[1].name + " - " + error)
                             updateStatus("upload", {
@@ -71,7 +68,6 @@ export const FileUpload = ({ addListItem, updateCanDownload, gameComp, uploadLab
                                     message: [fileAmount.toString() + " file" + (fileAmount != 1 ? "s" : "") + " added to entries"]
                                 })
                             }
-                            checkGameComp(repeatComparisons)
                         }
                     }
                 );
@@ -89,35 +85,6 @@ export const FileUpload = ({ addListItem, updateCanDownload, gameComp, uploadLab
             }
         }
         setUploadLabel("some more")
-    }
-    
-    //Check game PB comparison name
-    const checkGameComp = (repeatComparisons) => {
-        if(gameComp.length == 0){
-            updateStatus("comp", {
-                header: "Warning",
-                message: ["No game PB comparison name provided"]
-            })
-            updateCanDownload("comp", false)
-        }
-        else if(gameComp == "Personal Best"){
-            updateStatus("comp", {
-                header: "Error",
-                message: ["Comparison cannot be named \'Personal Best\' as it's the default name for LiveSplit's PB comparison"]
-            })
-            updateCanDownload("comp", false)
-        }
-        else if(repeatComparisons.includes(gameComp)){
-            updateStatus("comp", {
-                header: "Error",
-                message: ["Comparison cannot be named after an existing comparison that will be carried over in your output splits"]
-            })
-            updateCanDownload("comp", false)
-        }
-        else{
-            updateStatus("comp")
-            updateCanDownload("comp", true)
-        }
     }
 
     return (

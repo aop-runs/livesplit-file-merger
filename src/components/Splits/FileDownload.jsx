@@ -4,22 +4,26 @@ import { downloadFile, downloadFileAs, validSpecifier, isAValidFile, openContent
 import { gatherSplitsDataByTag, createOutputSplits } from '../../utils/livesplit.js'
 import '../../styles/style.css'
 
-export const FileDownload = ({ listItems, unmaskPaths, canDownload, updateCanDownload, outputName, setOutputName, finalOutput, setFinalOutput, runName, useFirstInfo, setupTime, gameComp, customInfo, usedTimings, templateText, toggleSettings, appStatuses, updateStatus }) => {
+export const FileDownload = ({ listItems, unmaskPaths, canDownload, updateCanDownload, outputSettings, setOutputSettings, finalOutput, setFinalOutput, appStatuses, updateStatus }) => {
 
     //Track filename
     const updateFilename = (name) => {
-        setOutputName(name)
+        setOutputSettings(outputSettings => {
+            const updatedSettings = {...outputSettings}
+            updatedSettings["outputName"] = name
+            return updatedSettings
+        })
         checkFilename(name)
     }
 
     //Gather default name by game and categories
     const getDefaultFilename = () => {
         let defaultName = []
-        if(runName.game.length != 0){
-            defaultName.push(runName.game)
+        if(outputSettings["runName"].game.length != 0){
+            defaultName.push(outputSettings["runName"].game)
         }
-        if(runName.category.length != 0){
-            defaultName.push(runName.category)
+        if(outputSettings["runName"].category.length != 0){
+            defaultName.push(outputSettings["runName"].category)
         }
         if(defaultName.length == 0){
             return "Untitled"
@@ -65,7 +69,7 @@ export const FileDownload = ({ listItems, unmaskPaths, canDownload, updateCanDow
         setFinalOutput({name: "", data: ""})
         let splitsData = ""
         try {
-            splitsData = createOutputSplits(listItems, runName, useFirstInfo, setupTime, gameComp, customInfo, usedTimings, templateText, toggleSettings)
+            splitsData = createOutputSplits(listItems, outputSettings)
             updateStatus("output", {
                 header: "Success",
                 message: ["Output splits file named: " + filename + validSpecifier.extension + " is ready to be downloaded below"]
@@ -127,14 +131,14 @@ export const FileDownload = ({ listItems, unmaskPaths, canDownload, updateCanDow
             />}
             <div title="Filename for output splits file">
                 <label>Output Filename: </label>
-                <input type="text" disabled={listItems.length < 2} placeholder={"filename.lss"} value={outputName} onChange={(e) => updateFilename(e.target.value)}/>
-                <button type="button" disabled={listItems.length < 2 || outputName.length == 0} onClick={() => updateFilename("")} title="Clear textfield for output's filename">
+                <input type="text" disabled={listItems.length < 2} placeholder={"filename.lss"} value={outputSettings["outputName"]} onChange={(e) => updateFilename(e.target.value)}/>
+                <button type="button" disabled={listItems.length < 2 || outputSettings["outputName"].length == 0} onClick={() => updateFilename("")} title="Clear textfield for output's filename">
                     Clear Filename
                 </button>
                 <button type="button" disabled={listItems.length < 2} onClick={() => updateFilename(getDefaultFilename())} title="Set default output filename based on the name of the run">
                     Set Default Filename
                 </button>
-                <button type="button" disabled={listItems.length < 2 || outputName.length == 0 || !(Array.from(new Set(Object.values(canDownload)))[0] == true && new Set(Object.values(canDownload)).size == 1)} onClick={() => prepareOutputSplits(outputName.replace(validSpecifier.extension, ""))} title="Prepares output file for combined splits that can be downloaded">
+                <button type="button" disabled={listItems.length < 2 || outputSettings["outputName"].length == 0 || !(Array.from(new Set(Object.values(canDownload)))[0] == true && new Set(Object.values(canDownload)).size == 1)} onClick={() => prepareOutputSplits(outputSettings["outputName"].replace(validSpecifier.extension, ""))} title="Prepares output file for combined splits that can be downloaded">
                     Prepare Output Splits
                 </button>
             </div>

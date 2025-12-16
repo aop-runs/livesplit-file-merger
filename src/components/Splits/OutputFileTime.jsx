@@ -4,29 +4,30 @@ import { StatusBox } from '../StatusBox.jsx'
 import { isAValidFile, layoutExtension } from '../../utils/file.js'
 import { defaultSetup, defaultPBComp } from "../../utils/livesplit.js";
 
-export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, toggleSettings, presentComparisons, setPresentComparisons, useFirstInfo, setUseFirstInfo, customInfo, setCustomInfo, setupTime, setSetupTime, gameComp, setGameComp, appStatuses, updateStatus }) => {
+export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, outputSettings, setOutputSettings, checkGameComp, appStatuses, updateStatus }) => {
     
     //Toggle whether selected comparison should be carried over to output file
     const toggleComparison = (index, value) => {
-        setPresentComparisons(presentComparisons => {
-            const updatedPresentComparisons = [...presentComparisons]
-            updatedPresentComparisons[index].used = value
-            return updatedPresentComparisons
+        setOutputSettings(outputSettings => {
+            const updatedSettings = {...outputSettings}
+            updatedSettings["usedComparisons"][index].used = value
+            return updatedSettings
         })
     }
     const toggleAllComparisons = (value) => {
-        for(let i = 0; i < presentComparisons.length; i++){
+        for(let i = 0; i < outputSettings["usedComparisons"].length; i++){
             toggleComparison(i, value)
         }
     }
 
     //Toggle whether to use custom layout and filepath or ones from the first LiveSplit file
     const toggleFirstInfo = (value) => {
-        setUseFirstInfo(value)
         if(!value && listItems.length != 0){
-            setCustomInfo({
-                layout: listItems[0].layoutPath,
-                offset: listItems[0].offset
+            setOutputSettings(outputSettings => {
+                const updatedSettings = {...outputSettings}
+                updatedSettings["customInfo"].layout = listItems[0].layoutPath
+                updatedSettings["customInfo"].offset = listItems[0].offset
+                return updatedSettings
             })
             updateStatus("layout", {
                 header: "Caution",
@@ -34,9 +35,11 @@ export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, togg
             })
         }
         else{
-            setCustomInfo({
-                layout: "",
-                offset: ""
+            setOutputSettings(outputSettings => {
+                const updatedSettings = {...outputSettings}
+                updatedSettings["customInfo"].layout = null
+                updatedSettings["customInfo"].offset = null
+                return updatedSettings
             })
             updateStatus("layout")
             updateStatus("offset")
@@ -45,10 +48,10 @@ export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, togg
 
     //Update custom layout path or offset
     const changeCustomSetting = (key, value) => {
-        setCustomInfo(customInfo => {
-            const updatedCustomInfo = {...customInfo}
-            updatedCustomInfo[key] = value
-            return updatedCustomInfo
+        setOutputSettings(outputSettings => {
+            const updatedSettings = {...outputSettings}
+            updatedSettings["customInfo"][key] = value
+            return updatedSettings
         })
         if(key == "layout"){
             checkLayout(value)
@@ -140,7 +143,7 @@ export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, togg
 
     //Update custom layout with the name of the file gathered from file picker
     const changeLayoutFile = (e) => {
-        let splitPath = customInfo.layout.split("\\")
+        let splitPath = outputSettings["customInfo"].layout.split("\\")
         splitPath[splitPath.length - 1] = e.target.files[0].name
         let finalPath = splitPath.join("\\")
         changeCustomSetting("layout", finalPath)
@@ -155,7 +158,11 @@ export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, togg
 
     //Update setup split time
     const updateSetupTime = (value) => {
-        setSetupTime(value)
+        setOutputSettings(outputSettings => {
+            const updatedSettings = {...outputSettings}
+            updatedSettings["setupTime"] = value
+            return updatedSettings
+        })
         checkSetup(value)
     }
 
@@ -225,37 +232,12 @@ export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, togg
 
     //Update game PB comparison name
     const updateComparisonName = (value) => {
-        setGameComp(value)
-        checkGameComp(value)
-    }
-
-    //Check game PB comparison name
-    const checkGameComp = (value) => {
-        if(value.length == 0){
-            updateStatus("comp", {
-                header: "Warning",
-                message: ["No game PB comparison name provided"]
-            })
-            updateCanDownload("comp", false)
-        }
-        else if(value == "Personal Best"){
-            updateStatus("comp", {
-                header: "Error",
-                message: ["Comparison cannot be named \'Personal Best\' as it's the default name for LiveSplit's PB comparison"]
-            })
-            updateCanDownload("comp", false)
-        }
-        else if(presentComparisons.findIndex(c => c.name === value) != -1){
-            updateStatus("comp", {
-                header: "Error",
-                message: ["Comparison cannot be named after an existing comparison that will be carried over in your output splits"]
-            })
-            updateCanDownload("comp", false)
-        }
-        else{
-            updateStatus("comp")
-            updateCanDownload("comp", true)
-        }
+        setOutputSettings(outputSettings => {
+            const updatedSettings = {...outputSettings}
+            updatedSettings["gameComp"] = value
+            checkGameComp(updatedSettings)
+            return updatedSettings
+        })
     }
 
     return (
@@ -263,22 +245,29 @@ export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, togg
             <React.Fragment>
                 
                 {/* Comparisons Present in Each Item */}
-                {toggleSettings["comp"] && 
+                {outputSettings["toggles"]["comp"] && 
                 <React.Fragment>
-                    <label title="Comparisons present in every file that can be toggled whether they can be carried over to your output splits">
-                        {presentComparisons.map((comp, index) => {
-                            return (
-                                <label id={comp.name} key={index}>
-                                    <input type="checkbox" disabled={listItems.length < 2} htmlFor={comp.name} checked={comp.used} onChange={(e) => toggleComparison(index, e.target.checked)}/>
-                                    Carry over {comp.name} Comparison<br/>
-                                </label>
-                            );
-                        })}
-                    </label>
-                    <button type="button" disabled={listItems.length < 2 || (Array.from(new Set(presentComparisons.map((comp) => {return comp.used})))[0] == true && new Set(presentComparisons.map((comp) => {return comp.used})).size == 1)} onClick={() => toggleAllComparisons(true)} title="Toogle all above comparison settings on">
+                    {outputSettings["usedComparisons"].length != 0 &&
+                        <label title="Comparisons present in every file that can be toggled whether they can be carried over to your output splits">
+                            {outputSettings["usedComparisons"].map((comp, index) => {
+                                return (
+                                    <label id={comp.name} key={index}>
+                                        <input type="checkbox" disabled={listItems.length < 2} htmlFor={comp.name} checked={comp.used} onChange={(e) => toggleComparison(index, e.target.checked)}/>
+                                        Carry over {comp.name} Comparison<br/>
+                                    </label>
+                                );
+                            })}
+                        </label>
+                    }
+                    {outputSettings["usedComparisons"].length == 0 &&
+                        <label title="Label for no comparisons found that can be carried over to your output splits">
+                            No comparisons found that exist in each entry<br/>
+                        </label>
+                    }
+                    <button type="button" disabled={listItems.length < 2 || (Array.from(new Set(outputSettings["usedComparisons"].map((comp) => {return comp.used})))[0] == true && new Set(outputSettings["usedComparisons"].map((comp) => {return comp.used})).size == 1)} onClick={() => toggleAllComparisons(true)} title="Toogle all above comparison settings on">
                         Toggle All Comparisons On
                     </button>
-                    <button type="button" disabled={listItems.length < 2 || (Array.from(new Set(presentComparisons.map((comp) => {return comp.used})))[0] == false && new Set(presentComparisons.map((comp) => {return comp.used})).size == 1)} onClick={() => toggleAllComparisons(false)} title="Toogle all above comparison settings off">
+                    <button type="button" disabled={listItems.length < 2 || (Array.from(new Set(outputSettings["usedComparisons"].map((comp) => {return comp.used})))[0] == false && new Set(outputSettings["usedComparisons"].map((comp) => {return comp.used})).size == 1)} onClick={() => toggleAllComparisons(false)} title="Toogle all above comparison settings off">
                         Toggle All Comparisons Off
                     </button>
                     <br/><br/>
@@ -292,16 +281,16 @@ export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, togg
                     hideStatus={() => updateStatus("layout")}
                 />}
                 <label title="The layout LiveSplit will use for your output splits">
-                    Starting Layout: {useFirstInfo && 
+                    Starting Layout: {(outputSettings["customInfo"].layout == null && outputSettings["customInfo"].offset == null) && 
                         (listItems.length!=0 && listItems[0].layoutPath.length!=0 ? (unmaskPaths ? listItems[0].layoutPath : "*".repeat(listItems[0].layoutPath.length)) : "N/A")
                     }
-                    {!useFirstInfo && 
+                    {(outputSettings["customInfo"].layout != null && outputSettings["customInfo"].offset != null) && 
                         <React.Fragment>
-                            <input type={unmaskPaths ? "text" : "password" } disabled={listItems.length < 2} placeholder={"filepath\\filename.lsl"} value={customInfo.layout} onChange={(e) => changeCustomSetting("layout", e.target.value)}/>
-                            <button type="button" disabled={customInfo.layout.length == 0} onClick={() => changeCustomSetting("layout", "")} title="Clear textfield for starting layout">
+                            <input type={unmaskPaths ? "text" : "password" } disabled={listItems.length < 2} placeholder={"filepath\\filename.lsl"} value={outputSettings["customInfo"].layout} onChange={(e) => changeCustomSetting("layout", e.target.value)}/>
+                            <button type="button" disabled={outputSettings["customInfo"].layout.length == 0} onClick={() => changeCustomSetting("layout", "")} title="Clear textfield for starting layout">
                                 Clear Layout
                             </button>
-                            <button type="button" disabled={customInfo.layout.length == 0} onClick={promptLayoutFile} title="Select another layout that exists in your current directory">
+                            <button type="button" disabled={outputSettings["customInfo"].layout.length == 0} onClick={promptLayoutFile} title="Select another layout that exists in your current directory">
                                 Select Another Layout
                             </button>
                             <input type="file" className = "layoutUpload" ref={layoutRef} value= "" accept={layoutExtension} onChange={changeLayoutFile} />
@@ -316,20 +305,20 @@ export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, togg
                     hideStatus={() => updateStatus("offset")}
                 />}
                 <label title="The offset LiveSplit will use for your output splits">
-                    Starting Offset: {useFirstInfo && 
+                    Starting Offset: {(outputSettings["customInfo"].layout == null && outputSettings["customInfo"].offset == null) && 
                         (listItems.length!=0 ? listItems[0].offset : "N/A")
                     }
-                    {!useFirstInfo && 
+                    {(outputSettings["customInfo"].layout != null && outputSettings["customInfo"].offset != null) && 
                         <React.Fragment>
-                            <input type="text" disabled={listItems.length < 2} placeholder={"-0.00:00:00.0000000"} value={customInfo.offset} onChange={(e) => changeCustomSetting("offset", e.target.value)}/>
-                            <button type="button" disabled={customInfo.offset.length == 0} onClick={() => changeCustomSetting("offset", "")} title="Clear textfield for starting offset">
+                            <input type="text" disabled={listItems.length < 2} placeholder={"-0.00:00:00.0000000"} value={outputSettings["customInfo"].offset} onChange={(e) => changeCustomSetting("offset", e.target.value)}/>
+                            <button type="button" disabled={outputSettings["customInfo"].offset.length == 0} onClick={() => changeCustomSetting("offset", "")} title="Clear textfield for starting offset">
                                 Clear Offset
                             </button>
                         </React.Fragment>
                     }
                 </label><br/>
                 <label id="usefirst" title="Choose whether to use the first LiveSplit file's layout filepath and timer offset or custom specified ones">
-                    <input type="checkbox" disabled={listItems.length < 2} htmlFor="unfirst" checked={useFirstInfo} onChange={(e) => toggleFirstInfo(e.target.checked)}/>
+                    <input type="checkbox" disabled={listItems.length < 2} htmlFor="unfirst" checked={(outputSettings["customInfo"].layout == null && outputSettings["customInfo"].offset == null)} onChange={(e) => toggleFirstInfo(e.target.checked)}/>
                     Use Properties from First Entry
                 </label><br/>
 
@@ -341,8 +330,8 @@ export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, togg
                 />}
                 <div title="The time allotted for setup splits for split calculations">
                     <label>Setup Split Time: </label>
-                    <input type="text" disabled={listItems.length < 2} placeholder={"0.00:00:00.0000000"} value={setupTime} onChange={(e) => updateSetupTime(e.target.value)}/>
-                    <button type="button" disabled={listItems.length < 2 || setupTime.length == 0} onClick={() => updateSetupTime("")} title="Clear textfield for setup split time">
+                    <input type="text" disabled={listItems.length < 2} placeholder={"0.00:00:00.0000000"} value={outputSettings["setupTime"]} onChange={(e) => updateSetupTime(e.target.value)}/>
+                    <button type="button" disabled={listItems.length < 2 || outputSettings["setupTime"].length == 0} onClick={() => updateSetupTime("")} title="Clear textfield for setup split time">
                         Clear Setup Split Time
                     </button>
                     <button type="button" disabled={listItems.length < 2} onClick={() => updateSetupTime(defaultSetup)} title="Revert back to default setup split time">
@@ -351,7 +340,7 @@ export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, togg
                 </div>
 
                 {/* Game Comparison Name */}
-                {toggleSettings["pb"] && 
+                {outputSettings["toggles"]["pb"] && 
                     <React.Fragment>
                     {(appStatuses.comp.header.length > 0) && <StatusBox
                         header={appStatuses.comp.header}
@@ -360,8 +349,8 @@ export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, togg
                     />}
                     <div title="The name of the comparison for current game PBs">
                         <label>Game PB Comparison Name: </label>
-                        <input type="text" disabled={listItems.length < 2} placeholder={"Comparison Name"} value={gameComp} onChange={(e) => updateComparisonName(e.target.value)}/>
-                        <button type="button" disabled={listItems.length < 2 || gameComp.length == 0} onClick={() => updateComparisonName("")} title="Clear textfield for game PB comparison name">
+                        <input type="text" disabled={listItems.length < 2} placeholder={"Comparison Name"} value={outputSettings["gameComp"]} onChange={(e) => updateComparisonName(e.target.value)}/>
+                        <button type="button" disabled={listItems.length < 2 || outputSettings["gameComp"].length == 0} onClick={() => updateComparisonName("")} title="Clear textfield for game PB comparison name">
                             Clear Comparison Name
                         </button>
                         <button type="button" disabled={listItems.length < 2} onClick={() => updateComparisonName(defaultPBComp)} title="Revert back to default game PB comparison name">

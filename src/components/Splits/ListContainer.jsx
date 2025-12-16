@@ -14,26 +14,44 @@ export const ListContainer = () => {
     const [files, setFiles] = useState([])
     const [unmaskPaths, setUnmaskPaths] = useState(false)
     const [uploadLabel, setUploadLabel] = useState("your")
-    const [outputName, setOutputName] = useState("")
-    const [presentComparisons, setPresentComparisons] = useState([])
+    const [requestData, setRequestData] = useState({game: [], category: [], selectedGame: null})
     const [finalOutput, setFinalOutput] = useState({name: "", data: ""})
-    const [useFirstInfo, setUseFirstInfo] = useState(true)
-    const [setupTime, setSetupTime] = useState(defaultSetup)
-    const [gameComp, setGameComp] = useState(defaultPBComp)
-    const [customInfo, setCustomInfo] = useState({layout: "", offset: ""})
-    const [usedTimings, setUsedTimings] = useState({realTime: true, gameTime: false})
-    const [templateText, setTemplateText] = useState({setup: "", final: ""})
-    const [runName, setRunName] = useState({game: "", category: ""})
-    const [toggleSettings, setToggleSettings] = useState(() => {
-        const obj = {}
-        for(let key of ["pb", "sob", "comp", "icon", "subs"]){
-            obj[key] = true
-        }
-        return obj
-    })
-    const [requestData, setRequestData] = useState({game: [], category: []})
-    const [selectedRequestedGame, setSelectedRequestedGame] = useState(null)
 
+    //Output settings for customizing splits
+    const initializeSettings = () => {
+        return {
+            outputName: "",
+            usedComparisons: [],
+            setupTime: defaultSetup,
+            gameComp: defaultPBComp,
+            useFirst: true,
+            customInfo: {
+                layout: null,
+                offset: null
+            },
+            usedTimings: {
+                realTime: true,
+                gameTime: false
+            },
+            templateText: {
+                setup: "",
+                final: ""
+            },
+            runName: {
+                game: "",
+                category: ""
+            },
+            toggles: {
+                pb: true,
+                sob: true,
+                comp: true,
+                icon: true,
+                subs: true
+            }
+        }
+    }
+    const [outputSettings, setOutputSettings] = useState(initializeSettings())
+    
     //Status Boxes
     const initialStatus = {header: "", message: [""]}
     const [appStatuses, setAppStatuses] = useState(() => {
@@ -78,20 +96,51 @@ export const ListContainer = () => {
     }
     window.addEventListener("beforeunload", alertUser);
     
+    //Check game PB comparison name
+    const checkGameComp = (settings) => {
+        if(settings["gameComp"].length == 0){
+            updateStatus("comp", {
+                header: "Warning",
+                message: ["No game PB comparison name provided"]
+            })
+            updateCanDownload("comp", false)
+        }
+        else if(settings["gameComp"] == "Personal Best"){
+            updateStatus("comp", {
+                header: "Error",
+                message: ["Comparison cannot be named \'Personal Best\' as it's the default name for LiveSplit's PB comparison"]
+            })
+            updateCanDownload("comp", false)
+        }
+        else if(settings["usedComparisons"].findIndex(c => c.name === settings["gameComp"]) != -1){
+            updateStatus("comp", {
+                header: "Error",
+                message: ["Comparison cannot be named after an existing comparison that will be carried over in your output splits"]
+            })
+            updateCanDownload("comp", false)
+        }
+        else{
+            updateStatus("comp")
+            updateCanDownload("comp", true)
+        }
+    }
+
     //Refresh all comparisons after list is modified
     const refreshComparisons = (files) => {
-        setPresentComparisons(presentComparisons => {
-            let updatedPresentComparisons = [...presentComparisons]
+        setOutputSettings(outputSettings => {
+            let updatedSettings = {...outputSettings}
             let searchedComp = []
             for(let file of Array.from(files).entries()){
                 searchedComp = file[0] != 0 ? searchedComp.filter(name => file[1].comparisons.includes(name)) : [...file[1].comparisons]
             }
-            updatedPresentComparisons = searchedComp.map(
+            updatedSettings["usedComparisons"] = searchedComp.map(
                 (comp) => {
-                    return {name: comp, used: presentComparisons.findIndex(c => c.name === comp) != -1 ? presentComparisons[presentComparisons.findIndex(c => c.name === comp)].used : true}
+                    let nameIndex = outputSettings["usedComparisons"].findIndex(c => c.name === comp)
+                    return {name: comp, used: outputSettings["usedComparisons"].findIndex(c => c.name === comp) != -1 ? outputSettings["usedComparisons"][nameIndex].used : true}
                 }
             )
-            return updatedPresentComparisons
+            checkGameComp(updatedSettings)
+            return updatedSettings
         })
     }
 
@@ -187,25 +236,9 @@ export const ListContainer = () => {
                 setFiles([])
                 setUnmaskPaths(false)
                 setUploadLabel("your")
-                setOutputName("")
-                setPresentComparisons([])
+                setOutputSettings(initializeSettings())
                 setFinalOutput({name: "", data: ""})
-                setUseFirstInfo(true)
-                setSetupTime(defaultSetup)
-                setGameComp(defaultPBComp)
-                setCustomInfo({layout: "", offset: ""})
-                setUsedTimings({realTime: true, gameTime: false})
-                setTemplateText({setup: "", final: ""})
-                setRunName({game: "", category: ""})
-                setToggleSettings(toggleSettings => {
-                    const updatedToggleSettings = {...toggleSettings}
-                    for(let key of Object.keys(updatedToggleSettings)){
-                        updatedToggleSettings[key] = true
-                    }
-                    return updatedToggleSettings
-                })
-                setRequestData({game: [], category: []})
-                setSelectedRequestedGame(null)
+                setRequestData({game: [], category: [], selectedGame: null})
                 setAppStatuses(appStatuses => {
                     const updatedAppStatuses = {...appStatuses}
                     for(let key of Object.keys(updatedAppStatuses)){
@@ -236,7 +269,7 @@ export const ListContainer = () => {
             <FileUpload
                 addListItem={addFileListItem}
                 updateCanDownload={updateCanDownload}
-                gameComp={gameComp}
+                outputSettings={outputSettings}
                 uploadLabel={uploadLabel}
                 setUploadLabel={setUploadLabel}
                 appStatuses={appStatuses}
@@ -249,7 +282,7 @@ export const ListContainer = () => {
                 listItems={files}
                 unmaskPaths={unmaskPaths}
                 updateCanDownload={updateCanDownload}
-                gameComp={gameComp}
+                outputSettings={outputSettings}
                 moveListItem={moveFileListItem}
                 removeListItem={removeFileListItem}
                 reverseEntries={reverseEntries}
@@ -263,36 +296,19 @@ export const ListContainer = () => {
                 listItems={files}
                 unmaskPaths={unmaskPaths}
                 updateCanDownload={updateCanDownload}
-                toggleSettings={toggleSettings}
-                presentComparisons={presentComparisons}
-                setPresentComparisons={setPresentComparisons}
-                useFirstInfo={useFirstInfo}
-                setUseFirstInfo={setUseFirstInfo}
-                customInfo={customInfo}
-                setCustomInfo={setCustomInfo}
-                setupTime={setupTime}
-                setSetupTime={setSetupTime}
-                gameComp={gameComp}
-                setGameComp={setGameComp}
+                outputSettings={outputSettings}
+                setOutputSettings={setOutputSettings}
+                checkGameComp={checkGameComp}
                 appStatuses={appStatuses}
                 updateStatus={updateStatus}
             /><br/>
             <OutputSplitSettings
                 listItems={files}
                 updateCanDownload={updateCanDownload}
-                setGameComp={setGameComp}
-                usedTimings={usedTimings}
-                setUsedTimings={setUsedTimings}
-                toggleSettings={toggleSettings}
-                setToggleSettings={setToggleSettings}
-                templateText={templateText}
-                setTemplateText={setTemplateText}
-                runName={runName}
-                setRunName={setRunName}
+                outputSettings={outputSettings}
+                setOutputSettings={setOutputSettings}
                 requestData={requestData}
                 setRequestData={setRequestData}
-                selectedRequestedGame={selectedRequestedGame}
-                setSelectedRequestedGame={setSelectedRequestedGame}
                 appStatuses={appStatuses}
                 updateStatus={updateStatus}
             /><br/>
@@ -303,18 +319,10 @@ export const ListContainer = () => {
                 unmaskPaths={unmaskPaths}
                 canDownload={canDownload}
                 updateCanDownload={updateCanDownload}
-                outputName={outputName}
-                setOutputName={setOutputName}
+                outputSettings={outputSettings}
+                setOutputSettings={setOutputSettings}
                 finalOutput={finalOutput}
                 setFinalOutput={setFinalOutput}
-                runName={runName}
-                useFirstInfo={useFirstInfo}
-                setupTime={setupTime}
-                gameComp={gameComp}
-                customInfo={customInfo}
-                usedTimings={usedTimings}
-                templateText={templateText}
-                toggleSettings={toggleSettings}
                 appStatuses={appStatuses}
                 updateStatus={updateStatus}
             />

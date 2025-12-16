@@ -179,14 +179,14 @@ function secondsToTime(time){
 }
 
 //Create multi-game splits based on provided files and applied settings
-export function createOutputSplits(files, runName, useFirstInfo, setupTime, gameComp, customInfo, usedTimings, templateText, toggleSettings){
+export function createOutputSplits(files, outputSettings){
     
     //Everything outside segments
     let finalOutput = new DOMParser().parseFromString(gatherFullTemplate(), validSpecifier.streamType);
-    finalOutput.getElementsByTagName("GameName")[0].textContent = runName.game;
-    finalOutput.getElementsByTagName("CategoryName")[0].textContent = runName.category;
-    let layout = useFirstInfo ? files[0].layoutPath : customInfo.layout
-    let offset = useFirstInfo ? files[0].offset : customInfo.offset
+    finalOutput.getElementsByTagName("GameName")[0].textContent = outputSettings["runName"].game;
+    finalOutput.getElementsByTagName("CategoryName")[0].textContent = outputSettings["runName"].category;
+    let layout = outputSettings["customInfo"].layout == null ? files[0].layoutPath : outputSettings["customInfo"].layout
+    let offset = outputSettings["customInfo"].offset == null ? files[0].offset : outputSettings["customInfo"].offset
     finalOutput.getElementsByTagName("LayoutPath")[0].textContent = layout;
     finalOutput.getElementsByTagName("Offset")[0].textContent = offset;
 
@@ -201,14 +201,14 @@ export function createOutputSplits(files, runName, useFirstInfo, setupTime, game
             let newSegment = new DOMParser().parseFromString(gatherSegmentTemplate(), validSpecifier.streamType);
             
             //Match icon from cache if one exists
-            newSegment.getElementsByTagName("Icon")[0].textContent = (toggleSettings.icon && child.getElementsByTagName("Icon")[0].textContent.length != 0) ? iconCache[parseInt(child.getElementsByTagName("Icon")[0].textContent) - 1] : "";
+            newSegment.getElementsByTagName("Icon")[0].textContent = (outputSettings["toggles"].icon && child.getElementsByTagName("Icon")[0].textContent.length != 0) ? iconCache[parseInt(child.getElementsByTagName("Icon")[0].textContent) - 1] : "";
 
             //Carry over segment names and if needed, remove subsplit identifiers to accomodate subplits for each game
-            if(toggleSettings.subs){
+            if(outputSettings["toggles"].subs){
                 let splitName = child.getElementsByTagName("Name")[0].textContent;
                 if(childIndex == segmentContents.children.length - 1){
                     splitName = splitName.includes("}") ? splitName.slice(splitName.indexOf("}") + 1) : splitName;
-                    splitName = "{" + adjustTemplateText(templateText.final, splitFile.game, splitFile.category, fileIndex + 1, files.length) + "}" + splitName;
+                    splitName = "{" + adjustTemplateText(outputSettings["templateText"].final, splitFile.game, splitFile.category, fileIndex + 1, files.length) + "}" + splitName;
                 }
                 else{
                     splitName = splitName.startsWith("-") ? splitName.slice(1) : splitName;
@@ -221,14 +221,14 @@ export function createOutputSplits(files, runName, useFirstInfo, setupTime, game
             }
 
             //Carry over sum of bests for both real time and game time
-            if(toggleSettings.sob){
-                if(usedTimings.realTime){
+            if(outputSettings["toggles"].sob){
+                if(outputSettings["usedTimings"].realTime){
                     try{
                         newSegment.getElementsByTagName("BestSegmentTime")[0].appendChild(child.getElementsByTagName("BestSegmentTime")[0].getElementsByTagName("RealTime")[0]);
                     }
                     catch{}
                 }
-                if(usedTimings.gameTime){
+                if(outputSettings["usedTimings"].gameTime){
                     try{
                         newSegment.getElementsByTagName("BestSegmentTime")[0].appendChild(child.getElementsByTagName("BestSegmentTime")[0].getElementsByTagName("GameTime")[0]);
                     }
@@ -237,10 +237,10 @@ export function createOutputSplits(files, runName, useFirstInfo, setupTime, game
             }
 
             //Carry over pbs as a new comparison for both real time and game time
-            if(toggleSettings.pb){
-                let newSplitTime = new DOMParser().parseFromString(gatherPBsTemplate(gameComp), validSpecifier.streamType);
+            if(outputSettings["toggles"].pb){
+                let newSplitTime = new DOMParser().parseFromString(gatherPBsTemplate(outputSettings["gameComp"]), validSpecifier.streamType);
                 newSegment.getElementsByTagName("SplitTimes")[0].appendChild(newSplitTime.documentElement)
-                if(usedTimings.realTime){
+                if(outputSettings["usedTimings"].realTime){
                     try{
                         let time = timeToSeconds(child.getElementsByTagName("SplitTimes")[0].getElementsByTagName("SplitTime")[0].getElementsByTagName("RealTime")[0].textContent);
                         runningReal += (time - runningReal) + realTimeStamp;
@@ -250,7 +250,7 @@ export function createOutputSplits(files, runName, useFirstInfo, setupTime, game
                         newSegment.getElementsByTagName("SplitTimes")[0].getElementsByTagName("SplitTime")[1].removeChild(newSegment.getElementsByTagName("SplitTimes")[0].getElementsByTagName("SplitTime")[1].getElementsByTagName("RealTime")[0]);
                     }
                 }
-                if(usedTimings.gameTime){
+                if(outputSettings["usedTimings"].gameTime){
                     try{
                         let time = timeToSeconds(child.getElementsByTagName("SplitTimes")[0].getElementsByTagName("SplitTime")[0].getElementsByTagName("GameTime")[0].textContent);
                         runningGame += (time - runningGame) + gameTimeStamp;
@@ -266,25 +266,25 @@ export function createOutputSplits(files, runName, useFirstInfo, setupTime, game
         //Create setup split if there are files remaining
         if(fileIndex != files.length - 1){
             let newSegment = new DOMParser().parseFromString(gatherSegmentTemplate(), validSpecifier.streamType);
-            newSegment.getElementsByTagName("Name")[0].textContent = adjustTemplateText(templateText.setup, files[fileIndex + 1].game, files[fileIndex + 1].category, fileIndex + 2, files.length);
-            if(toggleSettings.sob){
-                if(usedTimings.realTime){
-                    newSegment.getElementsByTagName("BestSegmentTime")[0].appendChild(new DOMParser().parseFromString(`<RealTime>${setupTime}</RealTime>`, validSpecifier.streamType).documentElement);
+            newSegment.getElementsByTagName("Name")[0].textContent = adjustTemplateText(outputSettings["templateText"].setup, files[fileIndex + 1].game, files[fileIndex + 1].category, fileIndex + 2, files.length);
+            if(outputSettings["toggles"].sob){
+                if(outputSettings["usedTimings"].realTime){
+                    newSegment.getElementsByTagName("BestSegmentTime")[0].appendChild(new DOMParser().parseFromString(`<RealTime>${outputSettings["setupTime"]}</RealTime>`, validSpecifier.streamType).documentElement);
                 }
-                if(usedTimings.gameTime){
-                    newSegment.getElementsByTagName("BestSegmentTime")[0].appendChild(new DOMParser().parseFromString(`<GameTime>${setupTime}</GameTime>`, validSpecifier.streamType).documentElement);
+                if(outputSettings["usedTimings"].gameTime){
+                    newSegment.getElementsByTagName("BestSegmentTime")[0].appendChild(new DOMParser().parseFromString(`<GameTime>${outputSettings["setupTime"]}</GameTime>`, validSpecifier.streamType).documentElement);
                 }
             }
-            if(toggleSettings.pb){
-                let newSplitTime = new DOMParser().parseFromString(gatherPBsTemplate(gameComp), validSpecifier.streamType);
+            if(outputSettings["toggles"].pb){
+                let newSplitTime = new DOMParser().parseFromString(gatherPBsTemplate(outputSettings["gameComp"]), validSpecifier.streamType);
                 newSegment.getElementsByTagName("SplitTimes")[0].appendChild(newSplitTime.documentElement);
-                if(usedTimings.realTime){
-                    runningReal += timeToSeconds(setupTime);
+                if(outputSettings["usedTimings"].realTime){
+                    runningReal += timeToSeconds(outputSettings["setupTime"]);
                     realTimeStamp = runningReal;
                     newSegment.getElementsByTagName("SplitTimes")[0].getElementsByTagName("SplitTime")[1].getElementsByTagName("RealTime")[0].textContent = secondsToTime(runningReal);
                 }
-                if(usedTimings.gameTime){
-                    runningGame += timeToSeconds(setupTime);
+                if(outputSettings["usedTimings"].gameTime){
+                    runningGame += timeToSeconds(outputSettings["setupTime"]);
                     gameTimeStamp = runningGame;
                     newSegment.getElementsByTagName("SplitTimes")[0].getElementsByTagName("SplitTime")[1].getElementsByTagName("GameTime")[0].textContent = secondsToTime(runningGame);
                 }

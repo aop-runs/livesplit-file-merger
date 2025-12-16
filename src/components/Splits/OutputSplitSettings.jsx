@@ -4,7 +4,7 @@ import { StatusBox } from '../StatusBox.jsx'
 import { templateParameters, defaultPBComp } from "../../utils/livesplit.js";
 import { fuzzySearchGames, searchCategoriesFromGame, cacheNewData } from "../../utils/srcapi.js";
 
-export const OutputSplitSettings = ({ listItems, updateCanDownload, setGameComp, usedTimings, setUsedTimings, toggleSettings, setToggleSettings, templateText, setTemplateText, runName, setRunName, requestData, setRequestData, selectedRequestedGame, setSelectedRequestedGame, appStatuses, updateStatus }) => {
+export const OutputSplitSettings = ({ listItems, updateCanDownload, outputSettings, setOutputSettings, requestData, setRequestData, appStatuses, updateStatus }) => {
 
     //Used timings
     const updateTimingSelection = (value) => {
@@ -12,62 +12,66 @@ export const OutputSplitSettings = ({ listItems, updateCanDownload, setGameComp,
         toggleRadioButton("gameTime", value.endsWith("game"))
     }
     const toggleRadioButton = (key, value) => {
-        setUsedTimings(usedTimings => {
-            const updatedUsedTimings = {...usedTimings}
-            updatedUsedTimings[key] = value
-            return updatedUsedTimings
+        setOutputSettings(outputSettings => {
+            const updatedSettings = {...outputSettings}
+            updatedSettings["usedTimings"][key] = value
+            return updatedSettings
         })
     }
 
     //Toggle checkbox
     const toggleCheckbox = (key, value) => {
-        setToggleSettings(toggleSettings => {
-            const updatedToggleSettings = {...toggleSettings}
-            updatedToggleSettings[key] = value
-            return updatedToggleSettings
+        setOutputSettings(outputSettings => {
+            const updatedSettings = {...outputSettings}
+            updatedSettings["toggles"][key] = value
+            return updatedSettings
         })
         if(key == "subs" && !value){
             changeTemplateText("final", "")
         }
         else if(key == "pb" && !value){
-            setGameComp(defaultPBComp)
+            setOutputSettings(outputSettings => {
+                const updatedSettings = {...outputSettings}
+                updatedSettings["gameComp"] = defaultPBComp
+                return updatedSettings
+            })
             updateStatus("comp")
             updateCanDownload("comp", true)
         }
     }
     const toggleAllCheckboxes = (value) => {
-        for(let key of Object.keys(toggleSettings)){
+        for(let key of Object.keys(outputSettings["toggles"])){
             toggleCheckbox(key, value)
         }
     }
 
     //Update template text
     const changeTemplateText = (key, value) => {
-        setTemplateText(templateText => {
-            const updatedTemplateText = {...templateText}
-            updatedTemplateText[key] = value
-            return updatedTemplateText
+        setOutputSettings(outputSettings => {
+            const updatedSettings = {...outputSettings}
+            updatedSettings["templateText"][key] = value
+            return updatedSettings
         })
     }
 
     //Add paramater to text from select box
     const addParamaterToText = (key, value) => {
-        changeTemplateText(key, templateText[key] + value)
+        changeTemplateText(key, outputSettings["templateText"][key] + value)
     }
 
     //Update run name
     const changeRunName = (key, value) => {
-        setRunName(runName => {
-            const updatedRunName = {...runName}
-            updatedRunName[key] = value
-            return updatedRunName
+        setOutputSettings(outputSettings => {
+            const updatedSettings = {...outputSettings}
+            updatedSettings["runName"][key] = value
+            return updatedSettings
         })
     }
 
     //Change game and category names from Speedrun.com Request
     const updateGameName = (name) => {
         changeRunName("game", name)
-        setSelectedRequestedGame(requestData.game.find(g => g.name == name))
+        updateRequestData("selectedGame", requestData.game.find(g => g.name == name))
     }
     const updateCategoryName = (name) => {
         changeRunName("category", name)
@@ -89,7 +93,7 @@ export const OutputSplitSettings = ({ listItems, updateCanDownload, setGameComp,
         const gameQuery = fuzzySearchGames(game)
         gameQuery.then(
             (response) => {
-            setSelectedRequestedGame(null)
+            updateRequestData("selectedGame", null)
             if(response.data.data.length == 0){
                 updateStatus("game", {
                     header: "Error",
@@ -122,15 +126,15 @@ export const OutputSplitSettings = ({ listItems, updateCanDownload, setGameComp,
     const fetchCategoriesFromSRC = () => {
         updateStatus("category", {
             header: "Loading...",
-            message: ["Searching for categories for " + selectedRequestedGame.name + " on Speedrun.com"]
+            message: ["Searching for categories for " + requestData.selectedGame.name + " on Speedrun.com"]
         })
-        const categoryQuery = searchCategoriesFromGame(selectedRequestedGame.id)
+        const categoryQuery = searchCategoriesFromGame(requestData.selectedGame.id)
         categoryQuery.then(
             (response) => {
             if(response.data.data.length == 0){
                 updateStatus("category", {
                     header: "Error",
-                    message: ["No categories were found on Speedrun.com for " + selectedRequestedGame.name]
+                    message: ["No categories were found on Speedrun.com for " + requestData.selectedGame.name]
                 })
             }
             else{
@@ -143,10 +147,10 @@ export const OutputSplitSettings = ({ listItems, updateCanDownload, setGameComp,
                 updateRequestData("category", categories)
                 updateStatus("category", {
                     header: "Success",
-                    message: ["Found " + categories.length + " categor" + (categories.length != 1 ? "ies" : "y") + " for " + selectedRequestedGame.name + " on Speedrun.com"]
+                    message: ["Found " + categories.length + " categor" + (categories.length != 1 ? "ies" : "y") + " for " + requestData.selectedGame.name + " on Speedrun.com"]
                 })
             }
-            cacheNewData("Category", selectedRequestedGame.id, response.data)
+            cacheNewData("Category", requestData.selectedGame.id, response.data)
         })
         categoryQuery.catch(
             (error) => {
@@ -163,41 +167,41 @@ export const OutputSplitSettings = ({ listItems, updateCanDownload, setGameComp,
                 
                 {/* Timing Types */}
                 <label title="Carry over only real time for segments from your split files">
-                    <input type="radio" name="timings" value="real" disabled={listItems.length < 2} checked={usedTimings.realTime && !usedTimings.gameTime} onChange={(e) => updateTimingSelection(e.target.value)}/>Carry over Real Time
+                    <input type="radio" name="timings" value="real" disabled={listItems.length < 2} checked={outputSettings["usedTimings"].realTime && !outputSettings["usedTimings"].gameTime} onChange={(e) => updateTimingSelection(e.target.value)}/>Carry over Real Time
                 </label><br/>
                 <label title="Carry over only game time for segments from your split files">
-                    <input type="radio" name="timings" value="game" disabled={listItems.length < 2} checked={!usedTimings.realTime && usedTimings.gameTime} onChange={(e) => updateTimingSelection(e.target.value)}/>Carry over Game Time
+                    <input type="radio" name="timings" value="game" disabled={listItems.length < 2} checked={!outputSettings["usedTimings"].realTime && outputSettings["usedTimings"].gameTime} onChange={(e) => updateTimingSelection(e.target.value)}/>Carry over Game Time
                 </label><br/>
                 <label title="Carry over both real time and game time for segments from your split files">
-                    <input type="radio" name="timings" value="realgame" disabled={listItems.length < 2} checked={usedTimings.realTime && usedTimings.gameTime} onChange={(e) => updateTimingSelection(e.target.value)}/>Carry over Real Time & Game Time
+                    <input type="radio" name="timings" value="realgame" disabled={listItems.length < 2} checked={outputSettings["usedTimings"].realTime && outputSettings["usedTimings"].gameTime} onChange={(e) => updateTimingSelection(e.target.value)}/>Carry over Real Time & Game Time
                 </label><br/>
 
                 {/* Toggle Settings */}
                 <br/>
                 <label id="pbbox" title="Choose whether to carry over your pbs from your split files as a new comparison">
-                    <input type="checkbox" disabled={listItems.length < 2} htmlFor="pbbox" checked={toggleSettings["pb"]} onChange={(e) => toggleCheckbox("pb", e.target.checked)}/>
+                    <input type="checkbox" disabled={listItems.length < 2} htmlFor="pbbox" checked={outputSettings["toggles"]["pb"]} onChange={(e) => toggleCheckbox("pb", e.target.checked)}/>
                     Carry over PBs
                 </label><br/>
                 <label id="sobbox" title="Choose whether to carry over your sum of best segments from your split files">
-                    <input type="checkbox" disabled={listItems.length < 2} htmlFor="sobbox" checked={toggleSettings["sob"]} onChange={(e) => toggleCheckbox("sob", e.target.checked)}/>
+                    <input type="checkbox" disabled={listItems.length < 2} htmlFor="sobbox" checked={outputSettings["toggles"]["sob"]} onChange={(e) => toggleCheckbox("sob", e.target.checked)}/>
                     Carry over Sum of Best Times
                 </label><br/>
                 <label id="compbox" title="Choose whether to carry over other comparisons found from your split files">
-                    <input type="checkbox" disabled={listItems.length < 2} htmlFor="compbox" checked={toggleSettings["comp"]} onChange={(e) => toggleCheckbox("comp", e.target.checked)}/>
+                    <input type="checkbox" disabled={listItems.length < 2} htmlFor="compbox" checked={outputSettings["toggles"]["comp"]} onChange={(e) => toggleCheckbox("comp", e.target.checked)}/>
                     Carry over Other Comparisons
                 </label><br/>
                 <label id="iconbox" title="Choose whether to carry over segment icons from your splits files">
-                    <input type="checkbox" disabled={listItems.length < 2} htmlFor="iconbox" checked={toggleSettings["icon"]} onChange={(e) => toggleCheckbox("icon", e.target.checked)}/>
+                    <input type="checkbox" disabled={listItems.length < 2} htmlFor="iconbox" checked={outputSettings["toggles"]["icon"]} onChange={(e) => toggleCheckbox("icon", e.target.checked)}/>
                     Carry over Segment Icons
                 </label><br/>
                 <label id="subsbox" title="Choose whether to create new subsplits for each game (Note: This setting will remove existing subsplits from your splits files if toggled on)">
-                    <input type="checkbox" disabled={listItems.length < 2} htmlFor="subsbox" checked={toggleSettings["subs"]} onChange={(e) => toggleCheckbox("subs", e.target.checked)}/>
+                    <input type="checkbox" disabled={listItems.length < 2} htmlFor="subsbox" checked={outputSettings["toggles"]["subs"]} onChange={(e) => toggleCheckbox("subs", e.target.checked)}/>
                     Create Subsplits for Each Game
                 </label><br/>
-                <button type="button" disabled={listItems.length < 2 || (Array.from(new Set(Object.values(toggleSettings)))[0] == true && new Set(Object.values(toggleSettings)).size == 1)} onClick={() => toggleAllCheckboxes(true)} title="Toogle all above checkbox settings on">
+                <button type="button" disabled={listItems.length < 2 || (Array.from(new Set(Object.values(outputSettings["toggles"])))[0] == true && new Set(Object.values(outputSettings["toggles"])).size == 1)} onClick={() => toggleAllCheckboxes(true)} title="Toogle all above checkbox settings on">
                     Toggle Above Settings On
                 </button>
-                <button type="button" disabled={listItems.length < 2 || (Array.from(new Set(Object.values(toggleSettings)))[0] == false && new Set(Object.values(toggleSettings)).size == 1)} onClick={() => toggleAllCheckboxes(false)} title="Toogle all above checkbox settings off">
+                <button type="button" disabled={listItems.length < 2 || (Array.from(new Set(Object.values(outputSettings["toggles"])))[0] == false && new Set(Object.values(outputSettings["toggles"])).size == 1)} onClick={() => toggleAllCheckboxes(false)} title="Toogle all above checkbox settings off">
                     Toggle Above Settings Off
                 </button>
 
@@ -206,8 +210,8 @@ export const OutputSplitSettings = ({ listItems, updateCanDownload, setGameComp,
                 {/* Setup Template */}
                 <div title="The template that will be used for every setup split in between games">
                     <label>Setup Split Template: </label>
-                    <input type="text" disabled={listItems.length < 2} placeholder={"Template Text"} value={templateText["setup"]} onChange={(e) => changeTemplateText("setup", e.target.value)}/>
-                    <button type="button" disabled={listItems.length < 2 || templateText["setup"].length == 0} onClick={() => changeTemplateText("setup", "")} title="Clear textfield for setup split template">
+                    <input type="text" disabled={listItems.length < 2} placeholder={"Template Text"} value={outputSettings["templateText"]["setup"]} onChange={(e) => changeTemplateText("setup", e.target.value)}/>
+                    <button type="button" disabled={listItems.length < 2 || outputSettings["templateText"]["setup"].length == 0} onClick={() => changeTemplateText("setup", "")} title="Clear textfield for setup split template">
                         Clear Setup Split Template
                     </button>
                     <select value="" disabled={listItems.length < 2} onChange={(e) => addParamaterToText("setup", e.target.value)} title="Select parameters to add to the setup split template">
@@ -222,11 +226,11 @@ export const OutputSplitSettings = ({ listItems, updateCanDownload, setGameComp,
                     </select>
                 </div>
                 {/* Subsplit Template */}
-                {toggleSettings["subs"] && 
+                {outputSettings["toggles"]["subs"] && 
                     <div title="The template that will be used for that last subsplit in each game">
                         <label>Game's Final Subsplit Template: </label>
-                        <input type="text" disabled={listItems.length < 2} placeholder={"Template Text"} value={templateText["final"]} onChange={(e) => changeTemplateText("final", e.target.value)}/>
-                        <button type="button" disabled={listItems.length < 2 || templateText["final"].length == 0} onClick={() => changeTemplateText("final", "")} title="Clear textfield for game's final subsplit template">
+                        <input type="text" disabled={listItems.length < 2} placeholder={"Template Text"} value={outputSettings["templateText"]["final"]} onChange={(e) => changeTemplateText("final", e.target.value)}/>
+                        <button type="button" disabled={listItems.length < 2 || outputSettings["templateText"]["final"].length == 0} onClick={() => changeTemplateText("final", "")} title="Clear textfield for game's final subsplit template">
                             Clear Final Subsplit Template
                         </button>
                         <select value="" disabled={listItems.length < 2} onChange={(e) => addParamaterToText("final", e.target.value)} title="Select parameters to add to the game's final subsplit template">
@@ -252,8 +256,8 @@ export const OutputSplitSettings = ({ listItems, updateCanDownload, setGameComp,
                 />}
                 <div title="The name of the game for the output splits file">
                     <label>Output Game Name: </label>
-                    <input type="text" disabled={listItems.length < 2} placeholder={"Game Name"} value={runName["game"]} onChange={(e) => changeRunName("game", e.target.value)}/>
-                    <button type="button" disabled={listItems.length < 2 || runName["game"].length == 0} onClick={() => fetchGameFromSRC(runName["game"])} title="Fetches list of games fuzzy searched from Speedrun.com">
+                    <input type="text" disabled={listItems.length < 2} placeholder={"Game Name"} value={outputSettings["runName"]["game"]} onChange={(e) => changeRunName("game", e.target.value)}/>
+                    <button type="button" disabled={listItems.length < 2 || outputSettings["runName"]["game"].length == 0} onClick={() => fetchGameFromSRC(outputSettings["runName"]["game"])} title="Fetches list of games fuzzy searched from Speedrun.com">
                         Fetch Game from Input
                     </button>
                     <select value="" disabled={listItems.length < 2 || requestData.game.length == 0} onChange={(e) => updateGameName(e.target.value)} title="Select game name for your output splits from Speedrun.com request">
@@ -266,7 +270,7 @@ export const OutputSplitSettings = ({ listItems, updateCanDownload, setGameComp,
                             );
                         })}
                     </select>
-                    <button type="button" disabled={listItems.length < 2 || runName["game"].length == 0} onClick={() => changeRunName("game", "")} title="Clear text field for the output's game name">
+                    <button type="button" disabled={listItems.length < 2 || outputSettings["runName"]["game"].length == 0} onClick={() => changeRunName("game", "")} title="Clear text field for the output's game name">
                         Clear Game Name
                     </button>
                 </div>
@@ -278,8 +282,8 @@ export const OutputSplitSettings = ({ listItems, updateCanDownload, setGameComp,
                 />}
                 <div title="The name of the category for the output splits file">
                     <label>Output Category Name: </label>
-                    <input type="text" disabled={listItems.length < 2} placeholder={"Category Name"} value={runName["category"]} onChange={(e) => changeRunName("category", e.target.value)}/>
-                    <button type="button" disabled={listItems.length < 2 || selectedRequestedGame == null} onClick={() => fetchCategoriesFromSRC()} title="Fetches category of a requested game from Speedrun.com">
+                    <input type="text" disabled={listItems.length < 2} placeholder={"Category Name"} value={outputSettings["runName"]["category"]} onChange={(e) => changeRunName("category", e.target.value)}/>
+                    <button type="button" disabled={listItems.length < 2 || requestData.selectedGame == null} onClick={() => fetchCategoriesFromSRC()} title="Fetches category of a requested game from Speedrun.com">
                         Fetch Category from Above Request
                     </button>
                     <select value="" disabled={listItems.length < 2 || requestData.category.length == 0} onChange={(e) => updateCategoryName(e.target.value)} title="Select category name for your output splits from requested Speedrun.com game">
@@ -292,7 +296,7 @@ export const OutputSplitSettings = ({ listItems, updateCanDownload, setGameComp,
                             );
                         })}
                     </select>
-                    <button type="button" disabled={listItems.length < 2 || runName["category"].length == 0} onClick={() => changeRunName("category", "")} title="Clear text field for the output's category name">
+                    <button type="button" disabled={listItems.length < 2 || outputSettings["runName"]["category"].length == 0} onClick={() => changeRunName("category", "")} title="Clear text field for the output's category name">
                         Clear Category Name
                     </button>
                 </div>
