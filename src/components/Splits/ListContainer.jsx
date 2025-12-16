@@ -24,7 +24,6 @@ export const ListContainer = () => {
             usedComparisons: [],
             setupTime: defaultSetup,
             gameComp: defaultPBComp,
-            useFirst: true,
             customInfo: {
                 layout: null,
                 offset: null
@@ -41,7 +40,7 @@ export const ListContainer = () => {
                 game: "",
                 category: ""
             },
-            toggles: {
+            toggleSettings: {
                 pb: true,
                 sob: true,
                 comp: true,
@@ -268,8 +267,6 @@ export const ListContainer = () => {
             </button>
             <FileUpload
                 addListItem={addFileListItem}
-                updateCanDownload={updateCanDownload}
-                outputSettings={outputSettings}
                 uploadLabel={uploadLabel}
                 setUploadLabel={setUploadLabel}
                 appStatuses={appStatuses}
@@ -281,13 +278,10 @@ export const ListContainer = () => {
             <ItemList
                 listItems={files}
                 unmaskPaths={unmaskPaths}
-                updateCanDownload={updateCanDownload}
-                outputSettings={outputSettings}
                 moveListItem={moveFileListItem}
                 removeListItem={removeFileListItem}
                 reverseEntries={reverseEntries}
                 sortEntries={sortEntries}
-                updateStatus={updateStatus}
             />
 
             {/* Output Settings */}

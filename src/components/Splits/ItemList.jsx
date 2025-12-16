@@ -2,7 +2,7 @@ import React, {  } from 'react'
 import { Item } from './Item'
 import '../../styles/style.css'
 
-export const ItemList = ({ listItems, unmaskPaths, updateCanDownload, outputSettings, moveListItem, removeListItem, reverseEntries, sortEntries, updateStatus }) => {
+export const ItemList = ({ listItems, unmaskPaths, moveListItem, removeListItem, reverseEntries, sortEntries }) => {
 
     return (
             
@@ -16,12 +16,8 @@ export const ItemList = ({ listItems, unmaskPaths, updateCanDownload, outputSett
                     listSize={listItems.length}
                     unmaskPaths={unmaskPaths}
                     itemData={file}
-                    updateCanDownload={updateCanDownload}
-                    outputSettings={outputSettings}
-                    listItems={listItems}
                     moveListItem={moveListItem}
                     removeListItem={removeListItem}
-                    updateStatus={updateStatus}
                 />
             ))}
             </div>

@@ -42,6 +42,14 @@ export function gatherFullTemplate(){
 </Run>`;
 }
 
+// Comparison template for carrying over Game PBs and other useable comparisons
+function gatherComparisonTemplate(compName){
+    return `<SplitTime name="${compName}">
+<RealTime></RealTime>
+<GameTime></GameTime>
+</SplitTime>`;
+}
+
 // Segment template
 export function gatherSegmentTemplate(){
     return `<Segment>
@@ -49,19 +57,11 @@ export function gatherSegmentTemplate(){
 </Name>
 <Icon />
 <SplitTimes>
-<SplitTime name="Personal Best" />
+${gatherComparisonTemplate("Personal Best")}
 </SplitTimes>
 <BestSegmentTime />
 <SegmentHistory />
 </Segment>`;
-}
-
-// Comparison template for carrying over Game PBs
-function gatherPBsTemplate(compName){
-    return `<SplitTime name="${compName}">
-<RealTime></RealTime>
-<GameTime></GameTime>
-</SplitTime>`;
 }
 
 //Gather data from specific tag
@@ -185,8 +185,8 @@ export function createOutputSplits(files, outputSettings){
     let finalOutput = new DOMParser().parseFromString(gatherFullTemplate(), validSpecifier.streamType);
     finalOutput.getElementsByTagName("GameName")[0].textContent = outputSettings["runName"].game;
     finalOutput.getElementsByTagName("CategoryName")[0].textContent = outputSettings["runName"].category;
-    let layout = outputSettings["customInfo"].layout == null ? files[0].layoutPath : outputSettings["customInfo"].layout
-    let offset = outputSettings["customInfo"].offset == null ? files[0].offset : outputSettings["customInfo"].offset
+    let layout = outputSettings["customInfo"].layout == null ? files[0].layoutPath : outputSettings["customInfo"].layout;
+    let offset = outputSettings["customInfo"].offset == null ? files[0].offset : outputSettings["customInfo"].offset;
     finalOutput.getElementsByTagName("LayoutPath")[0].textContent = layout;
     finalOutput.getElementsByTagName("Offset")[0].textContent = offset;
 
@@ -201,10 +201,10 @@ export function createOutputSplits(files, outputSettings){
             let newSegment = new DOMParser().parseFromString(gatherSegmentTemplate(), validSpecifier.streamType);
             
             //Match icon from cache if one exists
-            newSegment.getElementsByTagName("Icon")[0].textContent = (outputSettings["toggles"].icon && child.getElementsByTagName("Icon")[0].textContent.length != 0) ? iconCache[parseInt(child.getElementsByTagName("Icon")[0].textContent) - 1] : "";
+            newSegment.getElementsByTagName("Icon")[0].textContent = (outputSettings["toggleSettings"].icon && child.getElementsByTagName("Icon")[0].textContent.length != 0) ? iconCache[parseInt(child.getElementsByTagName("Icon")[0].textContent) - 1] : "";
 
             //Carry over segment names and if needed, remove subsplit identifiers to accomodate subplits for each game
-            if(outputSettings["toggles"].subs){
+            if(outputSettings["toggleSettings"].subs){
                 let splitName = child.getElementsByTagName("Name")[0].textContent;
                 if(childIndex == segmentContents.children.length - 1){
                     splitName = splitName.includes("}") ? splitName.slice(splitName.indexOf("}") + 1) : splitName;
@@ -221,7 +221,7 @@ export function createOutputSplits(files, outputSettings){
             }
 
             //Carry over sum of bests for both real time and game time
-            if(outputSettings["toggles"].sob){
+            if(outputSettings["toggleSettings"].sob){
                 if(outputSettings["usedTimings"].realTime){
                     try{
                         newSegment.getElementsByTagName("BestSegmentTime")[0].appendChild(child.getElementsByTagName("BestSegmentTime")[0].getElementsByTagName("RealTime")[0]);
@@ -237,8 +237,8 @@ export function createOutputSplits(files, outputSettings){
             }
 
             //Carry over pbs as a new comparison for both real time and game time
-            if(outputSettings["toggles"].pb){
-                let newSplitTime = new DOMParser().parseFromString(gatherPBsTemplate(outputSettings["gameComp"]), validSpecifier.streamType);
+            if(outputSettings["toggleSettings"].pb){
+                let newSplitTime = new DOMParser().parseFromString(gatherComparisonTemplate(outputSettings["gameComp"]), validSpecifier.streamType);
                 newSegment.getElementsByTagName("SplitTimes")[0].appendChild(newSplitTime.documentElement)
                 if(outputSettings["usedTimings"].realTime){
                     try{
@@ -267,7 +267,7 @@ export function createOutputSplits(files, outputSettings){
         if(fileIndex != files.length - 1){
             let newSegment = new DOMParser().parseFromString(gatherSegmentTemplate(), validSpecifier.streamType);
             newSegment.getElementsByTagName("Name")[0].textContent = adjustTemplateText(outputSettings["templateText"].setup, files[fileIndex + 1].game, files[fileIndex + 1].category, fileIndex + 2, files.length);
-            if(outputSettings["toggles"].sob){
+            if(outputSettings["toggleSettings"].sob){
                 if(outputSettings["usedTimings"].realTime){
                     newSegment.getElementsByTagName("BestSegmentTime")[0].appendChild(new DOMParser().parseFromString(`<RealTime>${outputSettings["setupTime"]}</RealTime>`, validSpecifier.streamType).documentElement);
                 }
@@ -275,8 +275,8 @@ export function createOutputSplits(files, outputSettings){
                     newSegment.getElementsByTagName("BestSegmentTime")[0].appendChild(new DOMParser().parseFromString(`<GameTime>${outputSettings["setupTime"]}</GameTime>`, validSpecifier.streamType).documentElement);
                 }
             }
-            if(outputSettings["toggles"].pb){
-                let newSplitTime = new DOMParser().parseFromString(gatherPBsTemplate(outputSettings["gameComp"]), validSpecifier.streamType);
+            if(outputSettings["toggleSettings"].pb){
+                let newSplitTime = new DOMParser().parseFromString(gatherComparisonTemplate(outputSettings["gameComp"]), validSpecifier.streamType);
                 newSegment.getElementsByTagName("SplitTimes")[0].appendChild(newSplitTime.documentElement);
                 if(outputSettings["usedTimings"].realTime){
                     runningReal += timeToSeconds(outputSettings["setupTime"]);

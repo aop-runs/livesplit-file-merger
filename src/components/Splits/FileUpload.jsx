@@ -5,7 +5,7 @@ import { gatherFileContents, validSpecifier } from '../../utils/file.js'
 import { cleanSplitsFile, gatherRunName, findCustomComparisons, gatherSplitsDataByTag } from '../../utils/livesplit.js'
 import '../../styles/style.css'
 
-export const FileUpload = ({ addListItem, updateCanDownload, outputSettings, uploadLabel, setUploadLabel, appStatuses, updateStatus }) => {
+export const FileUpload = ({ addListItem, uploadLabel, setUploadLabel, appStatuses, updateStatus }) => {
 
     //Pre-included wrappers
     const wrapperRef = useRef(null);

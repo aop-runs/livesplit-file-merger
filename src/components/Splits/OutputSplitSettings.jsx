@@ -23,7 +23,7 @@ export const OutputSplitSettings = ({ listItems, updateCanDownload, outputSettin
     const toggleCheckbox = (key, value) => {
         setOutputSettings(outputSettings => {
             const updatedSettings = {...outputSettings}
-            updatedSettings["toggles"][key] = value
+            updatedSettings["toggleSettings"][key] = value
             return updatedSettings
         })
         if(key == "subs" && !value){
@@ -40,7 +40,7 @@ export const OutputSplitSettings = ({ listItems, updateCanDownload, outputSettin
         }
     }
     const toggleAllCheckboxes = (value) => {
-        for(let key of Object.keys(outputSettings["toggles"])){
+        for(let key of Object.keys(outputSettings["toggleSettings"])){
             toggleCheckbox(key, value)
         }
     }
@@ -179,29 +179,29 @@ export const OutputSplitSettings = ({ listItems, updateCanDownload, outputSettin
                 {/* Toggle Settings */}
                 <br/>
                 <label id="pbbox" title="Choose whether to carry over your pbs from your split files as a new comparison">
-                    <input type="checkbox" disabled={listItems.length < 2} htmlFor="pbbox" checked={outputSettings["toggles"]["pb"]} onChange={(e) => toggleCheckbox("pb", e.target.checked)}/>
+                    <input type="checkbox" disabled={listItems.length < 2} htmlFor="pbbox" checked={outputSettings["toggleSettings"]["pb"]} onChange={(e) => toggleCheckbox("pb", e.target.checked)}/>
                     Carry over PBs
                 </label><br/>
                 <label id="sobbox" title="Choose whether to carry over your sum of best segments from your split files">
-                    <input type="checkbox" disabled={listItems.length < 2} htmlFor="sobbox" checked={outputSettings["toggles"]["sob"]} onChange={(e) => toggleCheckbox("sob", e.target.checked)}/>
+                    <input type="checkbox" disabled={listItems.length < 2} htmlFor="sobbox" checked={outputSettings["toggleSettings"]["sob"]} onChange={(e) => toggleCheckbox("sob", e.target.checked)}/>
                     Carry over Sum of Best Times
                 </label><br/>
                 <label id="compbox" title="Choose whether to carry over other comparisons found from your split files">
-                    <input type="checkbox" disabled={listItems.length < 2} htmlFor="compbox" checked={outputSettings["toggles"]["comp"]} onChange={(e) => toggleCheckbox("comp", e.target.checked)}/>
+                    <input type="checkbox" disabled={listItems.length < 2} htmlFor="compbox" checked={outputSettings["toggleSettings"]["comp"]} onChange={(e) => toggleCheckbox("comp", e.target.checked)}/>
                     Carry over Other Comparisons
                 </label><br/>
                 <label id="iconbox" title="Choose whether to carry over segment icons from your splits files">
-                    <input type="checkbox" disabled={listItems.length < 2} htmlFor="iconbox" checked={outputSettings["toggles"]["icon"]} onChange={(e) => toggleCheckbox("icon", e.target.checked)}/>
+                    <input type="checkbox" disabled={listItems.length < 2} htmlFor="iconbox" checked={outputSettings["toggleSettings"]["icon"]} onChange={(e) => toggleCheckbox("icon", e.target.checked)}/>
                     Carry over Segment Icons
                 </label><br/>
                 <label id="subsbox" title="Choose whether to create new subsplits for each game (Note: This setting will remove existing subsplits from your splits files if toggled on)">
-                    <input type="checkbox" disabled={listItems.length < 2} htmlFor="subsbox" checked={outputSettings["toggles"]["subs"]} onChange={(e) => toggleCheckbox("subs", e.target.checked)}/>
+                    <input type="checkbox" disabled={listItems.length < 2} htmlFor="subsbox" checked={outputSettings["toggleSettings"]["subs"]} onChange={(e) => toggleCheckbox("subs", e.target.checked)}/>
                     Create Subsplits for Each Game
                 </label><br/>
-                <button type="button" disabled={listItems.length < 2 || (Array.from(new Set(Object.values(outputSettings["toggles"])))[0] == true && new Set(Object.values(outputSettings["toggles"])).size == 1)} onClick={() => toggleAllCheckboxes(true)} title="Toogle all above checkbox settings on">
+                <button type="button" disabled={listItems.length < 2 || (Array.from(new Set(Object.values(outputSettings["toggleSettings"])))[0] == true && new Set(Object.values(outputSettings["toggleSettings"])).size == 1)} onClick={() => toggleAllCheckboxes(true)} title="Toogle all above checkbox settings on">
                     Toggle Above Settings On
                 </button>
-                <button type="button" disabled={listItems.length < 2 || (Array.from(new Set(Object.values(outputSettings["toggles"])))[0] == false && new Set(Object.values(outputSettings["toggles"])).size == 1)} onClick={() => toggleAllCheckboxes(false)} title="Toogle all above checkbox settings off">
+                <button type="button" disabled={listItems.length < 2 || (Array.from(new Set(Object.values(outputSettings["toggleSettings"])))[0] == false && new Set(Object.values(outputSettings["toggleSettings"])).size == 1)} onClick={() => toggleAllCheckboxes(false)} title="Toogle all above checkbox settings off">
                     Toggle Above Settings Off
                 </button>
 
@@ -226,7 +226,7 @@ export const OutputSplitSettings = ({ listItems, updateCanDownload, outputSettin
                     </select>
                 </div>
                 {/* Subsplit Template */}
-                {outputSettings["toggles"]["subs"] && 
+                {outputSettings["toggleSettings"]["subs"] && 
                     <div title="The template that will be used for that last subsplit in each game">
                         <label>Game's Final Subsplit Template: </label>
                         <input type="text" disabled={listItems.length < 2} placeholder={"Template Text"} value={outputSettings["templateText"]["final"]} onChange={(e) => changeTemplateText("final", e.target.value)}/>

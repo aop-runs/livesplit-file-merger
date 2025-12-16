@@ -107,10 +107,10 @@ export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, outp
             }
         }
 
-        //Floating point is 7 decimal points long
+        //Floating point is no more than 7 decimal points long
         if(value.split(".").length > 1 && !hasInvalid){
             const temp = value.split(".")
-            if(!temp[temp.length - 1].includes(":") && temp[temp.length - 1].length != 7){
+            if(!temp[temp.length - 1].includes(":") && (temp[temp.length - 1].length > 7 || temp[temp.length - 1].length == 0)){
                 hasInvalid = true
             }
         }
@@ -196,10 +196,10 @@ export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, outp
             }
         }
 
-        //Floating point is 7 decimal points long
+        //Floating point is no more than 7 decimal points long
         if(value.split(".").length > 1 && !hasInvalid){
             const temp = value.split(".")
-            if(!temp[temp.length - 1].includes(":") && temp[temp.length - 1].length != 7){
+            if(!temp[temp.length - 1].includes(":") && (temp[temp.length - 1].length > 7 || temp[temp.length - 1].length == 0)){
                 hasInvalid = true
             }
         }
@@ -245,7 +245,7 @@ export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, outp
             <React.Fragment>
                 
                 {/* Comparisons Present in Each Item */}
-                {outputSettings["toggles"]["comp"] && 
+                {outputSettings["toggleSettings"]["comp"] && 
                 <React.Fragment>
                     {outputSettings["usedComparisons"].length != 0 &&
                         <label title="Comparisons present in every file that can be toggled whether they can be carried over to your output splits">
@@ -340,7 +340,7 @@ export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, outp
                 </div>
 
                 {/* Game Comparison Name */}
-                {outputSettings["toggles"]["pb"] && 
+                {outputSettings["toggleSettings"]["pb"] && 
                     <React.Fragment>
                     {(appStatuses.comp.header.length > 0) && <StatusBox
                         header={appStatuses.comp.header}

@@ -4,7 +4,7 @@ import { useDrag, useDrop } from 'react-dnd'
 import { ItemModal } from './ItemModal'
 import '../../styles/style.css'
 
-export const Item = ({ index, listSize, unmaskPaths, itemData, updateCanDownload, outputSettings, listItems, moveListItem, removeListItem, updateStatus }) => {
+export const Item = ({ index, listSize, unmaskPaths, itemData, moveListItem, removeListItem }) => {
 
     // useDrag - the list item is draggable
     const [isDraggingEnabled, setIsDraggingEnabled] = useState(true);
