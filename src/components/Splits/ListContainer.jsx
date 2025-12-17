@@ -135,7 +135,7 @@ export const ListContainer = () => {
             for(let file of Array.from(files).entries()){
                 searchedComp = file[0] != 0 ? searchedComp.filter(name => file[1].comparisons.includes(name)) : [...file[1].comparisons]
             }
-            updatedSettings["usedComparisons"] = searchedComp.map(
+            updatedSettings["usedComparisons"] = searchedComp.filter(name => name != defaultPBComp).map(
                 (comp) => {
                     let nameIndex = outputSettings["usedComparisons"].findIndex(c => c.name === comp)
                     return {name: comp, used: outputSettings["usedComparisons"].findIndex(c => c.name === comp) != -1 ? outputSettings["usedComparisons"][nameIndex].used : true}
