@@ -5,7 +5,7 @@ import { gatherFileContents, validSpecifier } from '../../utils/file.js'
 import { cleanSplitsFile, gatherRunName, findCustomComparisons, gatherSplitsDataByTag } from '../../utils/livesplit.js'
 import '../../styles/style.css'
 
-export const FileUpload = ({ addListItem, uploadLabel, setUploadLabel, appStatuses, updateStatus }) => {
+export const FileUpload = ({ addListItem, appStatuses, updateStatus }) => {
 
     //Pre-included wrappers
     const wrapperRef = useRef(null);
@@ -84,7 +84,6 @@ export const FileUpload = ({ addListItem, uploadLabel, setUploadLabel, appStatus
                 );
             }
         }
-        setUploadLabel("some more")
     }
 
     return (
@@ -97,7 +96,7 @@ export const FileUpload = ({ addListItem, uploadLabel, setUploadLabel, appStatus
             />}
             <div ref={wrapperRef} className="upload" onDragEnter={onDragEnter} onDragLeave={onDragLeave} onDrop={onFileDrop} title="Box where you you click to upload LiveSplit files or drag &drop them">
                 <p>
-                    Drag & Drop {uploadLabel} {validSpecifier.extension} files here
+                    Click to Upload or Drag & Drop your {validSpecifier.extension} Files Here
                 </p>
                 <input type="file" value= "" accept={validSpecifier.extension} onChange={onFileSelect} multiple/>
             </div>

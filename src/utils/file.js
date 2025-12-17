@@ -44,16 +44,16 @@ export function openContentsInNewTab(contents, layoutPath, maskLayoutPath){
 }
 
 //Download file (Failback function that downloads output to Downloads folder)
-export async function downloadFile(contents, filename){
+export async function downloadFile(output){
     return await new Promise(function(resolve, reject) {
         //File downloader
         try{
-            if(!isAValidFile(filename, validSpecifier.extension)){
-                throw new Error(filename + " is not a valid filename");
+            if(!isAValidFile(output.name, validSpecifier.extension)){
+                throw new Error(output.name + " is not a valid filename");
             }
             const link = document.createElement("a");
-            link.href = URL.createObjectURL(new Blob([contents], { type: validSpecifier.streamType }));
-            link.download = filename;
+            link.href = URL.createObjectURL(new Blob([output.data], { type: validSpecifier.streamType }));
+            link.download = output.name;
             link.click();
             URL.revokeObjectURL(link.href);
             resolve("Success");
@@ -65,13 +65,13 @@ export async function downloadFile(contents, filename){
 }
 
 //Download file as
-export async function downloadFileAs(contents, filename){
+export async function downloadFileAs(output){
     return await new Promise(function(resolve, reject) {
         async function launchPromise() {
             //File picker
             try{
                 const fileHandle = await window.showSaveFilePicker({
-                    suggestedName: filename,
+                    suggestedName: output.name,
                     startIn: 'downloads',
                     types: [
                         {
@@ -87,7 +87,7 @@ export async function downloadFileAs(contents, filename){
                     throw new Error(fileHandle.name + " from file dialog is not a valid filename");
                 }
                 const writableFileStream = await fileHandle.createWritable();
-                await writableFileStream.write(new Blob([contents], { type: validSpecifier.streamType }));
+                await writableFileStream.write(new Blob([output.data], { type: validSpecifier.streamType }));
                 await writableFileStream.close();
                 resolve("Success");
             //Catch error

@@ -4,14 +4,14 @@ import { downloadFile, downloadFileAs, validSpecifier, isAValidFile, openContent
 import { gatherSplitsDataByTag, createOutputSplits } from '../../utils/livesplit.js'
 import '../../styles/style.css'
 
-export const FileDownload = ({ listItems, unmaskPaths, canDownload, updateCanDownload, outputSettings, setOutputSettings, finalOutput, setFinalOutput, appStatuses, updateStatus }) => {
+export const FileDownload = ({ listItems, unmaskPaths, outputSettings, canDownload, updateCanDownload, finalOutput, setFinalOutput, appStatuses, updateStatus }) => {
 
     //Track filename
     const updateFilename = (name) => {
-        setOutputSettings(outputSettings => {
-            const updatedSettings = {...outputSettings}
-            updatedSettings["outputName"] = name
-            return updatedSettings
+        setFinalOutput(finalOutput => {
+            const updatedFinalOutput = {...finalOutput}
+            updatedFinalOutput.filename = name
+            return updatedFinalOutput
         })
         checkFilename(name)
     }
@@ -66,7 +66,11 @@ export const FileDownload = ({ listItems, unmaskPaths, canDownload, updateCanDow
             message: ["Creating combined splits file named: " + filename + validSpecifier.extension + " using " + listItems.length.toString() + " entr" + (listItems.length != 1 ? "ies" : "y")]
         })
         updateStatus("download")
-        setFinalOutput({name: "", data: ""})
+        setFinalOutput(finalOutput => {
+            const updatedFinalOutput = {...finalOutput}
+            updatedFinalOutput.data = {name: "", data: ""}
+            return updatedFinalOutput
+        })
         setTimeout(() => {
             let splitsData = createOutputSplits(listItems, outputSettings)
             try {
@@ -84,8 +88,7 @@ export const FileDownload = ({ listItems, unmaskPaths, canDownload, updateCanDow
             //Update output data
             setFinalOutput(finalOutput => {
                 const updatedFinalOutput = {...finalOutput}
-                updatedFinalOutput.name = filename + validSpecifier.extension
-                updatedFinalOutput.data = splitsData
+                updatedFinalOutput.output = {name: filename + validSpecifier.extension, data: splitsData}
                 return updatedFinalOutput
             })
         }, 0)
@@ -93,13 +96,13 @@ export const FileDownload = ({ listItems, unmaskPaths, canDownload, updateCanDow
 
     //Gather output and download result to user's system and launch failback for browsers that don't support showSaveFilePicker Ex. Firefox
     const launchDownload = () => {
-        let downloadPromise = typeof window.showSaveFilePicker === 'function' ? downloadFileAs(finalOutput.data, finalOutput.name) : downloadFile(finalOutput.data, finalOutput.name)
+        let downloadPromise = typeof window.showSaveFilePicker === 'function' ? downloadFileAs(finalOutput.output) : downloadFile(finalOutput.output)
         //Successful download
         downloadPromise.then(
             () => {
                 updateStatus("download", {
                     header: "Success",
-                    message: ["Download for " + finalOutput.name + " successful"]
+                    message: ["Download for " + finalOutput.output.name + " successful"]
                 })
             }
         );
@@ -114,7 +117,7 @@ export const FileDownload = ({ listItems, unmaskPaths, canDownload, updateCanDow
                 else{
                     updateStatus("download", {
                         header: "Error",
-                        message: ["Unable to download: " + finalOutput.name + " - " + error]
+                        message: ["Unable to download: " + finalOutput.output.name + " - " + error]
                     })
                 }
             }
@@ -132,20 +135,20 @@ export const FileDownload = ({ listItems, unmaskPaths, canDownload, updateCanDow
             />}
             <div title="Filename for output splits file">
                 <label>Output Filename: </label>
-                <input type="text" disabled={listItems.length < 2} placeholder={"filename.lss"} value={outputSettings["outputName"]} onChange={(e) => updateFilename(e.target.value)}/>
-                <button type="button" disabled={listItems.length < 2 || outputSettings["outputName"].length == 0} onClick={() => updateFilename("")} title="Clear textfield for output's filename">
+                <input type="text" disabled={listItems.length < 2} placeholder={"filename.lss"} value={finalOutput.filename} onChange={(e) => updateFilename(e.target.value)}/>
+                <button type="button" disabled={listItems.length < 2 || finalOutput.filename.length == 0} onClick={() => updateFilename("")} title="Clear textfield for output's filename">
                     Clear Filename
                 </button>
                 <button type="button" disabled={listItems.length < 2} onClick={() => updateFilename(getDefaultFilename())} title="Set default output filename based on the name of the run">
                     Set Default Filename
                 </button>
-                <button type="button" disabled={listItems.length < 2 || outputSettings["outputName"].length == 0 || !(Array.from(new Set(Object.values(canDownload)))[0] == true && new Set(Object.values(canDownload)).size == 1)} onClick={() => prepareOutputSplits(outputSettings["outputName"].replace(validSpecifier.extension, ""))} title="Prepares output file for combined splits that can be downloaded">
+                <button type="button" disabled={listItems.length < 2 || finalOutput.filename.length == 0 || !(Array.from(new Set(Object.values(canDownload)))[0] == true && new Set(Object.values(canDownload)).size == 1)} onClick={() => prepareOutputSplits(finalOutput.filename.replace(validSpecifier.extension, ""))} title="Prepares output file for combined splits that can be downloaded">
                     Prepare Output Splits
                 </button>
             </div>
 
         {/* File Download */}
-        {finalOutput.name.length != 0 &&
+        {finalOutput.output.name.length != 0 &&
             <React.Fragment>
             {(appStatuses.download.header.length > 0) && <StatusBox
                 header={appStatuses.download.header}
@@ -154,11 +157,11 @@ export const FileDownload = ({ listItems, unmaskPaths, canDownload, updateCanDow
             />}
             <div title="Download link for output splits file">
                 <label>Output Contents: </label>
-                <label className = "pointerCursor" onClick={() => openContentsInNewTab(finalOutput.data, gatherSplitsDataByTag(finalOutput.data, "LayoutPath"), !unmaskPaths)} title = "Click on the filename to view its raw contents before downloading">{finalOutput.name}</label>
+                <label className = "pointerCursor" onClick={() => openContentsInNewTab(finalOutput.output.data, gatherSplitsDataByTag(finalOutput.output.data, "LayoutPath"), !unmaskPaths)} title = "Click on the filename to view its raw contents before downloading">{finalOutput.output.name}</label>
                 <button type="button" onClick={launchDownload} title="Prepares download for your output splits file">
                     Download Splits File
                 </button>
-                <button type="button" onClick={() => setFinalOutput({name: "", data: ""})} title="Clear data from your final output splits">
+                <button type="button" onClick={() => setFinalOutput({filename: finalOutput.filename, output: {name: "", data: ""}})} title="Clear data from your final output splits">
                     Clear Download
                 </button>
             </div>

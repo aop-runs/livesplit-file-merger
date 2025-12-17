@@ -13,14 +13,12 @@ export const ListContainer = () => {
     //Shared states and variables
     const [files, setFiles] = useState([])
     const [unmaskPaths, setUnmaskPaths] = useState(false)
-    const [uploadLabel, setUploadLabel] = useState("your")
     const [requestData, setRequestData] = useState({game: [], category: [], selectedGame: null})
-    const [finalOutput, setFinalOutput] = useState({name: "", data: ""})
+    const [finalOutput, setFinalOutput] = useState({filename: "", output: {name: "", data: ""}})
 
     //Output settings for customizing splits
     const initializeSettings = () => {
         return {
-            outputName: "",
             usedComparisons: [],
             setupTime: defaultSetup,
             gameComp: defaultPBComp,
@@ -237,17 +235,10 @@ export const ListContainer = () => {
             if(confirm("Are you sure you want to reset eveything back to default?")){
                 setFiles([])
                 setUnmaskPaths(false)
-                setUploadLabel("your")
                 setOutputSettings(initializeSettings())
-                setFinalOutput({name: "", data: ""})
+                setFinalOutput({filename: "", output: {name: "", data: ""}})
                 setRequestData({game: [], category: [], selectedGame: null})
-                setAppStatuses(appStatuses => {
-                    const updatedAppStatuses = {...appStatuses}
-                    for(let key of Object.keys(updatedAppStatuses)){
-                        updatedAppStatuses[key] = initialStatus
-                    }
-                    return updatedAppStatuses
-                })
+                resetStatuses()
                 iconCache.length = 0
             }
         },
@@ -270,8 +261,6 @@ export const ListContainer = () => {
             </button>
             <FileUpload
                 addListItem={addFileListItem}
-                uploadLabel={uploadLabel}
-                setUploadLabel={setUploadLabel}
                 appStatuses={appStatuses}
                 updateStatus={updateStatus}
             />
@@ -315,10 +304,9 @@ export const ListContainer = () => {
             <FileDownload
                 listItems={files}
                 unmaskPaths={unmaskPaths}
+                outputSettings={outputSettings}
                 canDownload={canDownload}
                 updateCanDownload={updateCanDownload}
-                outputSettings={outputSettings}
-                setOutputSettings={setOutputSettings}
                 finalOutput={finalOutput}
                 setFinalOutput={setFinalOutput}
                 appStatuses={appStatuses}
