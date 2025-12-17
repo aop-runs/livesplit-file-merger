@@ -4,7 +4,7 @@ import { StatusBox } from '../StatusBox.jsx'
 import { templateParameters, defaultPBComp } from "../../utils/livesplit.js";
 import { fuzzySearchGames, searchCategoriesFromGame, cacheNewData } from "../../utils/srcapi.js";
 
-export const OutputSplitSettings = ({ listItems, updateCanDownload, outputSettings, setOutputSettings, requestData, setRequestData, appStatuses, updateStatus }) => {
+export const OutputSplitSettings = ({ listItems, updateCanDownload, outputSettings, setOutputSettings, requestData, setRequestData, checkGameComp, appStatuses, updateStatus }) => {
 
     //Used timings
     const updateTimingSelection = (value) => {
@@ -28,6 +28,18 @@ export const OutputSplitSettings = ({ listItems, updateCanDownload, outputSettin
         })
         if(key == "subs" && !value){
             changeTemplateText("final", "")
+        }
+        else if(key == "comp"){
+            setOutputSettings(outputSettings => {
+                const updatedSettings = {...outputSettings}
+                if(!value){
+                    for(let i = 0; i < updatedSettings["usedComparisons"].length; i++){
+                        updatedSettings["usedComparisons"][i].used = true
+                    }
+                }
+                checkGameComp(updatedSettings)
+                return updatedSettings
+            })
         }
         else if(key == "pb" && !value){
             setOutputSettings(outputSettings => {

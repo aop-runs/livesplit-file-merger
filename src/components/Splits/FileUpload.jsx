@@ -28,7 +28,7 @@ export const FileUpload = ({ addListItem, uploadLabel, setUploadLabel, appStatus
     const uploadFiles = (selectedFiles) => {
         updateStatus("upload", {
             header: "Loading...",
-            message: ["Adding " + selectedFiles.length.toString() + " file" + (selectedFiles.length != 1 ? "s" : "")]
+            message: ["Adding " + selectedFiles.length.toString() + " file" + (selectedFiles.length != 1 ? "s" : " to entries")]
         })
         let uploadErrors = []
         let fileAmount = selectedFiles.length

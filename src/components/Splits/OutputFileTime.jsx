@@ -11,6 +11,7 @@ export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, outp
         setOutputSettings(outputSettings => {
             const updatedSettings = {...outputSettings}
             updatedSettings["usedComparisons"][index].used = value
+            checkGameComp(updatedSettings)
             return updatedSettings
         })
     }
@@ -270,10 +271,10 @@ export const OutputFileTime = ({ listItems, unmaskPaths, updateCanDownload, outp
                             No comparisons found that exist in each entry<br/>
                         </label>
                     }
-                    <button type="button" disabled={listItems.length < 2 || (Array.from(new Set(outputSettings["usedComparisons"].map((comp) => {return comp.used})))[0] == true && new Set(outputSettings["usedComparisons"].map((comp) => {return comp.used})).size == 1)} onClick={() => toggleAllComparisons(true)} title="Toogle all above comparison settings on">
+                    <button type="button" disabled={listItems.length < 2 || outputSettings["usedComparisons"].length == 0 || (Array.from(new Set(outputSettings["usedComparisons"].map((comp) => {return comp.used})))[0] == true && new Set(outputSettings["usedComparisons"].map((comp) => {return comp.used})).size == 1)} onClick={() => toggleAllComparisons(true)} title="Toogle all above comparison settings on">
                         Toggle All Comparisons On
                     </button>
-                    <button type="button" disabled={listItems.length < 2 || (Array.from(new Set(outputSettings["usedComparisons"].map((comp) => {return comp.used})))[0] == false && new Set(outputSettings["usedComparisons"].map((comp) => {return comp.used})).size == 1)} onClick={() => toggleAllComparisons(false)} title="Toogle all above comparison settings off">
+                    <button type="button" disabled={listItems.length < 2 || outputSettings["usedComparisons"].length == 0 || (Array.from(new Set(outputSettings["usedComparisons"].map((comp) => {return comp.used})))[0] == false && new Set(outputSettings["usedComparisons"].map((comp) => {return comp.used})).size == 1)} onClick={() => toggleAllComparisons(false)} title="Toogle all above comparison settings off">
                         Toggle All Comparisons Off
                     </button>
                     <br/><br/>

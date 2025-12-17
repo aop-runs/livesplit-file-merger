@@ -61,33 +61,34 @@ export const FileDownload = ({ listItems, unmaskPaths, canDownload, updateCanDow
 
     //Prepares output that can be downloaded to the user's filesystem
     const prepareOutputSplits = (filename) => {
-        updateStatus("download")
         updateStatus("output", {
             header: "Loading...",
             message: ["Creating combined splits file named: " + filename + validSpecifier.extension + " using " + listItems.length.toString() + " entr" + (listItems.length != 1 ? "ies" : "y")]
         })
+        updateStatus("download")
         setFinalOutput({name: "", data: ""})
-        let splitsData = ""
-        try {
-            splitsData = createOutputSplits(listItems, outputSettings)
-            updateStatus("output", {
-                header: "Success",
-                message: ["Output splits file named: " + filename + validSpecifier.extension + " is ready to be downloaded below"]
+        setTimeout(() => {
+            let splitsData = createOutputSplits(listItems, outputSettings)
+            try {
+                updateStatus("output", {
+                    header: "Success",
+                    message: ["Output splits file named: " + filename + validSpecifier.extension + " is ready to be downloaded below"]
+                })
+            } catch (error){
+                updateStatus("output", {
+                    header: "Error",
+                    message: ["Unable to create output splits file named: " + filename + validSpecifier.extension + " - " + error]
+                })
+                return
+            }
+            //Update output data
+            setFinalOutput(finalOutput => {
+                const updatedFinalOutput = {...finalOutput}
+                updatedFinalOutput.name = filename + validSpecifier.extension
+                updatedFinalOutput.data = splitsData
+                return updatedFinalOutput
             })
-        } catch (error){
-            updateStatus("output", {
-                header: "Error",
-                message: ["Unable to create output splits file named: " + filename + validSpecifier.extension + " - " + error]
-            })
-            return
-        }
-        //Update output data
-        setFinalOutput(finalOutput => {
-            const updatedFinalOutput = {...finalOutput}
-            updatedFinalOutput.name = filename + validSpecifier.extension
-            updatedFinalOutput.data = splitsData
-            return updatedFinalOutput
-        })
+        }, 0)
     }
 
     //Gather output and download result to user's system and launch failback for browsers that don't support showSaveFilePicker Ex. Firefox
@@ -95,7 +96,7 @@ export const FileDownload = ({ listItems, unmaskPaths, canDownload, updateCanDow
         let downloadPromise = typeof window.showSaveFilePicker === 'function' ? downloadFileAs(finalOutput.data, finalOutput.name) : downloadFile(finalOutput.data, finalOutput.name)
         //Successful download
         downloadPromise.then(
-            (head) => {
+            () => {
                 updateStatus("download", {
                     header: "Success",
                     message: ["Download for " + finalOutput.name + " successful"]

@@ -111,16 +111,19 @@ export const ListContainer = () => {
             })
             updateCanDownload("comp", false)
         }
-        else if(settings["usedComparisons"].findIndex(c => c.name === settings["gameComp"]) != -1){
-            updateStatus("comp", {
-                header: "Error",
-                message: ["Comparison cannot be named after an existing comparison that will be carried over in your output splits"]
-            })
-            updateCanDownload("comp", false)
-        }
         else{
-            updateStatus("comp")
-            updateCanDownload("comp", true)
+            let locatedIndex = settings["usedComparisons"].findIndex(c => c.name === settings["gameComp"])
+            if(settings["toggleSettings"].comp && (locatedIndex != -1 && settings["usedComparisons"][locatedIndex].used)){
+                updateStatus("comp", {
+                    header: "Error",
+                    message: ["Comparison cannot be named after an existing comparison that will be carried over in your output splits"]
+                })
+                updateCanDownload("comp", false)
+            }
+            else{
+                updateStatus("comp")
+                updateCanDownload("comp", true)
+            }
         }
     }
 
@@ -303,6 +306,7 @@ export const ListContainer = () => {
                 setOutputSettings={setOutputSettings}
                 requestData={requestData}
                 setRequestData={setRequestData}
+                checkGameComp={checkGameComp}
                 appStatuses={appStatuses}
                 updateStatus={updateStatus}
             /><br/>
