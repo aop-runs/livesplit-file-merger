@@ -2,7 +2,7 @@ import React from 'react';
 import { StatusBox } from '../StatusBox.jsx'
 import { downloadFile, downloadFileAs, validSpecifier, isAValidFile, openContentsInNewTab } from '../../utils/file.js'
 import { gatherSplitsDataByTag, createOutputSplits } from '../../utils/livesplit.js'
-import '../../styles/style.css'
+import '../../styles/style.scss'
 
 export const FileDownload = ({ listItems, unmaskPaths, outputSettings, canDownload, updateCanDownload, finalOutput, setFinalOutput, appStatuses, updateStatus }) => {
 

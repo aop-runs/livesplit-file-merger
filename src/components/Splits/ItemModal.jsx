@@ -1,6 +1,6 @@
 import React from 'react'
 import { openContentsInNewTab } from '../../utils/file.js'
-import '../../styles/style.css'
+import '../../styles/style.scss'
 
 export const ItemModal = ({ itemData, index, unmaskPaths, closeModal }) => {
     

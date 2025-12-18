@@ -4,7 +4,7 @@ import { FileUpload } from './FileUpload.jsx'
 import { ItemList } from './ItemList.jsx'
 import { OutputSettings } from './OutputSettings.jsx'
 import { defaultSetup, defaultPBComp, iconCache } from "../../utils/livesplit.js";
-import '../../styles/style.css'
+import '../../styles/style.scss'
 
 export const ListContainer = () => {
     

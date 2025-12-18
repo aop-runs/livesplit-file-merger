@@ -3,7 +3,7 @@ import React, { useRef } from 'react';
 import { StatusBox } from '../StatusBox.jsx'
 import { gatherFileContents, validSpecifier } from '../../utils/file.js'
 import { cleanSplitsFile, gatherRunName, findCustomComparisons, gatherSplitsDataByTag } from '../../utils/livesplit.js'
-import '../../styles/style.css'
+import '../../styles/style.scss'
 
 export const FileUpload = ({ addListItem, appStatuses, updateStatus }) => {
 

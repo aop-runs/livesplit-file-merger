@@ -2,7 +2,7 @@
 import React, { useState, useRef } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 import { ItemModal } from './ItemModal'
-import '../../styles/style.css'
+import '../../styles/style.scss'
 
 export const Item = ({ index, listSize, unmaskPaths, itemData, moveListItem, removeListItem }) => {
 
