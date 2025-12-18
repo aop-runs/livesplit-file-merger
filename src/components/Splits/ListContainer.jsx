@@ -1,10 +1,8 @@
-//Based on: https://medium.com/@liadshiran92/easy-drag-and-drop-in-react-22778b30ba37
 import React, { useState, useCallback } from 'react'
 import { FileDownload } from './FileDownload.jsx'
 import { FileUpload } from './FileUpload.jsx'
 import { ItemList } from './ItemList.jsx'
-import { OutputFileTime } from './OutputFileTime.jsx'
-import { OutputSplitSettings } from './OutputSplitSettings.jsx'
+import { OutputSettings } from './OutputSettings.jsx'
 import { defaultSetup, defaultPBComp, iconCache } from "../../utils/livesplit.js";
 import '../../styles/style.css'
 
@@ -80,11 +78,16 @@ export const ListContainer = () => {
         return obj
     })
     const updateCanDownload = (key, value) => {
-        setCanDownload(appStatuses => {
-            const updatedCanDownload = {...appStatuses}
+        setCanDownload(canDownload => {
+            const updatedCanDownload = {...canDownload}
             updatedCanDownload[key] = value
             return updatedCanDownload
         })
+    }
+    const resetCanDownload = () => {
+        for(let key of Object.keys(canDownload)){
+            updateCanDownload(key, true)
+        }
     }
     
     //Alert user if they make any changes before refreshing or unloading website
@@ -239,6 +242,7 @@ export const ListContainer = () => {
                 setFinalOutput({filename: "", output: {name: "", data: ""}})
                 setRequestData({game: [], category: [], selectedGame: null})
                 resetStatuses()
+                resetCanDownload()
                 iconCache.length = 0
             }
         },
@@ -278,18 +282,9 @@ export const ListContainer = () => {
 
             {/* Output Settings */}
             <br/><br/>
-            <OutputFileTime
+            <OutputSettings
                 listItems={files}
                 unmaskPaths={unmaskPaths}
-                updateCanDownload={updateCanDownload}
-                outputSettings={outputSettings}
-                setOutputSettings={setOutputSettings}
-                checkGameComp={checkGameComp}
-                appStatuses={appStatuses}
-                updateStatus={updateStatus}
-            /><br/>
-            <OutputSplitSettings
-                listItems={files}
                 updateCanDownload={updateCanDownload}
                 outputSettings={outputSettings}
                 setOutputSettings={setOutputSettings}

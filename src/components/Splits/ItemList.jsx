@@ -1,3 +1,4 @@
+//Based on: https://medium.com/@liadshiran92/easy-drag-and-drop-in-react-22778b30ba37
 import React, {  } from 'react'
 import { Item } from './Item'
 import '../../styles/style.css'
