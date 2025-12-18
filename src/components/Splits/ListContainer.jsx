@@ -280,7 +280,8 @@ export const ListContainer = () => {
                 sortEntries={sortEntries}
             />
 
-            {/* Output Settings */}
+            {/*
+            Output Settings
             <br/><br/>
             <OutputSettings
                 listItems={files}
@@ -293,9 +294,11 @@ export const ListContainer = () => {
                 checkGameComp={checkGameComp}
                 appStatuses={appStatuses}
                 updateStatus={updateStatus}
-            /><br/>
+            />
+            */}
 
             {/* Download merged contents */}
+            <br/>
             <FileDownload
                 listItems={files}
                 unmaskPaths={unmaskPaths}

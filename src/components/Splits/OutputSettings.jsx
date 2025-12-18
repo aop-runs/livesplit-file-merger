@@ -1,6 +1,6 @@
 //Based on: https://medium.com/@aren.talb00/creating-a-custom-file-input-using-react-and-useref-233f5d4abfc9 & https://www.geeksforgeeks.org/reactjs/axios-in-react-a-guide-for-beginners/
 import React, { useRef } from 'react'
-import { StatusBox } from '../StatusBox.jsx'
+import { StatusBox } from '../Inputs/StatusBox.jsx'
 import { isAValidFile, layoutExtension } from '../../utils/file.js'
 import { templateParameters, defaultSetup, defaultPBComp, timeToSeconds } from "../../utils/livesplit.js";
 import { fuzzySearchGames, searchCategoriesFromGame, cacheNewData } from "../../utils/srcapi.js";

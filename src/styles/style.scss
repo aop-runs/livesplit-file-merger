@@ -67,3 +67,61 @@
 .layoutUpload {
   display: none;
 }
+
+//Textfield
+.textfield-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.textfield-wrapper input {
+    padding-right: 20px;
+}
+
+.textfield-wrapper input:focus {
+    outline: none;
+}
+
+.textfield-wrapper button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin-right: -5px;
+    font-size: 20px;
+    border: none;
+    background-color: transparent;
+}
+
+.textfield-active-button:hover{
+  color: grey;
+  cursor: pointer;
+}
+
+.textfield-disabled-button{
+  color: grey;
+}
+
+.textfield-extra-button {
+  position: absolute;
+  font-size: 20px;
+  margin-left: 1px;
+  border: none;
+  background-color: transparent;
+}
+
+//Output & Download
+.download-splits-name:hover{
+  color: grey;
+  cursor: pointer;
+}
+
+.download-button-icon {
+  font-size: 20px;
+  border: none;
+  background-color: transparent;
+}
+
+.download-button-icon:hover{
+  color: grey;
+  cursor: pointer;
+}
