@@ -1,6 +1,8 @@
 //Based on: https://medium.com/@aren.talb00/creating-a-custom-file-input-using-react-and-useref-233f5d4abfc9 & https://www.geeksforgeeks.org/reactjs/axios-in-react-a-guide-for-beginners/
 import React, { useRef } from 'react'
+import { DropDown } from '../Inputs/DropDown.jsx'
 import { StatusBox } from '../Inputs/StatusBox.jsx'
+import { TextField } from '../Inputs/TextField.jsx'
 import { isAValidFile, layoutExtension } from '../../utils/file.js'
 import { templateParameters, defaultSetup, defaultPBComp, timeToSeconds } from "../../utils/livesplit.js";
 import { fuzzySearchGames, searchCategoriesFromGame, cacheNewData } from "../../utils/srcapi.js";
@@ -293,11 +295,6 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
             updateCanDownload("comp", true)
         }
     }
-    const toggleAllCheckboxes = (value) => {
-        for(let key of Object.keys(outputSettings["toggleSettings"])){
-            toggleCheckbox(key, value)
-        }
-    }
 
     //Update template text
     const changeTemplateText = (key, value) => {
@@ -324,11 +321,17 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
 
     //Change game and category names from Speedrun.com Request
     const updateGameName = (name) => {
-        changeRunName("game", name)
-        updateRequestData("selectedGame", requestData.game.find(g => g.name == name))
+        if(name.length != 0){
+            changeRunName("game", name)
+            updateRequestData("selectedGame", requestData.game.find(g => g.name == name))
+            clearCategoryData()
+        }
     }
     const updateCategoryName = (name) => {
-        changeRunName("category", name)
+        if(name.length != 0){
+            changeRunName("category", name)
+            updateRequestData("selectedCategory", requestData.category.find(c => c.name == name))
+        }
     }
     const updateRequestData = (key, value) => {
         setRequestData(requestData => {
@@ -339,19 +342,19 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
     }
 
     //Speedrun.com Request to gather list of fuzzy searched games based on input
-    const fetchGameFromSRC = (game) => {
+    const fetchGameFromSRC = () => {
         updateStatus("game", {
             header: "Loading...",
-            message: ["Searching for game names matching " + game + " on Speedrun.com"]
+            message: ["Searching for game names matching " + outputSettings["runName"]["game"] + " on Speedrun.com"]
         })
-        const gameQuery = fuzzySearchGames(game)
+        const gameQuery = fuzzySearchGames(outputSettings["runName"]["game"])
         gameQuery.then(
             (response) => {
             updateRequestData("selectedGame", null)
             if(response.data.data.length == 0){
                 updateStatus("game", {
                     header: "Error",
-                    message: ["No results were found on Speedrun.com matching " + game]
+                    message: ["No results were found on Speedrun.com matching " + outputSettings["runName"]["game"]]
                 })
             }
             else{
@@ -362,10 +365,10 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
                 updateRequestData("game", games)
                 updateStatus("game", {
                     header: "Success",
-                    message: ["Found " + games.length + " result" + (games.length != 1 ? "s" : "") + " matching " + game + " from Speedrun.com"]
+                    message: ["Found " + games.length + " result" + (games.length != 1 ? "s" : "") + " matching " + outputSettings["runName"]["game"] + " from Speedrun.com"]
                 })
             }
-            cacheNewData("Game", game, response.data)
+            cacheNewData("Game", outputSettings["runName"]["game"], response.data)
         })
         gameQuery.catch(
             (error) => {
@@ -374,6 +377,11 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
                 message: ["Unable to fetch game names from Speedrun.com - " + error]
             })
         })
+    }
+    const clearGameData = () => {
+        updateRequestData("game", [])
+        updateRequestData("selectedGame", null)
+        updateStatus("game")
     }
 
     //Speedrun.com Request to categories from Speedrun.com for currently selected game
@@ -413,6 +421,11 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
                 message: ["Unable to fetch category names from Speedrun.com - " + error]
             })
         })
+    }
+    const clearCategoryData = () => {
+        updateRequestData("category", [])
+        updateRequestData("selectedCategory", null)
+        updateStatus("category")
     }
 
     return (
@@ -565,112 +578,150 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
                 <input type="checkbox" disabled={listItems.length < 2} htmlFor="iconbox" checked={outputSettings["toggleSettings"]["icon"]} onChange={(e) => toggleCheckbox("icon", e.target.checked)}/>
                 Carry over Segment Icons
             </label><br/>
+
+            {/* Splits Templates */}
+            <h4>Split Templates:</h4>
             <label id="subsbox" title="Choose whether to create new subsplits for each game (Note: This setting will remove existing subsplits from your splits files if toggled on)">
                 <input type="checkbox" disabled={listItems.length < 2} htmlFor="subsbox" checked={outputSettings["toggleSettings"]["subs"]} onChange={(e) => toggleCheckbox("subs", e.target.checked)}/>
                 Create Subsplits for Each Game
-            </label><br/>
-            <button type="button" disabled={listItems.length < 2 || (Array.from(new Set(Object.values(outputSettings["toggleSettings"])))[0] == true && new Set(Object.values(outputSettings["toggleSettings"])).size == 1)} onClick={() => toggleAllCheckboxes(true)} title="Toogle all above checkbox settings on">
-                Toggle Above Settings On
-            </button>
-            <button type="button" disabled={listItems.length < 2 || (Array.from(new Set(Object.values(outputSettings["toggleSettings"])))[0] == false && new Set(Object.values(outputSettings["toggleSettings"])).size == 1)} onClick={() => toggleAllCheckboxes(false)} title="Toogle all above checkbox settings off">
-                Toggle Above Settings Off
-            </button>
-
-            {/* Splits Templates */}
+            </label>
+            
             <br/><br/>
             {/* Setup Template */}
-            <div title="The template that will be used for every setup split in between games">
-                <label>Setup Split Template: </label>
-                <input type="text" disabled={listItems.length < 2} placeholder={"Template Text"} value={outputSettings["templateText"]["setup"]} onChange={(e) => changeTemplateText("setup", e.target.value)}/>
-                <button type="button" disabled={listItems.length < 2 || outputSettings["templateText"]["setup"].length == 0} onClick={() => changeTemplateText("setup", "")} title="Clear textfield for setup split template">
-                    Clear Setup Split Template
-                </button>
-                <select value="" disabled={listItems.length < 2} onChange={(e) => addParamaterToText("setup", e.target.value)} title="Select parameters to add to the setup split template">
-                    <option value="">Add Parameter to Template</option>
-                    {templateParameters.map((p, index) => {
+            <TextField
+                title={"Setup Split"}
+                unmaskCon={true}
+                disableCon={listItems.length < 2}
+                placeholderText={"Template Text"}
+                changeableValue={outputSettings["templateText"]["setup"]}
+                updateKey={"setup"}
+                updateFunction={changeTemplateText}
+                description={"The template that will be used for every setup split in between games"}
+                dropDown={{
+                    title: "Add Parameter to Template",
+                    updateFunction: addParamaterToText,
+                    description: "Select parameters to add to the setup split template",
+                    choices: templateParameters.map((p, index) => {
                         return (
                             <option key={index} value={p.param}>
                                 {p.name}
                             </option>
                         );
-                    })}
-                </select>
-            </div>
+                    })
+                }}
+            />
+            
             {/* Subsplit Template */}
             {outputSettings["toggleSettings"]["subs"] && 
-                <div title="The template that will be used for that last subsplit in each game">
-                    <label>Game's Final Subsplit Template: </label>
-                    <input type="text" disabled={listItems.length < 2} placeholder={"Template Text"} value={outputSettings["templateText"]["final"]} onChange={(e) => changeTemplateText("final", e.target.value)}/>
-                    <button type="button" disabled={listItems.length < 2 || outputSettings["templateText"]["final"].length == 0} onClick={() => changeTemplateText("final", "")} title="Clear textfield for game's final subsplit template">
-                        Clear Final Subsplit Template
-                    </button>
-                    <select value="" disabled={listItems.length < 2} onChange={(e) => addParamaterToText("final", e.target.value)} title="Select parameters to add to the game's final subsplit template">
-                        <option value="">Add Parameter to Template</option>
-                        {templateParameters.map((p, index) => {
-                            return (
-                                <option key={index} value={p.param}>
-                                    {p.name}
-                                </option>
-                            );
-                        })}
-                    </select>
-                </div>
+            <React.Fragment>
+            <br/>
+            <TextField
+                title={"Game's Final Subsplit"}
+                unmaskCon={true}
+                disableCon={listItems.length < 2}
+                placeholderText={"Template Text"}
+                changeableValue={outputSettings["templateText"]["final"]}
+                updateKey={"final"}
+                updateFunction={changeTemplateText}
+                description={"The template that will be used for the last subsplit in each game"}
+                dropDown={{
+                    title: "Add Parameter to Template",
+                    updateFunction: addParamaterToText,
+                    description: "Select parameters to add to the final subsplit template",
+                    choices: templateParameters.map((p, index) => {
+                        return (
+                            <option key={index} value={p.param}>
+                                {p.name}
+                            </option>
+                        );
+                    })
+                }}
+            />
+            </React.Fragment>
             }
 
             {/* Run Name */}
-            <br/>
+            <h4>Run Name:</h4>
             {/* Game Name */}
             {(appStatuses.game.header.length > 0) && <StatusBox
                 header={appStatuses.game.header}
                 message={appStatuses.game.message}
                 hideStatus={() => updateStatus("game")}
             />}
-            <div title="The name of the game for the output splits file">
-                <label>Output Game Name: </label>
-                <input type="text" disabled={listItems.length < 2} placeholder={"Game Name"} value={outputSettings["runName"]["game"]} onChange={(e) => changeRunName("game", e.target.value)}/>
-                <button type="button" disabled={listItems.length < 2 || outputSettings["runName"]["game"].length == 0} onClick={() => fetchGameFromSRC(outputSettings["runName"]["game"])} title="Fetches list of games fuzzy searched from Speedrun.com">
-                    Fetch Game from Input
+            <TextField
+                title={"Game Name"}
+                unmaskCon={true}
+                disableCon={listItems.length < 2}
+                placeholderText={"Game"}
+                changeableValue={outputSettings["runName"]["game"]}
+                updateKey={"game"}
+                updateFunction={changeRunName}
+                enterFunction={fetchGameFromSRC}
+                description={"The name of the game for the output splits file"}
+            />
+                <button type="button" disabled={listItems.length < 2 || outputSettings["runName"]["game"].length == 0} onClick={() => fetchGameFromSRC()} title="Fetches list of games fuzzy searched from Speedrun.com">
+                    Fetch Games from Input
                 </button>
-                <select value="" disabled={listItems.length < 2 || requestData.game.length == 0} onChange={(e) => updateGameName(e.target.value)} title="Select game name for your output splits from Speedrun.com request">
-                    <option value="">Select Game</option>
-                    {requestData.game.map((g, index) => {
-                        return (
-                            <option key={index} value={g.name}>
-                                {g.name}
-                            </option>
-                        );
-                    })}
-                </select>
-                <button type="button" disabled={listItems.length < 2 || outputSettings["runName"]["game"].length == 0} onClick={() => changeRunName("game", "")} title="Clear text field for the output's game name">
-                    Clear Game Name
-                </button>
-            </div>
+                {requestData.game.length != 0 &&
+                    <DropDown
+                        title={"Select Game"}
+                        setValue={requestData.selectedGame != null ? requestData.selectedGame.name : ""}
+                        disableCon={listItems.length < 2 || requestData.game.length == 0}
+                        updateFunction={updateGameName}
+                        description={"Select game name for your output splits from Speedrun.com request"}
+                        choices={requestData.game.map((g, index) => {
+                            return (
+                                <option key={index} value={g.name}>
+                                    {g.name}
+                                </option>
+                            );
+                        })}
+                        clearButton={{
+                            clearFunction: clearGameData,
+                            description: "Clear game selection results from Speedrun.com request"
+                        }}
+                    />
+                }
+            <br/><br/>
             {/* Category Name */}
             {(appStatuses.category.header.length > 0) && <StatusBox
                 header={appStatuses.category.header}
                 message={appStatuses.category.message}
                 hideStatus={() => updateStatus("category")}
             />}
-            <div title="The name of the category for the output splits file">
-                <label>Output Category Name: </label>
-                <input type="text" disabled={listItems.length < 2} placeholder={"Category Name"} value={outputSettings["runName"]["category"]} onChange={(e) => changeRunName("category", e.target.value)}/>
+            <TextField
+                title={"Category Name"}
+                unmaskCon={true}
+                disableCon={listItems.length < 2}
+                placeholderText={"Category"}
+                changeableValue={outputSettings["runName"]["category"]}
+                updateKey={"category"}
+                updateFunction={changeRunName}
+                description={"The name of the category for the output splits file"}
+            />
                 <button type="button" disabled={listItems.length < 2 || requestData.selectedGame == null} onClick={() => fetchCategoriesFromSRC()} title="Fetches category of a requested game from Speedrun.com">
-                    Fetch Category from Above Request
+                    {requestData.selectedGame != null ? "Fetch Categories from " + requestData.selectedGame.name : "Fetch a Game First"}
                 </button>
-                <select value="" disabled={listItems.length < 2 || requestData.category.length == 0} onChange={(e) => updateCategoryName(e.target.value)} title="Select category name for your output splits from requested Speedrun.com game">
-                    <option value="">Select Category</option>
-                    {requestData.category.map((c, index) => {
-                        return (
-                            <option key={index} value={c.name}>
-                                {c.name}
-                            </option>
-                        );
-                    })}
-                </select>
-                <button type="button" disabled={listItems.length < 2 || outputSettings["runName"]["category"].length == 0} onClick={() => changeRunName("category", "")} title="Clear text field for the output's category name">
-                    Clear Category Name
-                </button>
-            </div>
+                {requestData.category.length != 0 &&
+                    <DropDown
+                        title={"Select Category"}
+                        setValue={requestData.selectedCategory != null ? requestData.selectedCategory.name : ""}
+                        disableCon={listItems.length < 2 || requestData.category.length == 0}
+                        updateFunction={updateCategoryName}
+                        description={"Select category name for your output splits from requested Speedrun.com game"}
+                        choices={requestData.category.map((c, index) => {
+                            return (
+                                <option key={index} value={c.name}>
+                                    {c.name}
+                                </option>
+                            );
+                        })}
+                        clearButton={{
+                            clearFunction: clearCategoryData,
+                            description: "Clear category selection results from Speedrun.com request"
+                        }}
+                    />
+                }
 
         </React.Fragment>
 

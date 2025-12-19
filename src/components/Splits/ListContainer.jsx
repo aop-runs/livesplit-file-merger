@@ -11,7 +11,7 @@ export const ListContainer = () => {
     //Shared states and variables
     const [files, setFiles] = useState([])
     const [unmaskPaths, setUnmaskPaths] = useState(false)
-    const [requestData, setRequestData] = useState({game: [], category: [], selectedGame: null})
+    const [requestData, setRequestData] = useState({game: [], category: [], selectedGame: null, selectedCategory: null})
     const [finalOutput, setFinalOutput] = useState({filename: "", output: {name: "", data: ""}})
 
     //Output settings for customizing splits
@@ -240,7 +240,7 @@ export const ListContainer = () => {
                 setUnmaskPaths(false)
                 setOutputSettings(initializeSettings())
                 setFinalOutput({filename: "", output: {name: "", data: ""}})
-                setRequestData({game: [], category: [], selectedGame: null})
+                setRequestData({game: [], category: [], selectedGame: null, selectedCategory: null})
                 resetStatuses()
                 resetCanDownload()
                 iconCache.length = 0
@@ -281,7 +281,7 @@ export const ListContainer = () => {
             />
 
             {/*
-            Output Settings
+            {/* Output Settings */}
             <br/><br/>
             <OutputSettings
                 listItems={files}
@@ -295,7 +295,6 @@ export const ListContainer = () => {
                 appStatuses={appStatuses}
                 updateStatus={updateStatus}
             />
-            */}
 
             {/* Download merged contents */}
             <br/>

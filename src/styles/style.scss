@@ -68,6 +68,40 @@
   display: none;
 }
 
+//Output & Download
+.download-splits-name:hover{
+  color: grey;
+  cursor: pointer;
+}
+
+.download-button-icon {
+  font-size: 20px;
+  border: none;
+  background-color: transparent;
+}
+
+.download-button-icon:hover{
+  color: grey;
+  cursor: pointer;
+}
+
+//Dropdown
+.dropdown:focus{
+  outline: none;
+}
+
+.dropdown-clear-icon{
+  font-size: 20px;
+  border: none;
+  vertical-align: middle;
+  background-color: transparent;
+}
+
+.dropdown-clear-icon:hover{
+  color: grey;
+  cursor: pointer;
+}
+
 //Textfield
 .textfield-wrapper {
     position: relative;
@@ -107,21 +141,4 @@
   margin-left: 1px;
   border: none;
   background-color: transparent;
-}
-
-//Output & Download
-.download-splits-name:hover{
-  color: grey;
-  cursor: pointer;
-}
-
-.download-button-icon {
-  font-size: 20px;
-  border: none;
-  background-color: transparent;
-}
-
-.download-button-icon:hover{
-  color: grey;
-  cursor: pointer;
 }

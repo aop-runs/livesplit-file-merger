@@ -1,7 +1,6 @@
 import React from 'react';
 import { BsCloudDownload } from "react-icons/bs";
 import { GoTrash } from "react-icons/go";
-import { HiArrowPath } from "react-icons/hi2";
 import { StatusBox } from '../Inputs/StatusBox.jsx'
 import { TextField } from '../Inputs/TextField.jsx'
 import { downloadFile, downloadFileAs, validSpecifier, isAValidFile, openContentsInNewTab } from '../../utils/file.js'
@@ -97,6 +96,21 @@ export const FileDownload = ({ listItems, unmaskPaths, outputSettings, canDownlo
             })
         }, 0)
     }
+    const forcePrepareOutput = () => {
+        if((Array.from(new Set(Object.values(canDownload)))[0] == true && new Set(Object.values(canDownload)).size == 1)){
+            prepareOutputSplits(finalOutput.filename.replace(validSpecifier.extension, ""))
+        }
+    }
+
+    //Clear output data
+    const clearOutputData = () => {
+        setFinalOutput(finalOutput => {
+            const updatedFinalOutput = {...finalOutput}
+            updatedFinalOutput.output = {name: "", data: ""}
+            return updatedFinalOutput
+        })
+        updateStatus("output")
+    }
 
     //Gather output and download result to user's system and launch failback for browsers that don't support showSaveFilePicker Ex. Firefox
     const launchDownload = () => {
@@ -131,6 +145,7 @@ export const FileDownload = ({ listItems, unmaskPaths, outputSettings, canDownlo
     return (
         
         <React.Fragment>
+            <h4>Output Download:</h4>
             {/* File Preparation */}
             {(appStatuses.output.header.length > 0) && <StatusBox
                 header={appStatuses.output.header}
@@ -138,15 +153,15 @@ export const FileDownload = ({ listItems, unmaskPaths, outputSettings, canDownlo
                 hideStatus={() => updateStatus("output")}
             />}
             <TextField
-                title={"Output Filename"}
+                title={"Filename"}
                 unmaskCon={true}
                 disableCon={listItems.length < 2}
                 placeholderText={"filename.lss"}
                 changeableValue={finalOutput.filename}
                 updateFunction={updateFilename}
+                enterFunction={forcePrepareOutput}
                 description={"Filename for output splits file"}
                 defaultButton={{
-                    icon: <HiArrowPath />,
                     function: getDefaultFilename(),
                     description: "Set default output filename based on the name of the run"
                 }}
@@ -172,7 +187,7 @@ export const FileDownload = ({ listItems, unmaskPaths, outputSettings, canDownlo
                 <label className = "download-button-icon" onClick={launchDownload} title="Prepares download for your output splits file">
                     <BsCloudDownload />
                 </label>
-                <label className = "download-button-icon" onClick={() => setFinalOutput({filename: finalOutput.filename, output: {name: "", data: ""}})} title="Clear data from your final output splits">
+                <label className = "download-button-icon" onClick={clearOutputData} title="Clear data from your final output splits">
                     <GoTrash />
                 </label>
             </div>
