@@ -5,12 +5,12 @@ import { HiArrowPath } from "react-icons/hi2";
 import { TiDeleteOutline } from "react-icons/ti";
 import '../../styles/style.scss'
 
-export const TextField = ({ title, unmaskCon, disableCon, placeholderText, changeableValue, updateKey, updateFunction, enterFunction, description, defaultButton, miscButton, dropDown }) => {
+export const TextField = ({ title, unmaskCon, moveCursorToEnd, disableCon, placeholderText, changeableValue, updateKey, updateFunction, enterFunction, description, defaultButton, miscButton, dropDown }) => {
     
     //Set cursor position to end of textfield every click
     const inputRef = useRef(null);
     const setCursorToEnd = () => {
-        if(inputRef.current) {
+        if(moveCursorToEnd && inputRef.current) {
             inputRef.current.setSelectionRange(changeableValue.length, changeableValue.length);
         }
     }

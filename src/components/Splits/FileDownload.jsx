@@ -154,6 +154,7 @@ export const FileDownload = ({ listItems, unmaskPaths, outputSettings, canDownlo
             <TextField
                 title={"Filename"}
                 unmaskCon={true}
+                moveCursorToEnd={false}
                 disableCon={listItems.length < 2}
                 placeholderText={"filename.lss"}
                 changeableValue={finalOutput.filename}

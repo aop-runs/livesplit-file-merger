@@ -472,6 +472,7 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
                 <TextField
                     title={"Game PB Comparison Name"}
                     unmaskCon={true}
+                    moveCursorToEnd={false}
                     disableCon={listItems.length < 2}
                     placeholderText={"Comparison Name"}
                     changeableValue={listItems.length >= 2 ? outputSettings["gameComp"] : ""}
@@ -492,6 +493,7 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
             <TextField
                 title={"Setup Split Time"}
                 unmaskCon={true}
+                moveCursorToEnd={false}
                 disableCon={listItems.length < 2}
                 placeholderText={"0.00:00:00.0000000"}
                 changeableValue={listItems.length >= 2 ? outputSettings["setupTime"] : ""}
@@ -528,6 +530,7 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
                 <TextField
                     title={"Starting Layout"}
                     unmaskCon={unmaskPaths}
+                    moveCursorToEnd={true}
                     disableCon={listItems.length < 2}
                     placeholderText={"filepath\\filename.lsl"}
                     changeableValue={outputSettings["customInfo"]["layout"]}
@@ -563,6 +566,7 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
                 <TextField
                     title={"Starting Offset"}
                     unmaskCon={true}
+                    moveCursorToEnd={false}
                     disableCon={listItems.length < 2}
                     placeholderText={"-0.00:00:00.0000000"}
                     changeableValue={outputSettings["customInfo"]["offset"]}
@@ -640,6 +644,7 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
             <TextField
                 title={"Setup Split"}
                 unmaskCon={true}
+                moveCursorToEnd={false}
                 disableCon={listItems.length < 2}
                 placeholderText={"Template Text"}
                 changeableValue={outputSettings["templateText"]["setup"]}
@@ -667,6 +672,7 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
             <TextField
                 title={"Game's Final Subsplit"}
                 unmaskCon={true}
+                moveCursorToEnd={false}
                 disableCon={listItems.length < 2}
                 placeholderText={"Template Text"}
                 changeableValue={outputSettings["templateText"]["final"]}
@@ -699,6 +705,7 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
             <TextField
                 title={"Game Name"}
                 unmaskCon={true}
+                moveCursorToEnd={false}
                 disableCon={listItems.length < 2}
                 placeholderText={"Game"}
                 changeableValue={outputSettings["runName"]["game"]}
@@ -739,6 +746,7 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
             <TextField
                 title={"Category Name"}
                 unmaskCon={true}
+                moveCursorToEnd={false}
                 disableCon={listItems.length < 2}
                 placeholderText={"Category"}
                 changeableValue={outputSettings["runName"]["category"]}

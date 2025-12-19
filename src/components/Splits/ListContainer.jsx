@@ -52,7 +52,15 @@ export const ListContainer = () => {
     const [appStatuses, setAppStatuses] = useState(() => {
         const obj = {}
         for(let key of ["upload", "layout", "offset", "setup", "found", "comp", "game", "category", "output", "download"]){
-            obj[key] = initialStatus
+            if(key == "upload"){
+                obj[key] = {
+                    header: "Info",
+                    message: ["Upload some split files below to get started"]
+                }
+            }
+            else{
+                obj[key] = initialStatus
+            }
         }
         return obj
     })
@@ -65,8 +73,16 @@ export const ListContainer = () => {
     }
     const resetStatuses = () => {
         for(let key of Object.keys(appStatuses)){
-            updateStatus(key)
-        }
+            if(key == "upload"){
+                updateStatus("upload", {
+                    header: "Info",
+                    message: ["Upload some split files below to get started"]
+                })
+            }
+            else{
+                updateStatus(key)
+            }
+        } 
     }
 
     //Download checks
@@ -261,7 +277,8 @@ export const ListContainer = () => {
     return (
         <React.Fragment>
 
-            {/* List operations */}
+            {/* Application Settings */}
+            <h4>Application Settings:</h4>
             <label id="unmask" title="Choose whether to unhide absolute filepath names for LiveSplit layouts">
                 <input type="checkbox" htmlFor="unmask" checked={unmaskPaths} onChange={(e) => setUnmaskPaths(e.target.checked)}/>
                 Unmask Filepaths
@@ -270,6 +287,9 @@ export const ListContainer = () => {
             <button type="button" onClick={resetApplication} title="Remove all entries and revert all settings to default">
                 Reset Application
             </button>
+
+            {/* Upload Files */}
+
             <FileUpload
                 addListItem={addFileListItem}
                 appStatuses={appStatuses}
@@ -287,7 +307,6 @@ export const ListContainer = () => {
                 sortEntries={sortEntries}
             />
 
-            {/*
             {/* Output Settings */}
             <br/>
             <OutputSettings
