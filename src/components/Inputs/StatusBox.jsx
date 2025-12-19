@@ -1,7 +1,7 @@
 import React from 'react'
 import '../../styles/style.scss'
 
-export const StatusBox = ({ header, message, hideStatus }) => {
+export const StatusBox = ({ header, message }) => {
     
 return (
         //Modal div upon item click
@@ -15,9 +15,6 @@ return (
                         {line}
                     </p>
                 ))}
-                <button type ='button' onClick={hideStatus} title="Close this status tab">
-                    Hide Status
-                </button>
             </div>
         </React.Fragment>
     )

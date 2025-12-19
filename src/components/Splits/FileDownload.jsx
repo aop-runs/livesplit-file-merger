@@ -150,7 +150,6 @@ export const FileDownload = ({ listItems, unmaskPaths, outputSettings, canDownlo
             {(appStatuses.output.header.length > 0) && <StatusBox
                 header={appStatuses.output.header}
                 message={appStatuses.output.message}
-                hideStatus={() => updateStatus("output")}
             />}
             <TextField
                 title={"Filename"}
@@ -162,7 +161,7 @@ export const FileDownload = ({ listItems, unmaskPaths, outputSettings, canDownlo
                 enterFunction={forcePrepareOutput}
                 description={"Filename for output splits file"}
                 defaultButton={{
-                    function: getDefaultFilename(),
+                    value: getDefaultFilename(),
                     description: "Set default output filename based on the name of the run"
                 }}
             />
@@ -177,19 +176,18 @@ export const FileDownload = ({ listItems, unmaskPaths, outputSettings, canDownlo
             {(appStatuses.download.header.length > 0) && <StatusBox
                 header={appStatuses.download.header}
                 message={appStatuses.download.message}
-                hideStatus={() => updateStatus("download")}
             />}
             <div title="Download link for output splits file">
                 <label>Output Contents:</label><br/>
                 <label className = "download-splits-name" onClick={() => openContentsInNewTab(finalOutput.output.data, gatherSplitsDataByTag(finalOutput.output.data, "LayoutPath"), !unmaskPaths)} title = "Click on the filename to view its raw contents before downloading">
                     {finalOutput.output.name}
-                </label>
-                <label className = "download-button-icon" onClick={launchDownload} title="Prepares download for your output splits file">
+                </label><br/>
+                <button className = "download-button-icon" onClick={launchDownload} title="Prepares download for your output splits file">
                     <BsCloudDownload />
-                </label>
-                <label className = "download-button-icon" onClick={clearOutputData} title="Clear data from your final output splits">
+                </button>
+                <button className = "download-button-icon" onClick={clearOutputData} title="Clear data from your final output splits">
                     <GoTrash />
-                </label>
+                </button>
             </div>
             </React.Fragment>
         }

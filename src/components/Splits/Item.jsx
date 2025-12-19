@@ -1,6 +1,9 @@
 //Based on: https://medium.com/@liadshiran92/easy-drag-and-drop-in-react-22778b30ba37
 import React, { useState, useRef } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
+import { TbArrowMoveUp } from "react-icons/tb";
+import { TbArrowMoveDown } from "react-icons/tb";
+import { GoTrash } from "react-icons/go";
 import { ItemModal } from './ItemModal'
 import '../../styles/style.scss'
 
@@ -76,16 +79,17 @@ export const Item = ({ index, listSize, unmaskPaths, itemData, moveListItem, rem
                 "entry", 
                 isModalOpen ? "defaultCursor" : "moveCursor", 
                 isDragging ? "itemDrag" : "itemNoDrag"
-            ].join(" ")} title="Click here to open contents for this entry">
-                {itemData.runName}
-                <button type ='button' onClick={moveItemUp} disabled={index==0} title="Move this file up one spot in your entries">
-                    Move Up
+                ].join(" ")}
+                title="Click here to open contents for this entry">
+                {itemData.runName}<br/>
+                <button className = {"list-icon" + (index == 0 ? " list-icon-disabled" : " list-icon-active")} onClick={moveItemUp} disabled={index==0} title="Move this file up one spot in your entries">
+                    <TbArrowMoveUp />
                 </button>
-                <button type ='button' onClick={moveItemDown} disabled={index==listSize-1} title="Move this file down one spot in your entries">
-                    Move Down
+                <button className = {"list-icon" + (index == listSize-1 ? " list-icon-disabled" : " list-icon-active")} onClick={moveItemDown} disabled={index==listSize-1} title="Move this file down one spot in your entries">
+                    <TbArrowMoveDown />
                 </button>
-                <button type ='button' onClick={removeItem} title="Remove this file from your entries">
-                    Remove
+                <button className = "list-icon list-icon-active" onClick={removeItem} title="Remove this file from your entries">
+                    <GoTrash />
                 </button>
                 {isModalOpen && <ItemModal
                     itemData={itemData}

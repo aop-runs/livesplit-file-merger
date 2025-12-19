@@ -1,6 +1,7 @@
 //Based on: https://www.geeksforgeeks.org/reactjs/drag-and-drop-file-upload-component-with-react-hooks/ & https://medium.com/@dprincecoder/creating-a-drag-and-drop-file-upload-component-in-react-a-step-by-step-guide-4d93b6cc21e0
 import React, { useRef } from 'react';
 import { StatusBox } from '../Inputs/StatusBox.jsx'
+import { BsCloudUpload } from "react-icons/bs";
 import { gatherFileContents, validSpecifier } from '../../utils/file.js'
 import { cleanSplitsFile, gatherRunName, findCustomComparisons, gatherSplitsDataByTag } from '../../utils/livesplit.js'
 import '../../styles/style.scss'
@@ -89,15 +90,13 @@ export const FileUpload = ({ addListItem, appStatuses, updateStatus }) => {
     return (
         //File upload box
         <React.Fragment>
+            <h4>File Upload:</h4>
             {(appStatuses.upload.header.length > 0) && <StatusBox
                 header={appStatuses.upload.header}
                 message={appStatuses.upload.message}
-                hideStatus={() => updateStatus("upload")}
             />}
-            <div ref={wrapperRef} className="upload" onDragEnter={onDragEnter} onDragLeave={onDragLeave} onDrop={onFileDrop} title="Box where you you click to upload LiveSplit files or drag &drop them">
-                <p>
-                    Click to Upload or Drag & Drop your {validSpecifier.extension} Files Here
-                </p>
+            <div ref={wrapperRef} className="upload" onDragEnter={onDragEnter} onDragLeave={onDragLeave} onDrop={onFileDrop} title="Click to Upload or Drag & Drop your .lss Files Here">
+                <p className="uploadButton"><BsCloudUpload /></p>
                 <input type="file" value= "" accept={validSpecifier.extension} onChange={onFileSelect} multiple/>
             </div>
         </React.Fragment>

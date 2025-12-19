@@ -43,9 +43,13 @@
   z-index: 1;
 }
 
+
+//File Upload
 .upload {
     position: relative;
     border: 1px dashed gray;
+    padding-top: 40px;
+    padding-bottom: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -64,8 +68,44 @@
     opacity: 0.6;
 }
 
+.uploadButton {
+  position: absolute;
+  font-size: 40px;
+  border: none;
+  background-color: transparent;
+}
+
 .layoutUpload {
   display: none;
+}
+
+//List
+.list-icon {
+  font-size: 20px;
+  border: none;
+  background-color: transparent;
+}
+
+.list-icon-active:hover{
+  color: grey;
+  cursor: pointer;
+}
+
+.list-icon-disabled{
+  color: grey;
+  cursor: default;
+}
+
+//Comparisons
+.comparison-icon {
+  font-size: 20px;
+  border: none;
+  background-color: transparent;
+}
+
+.comparison-icon:hover{
+  color: grey;
+  cursor: pointer;
 }
 
 //Output & Download
@@ -139,6 +179,14 @@
   position: absolute;
   font-size: 20px;
   margin-left: 1px;
+  border: none;
+  background-color: transparent;
+}
+
+.textfield-misc-button {
+  position: absolute;
+  font-size: 20px;
+  margin-left: 20px;
   border: none;
   background-color: transparent;
 }

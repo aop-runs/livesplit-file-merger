@@ -51,7 +51,7 @@ export const ListContainer = () => {
     const initialStatus = {header: "", message: [""]}
     const [appStatuses, setAppStatuses] = useState(() => {
         const obj = {}
-        for(let key of ["upload", "layout", "offset", "setup", "comp", "game", "category", "output", "download"]){
+        for(let key of ["upload", "layout", "offset", "setup", "found", "comp", "game", "category", "output", "download"]){
             obj[key] = initialStatus
         }
         return obj
@@ -143,6 +143,15 @@ export const ListContainer = () => {
                 }
             )
             checkGameComp(updatedSettings)
+            if(updatedSettings["usedComparisons"].length == 0){
+                updateStatus("found", {
+                    header: "Warning",
+                    message: ["No comparisons found that exist in each entry"]
+                })
+            }
+            else{
+                updateStatus("found")
+            }
             return updatedSettings
         })
     }
@@ -257,9 +266,7 @@ export const ListContainer = () => {
                 <input type="checkbox" htmlFor="unmask" checked={unmaskPaths} onChange={(e) => setUnmaskPaths(e.target.checked)}/>
                 Unmask Filepaths
             </label>
-            <button type="button" onClick={resetStatuses} title="Closes any status box currently open on the webpage">
-                Close All Status Boxes
-            </button>
+            <br/>
             <button type="button" onClick={resetApplication} title="Remove all entries and revert all settings to default">
                 Reset Application
             </button>
@@ -282,7 +289,7 @@ export const ListContainer = () => {
 
             {/*
             {/* Output Settings */}
-            <br/><br/>
+            <br/>
             <OutputSettings
                 listItems={files}
                 unmaskPaths={unmaskPaths}
