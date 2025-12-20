@@ -145,55 +145,57 @@ export const FileDownload = ({ listItems, unmaskPaths, outputSettings, canDownlo
     return (
         
         <React.Fragment>
-            <h4 className ="sectionTitle">Output Download:</h4>
-            {/* File Preparation */}
-            {(appStatuses.output.header.length > 0) && <StatusBox
-                header={appStatuses.output.header}
-                message={appStatuses.output.message}
-            />}
-            <TextField
-                title={"Filename"}
-                unmaskCon={true}
-                moveCursorToEnd={false}
-                disableCon={listItems.length < 2}
-                placeholderText={"filename.lss"}
-                changeableValue={finalOutput.filename}
-                updateFunction={updateFilename}
-                enterFunction={forcePrepareOutput}
-                description={"Filename for output splits file"}
-                defaultButton={{
-                    value: getDefaultFilename(),
-                    description: "Set default output filename based on the name of the run"
-                }}
-            />
-            
-            <br/>
-            <button type="button" disabled={listItems.length < 2 || finalOutput.filename.length == 0 || !(Array.from(new Set(Object.values(canDownload)))[0] == true && new Set(Object.values(canDownload)).size == 1)} onClick={() => prepareOutputSplits(finalOutput.filename.replace(validSpecifier.extension, ""))} title="Prepares output file for combined splits that can be downloaded">
-                    Prepare Output Splits
-            </button><br/>
+            <details open title="Click to open/close this section">
+                <summary className ="sectionTitle">
+                    Output Download
+                </summary>
+                {/* File Preparation */}
+                {(appStatuses.output.header.length > 0) && <StatusBox
+                    header={appStatuses.output.header}
+                    message={appStatuses.output.message}
+                />}
+                <TextField
+                    title={"Filename"}
+                    unmaskCon={true}
+                    moveCursorToEnd={false}
+                    disableCon={listItems.length < 2}
+                    placeholderText={"filename.lss"}
+                    changeableValue={finalOutput.filename}
+                    updateFunction={updateFilename}
+                    enterFunction={forcePrepareOutput}
+                    description={"Filename for output splits file"}
+                    defaultButton={{
+                        value: getDefaultFilename(),
+                        description: "Set default output filename based on the name of the run"
+                    }}
+                />       
+                <br/>
+                <button type="button" disabled={listItems.length < 2 || finalOutput.filename.length == 0 || !(Array.from(new Set(Object.values(canDownload)))[0] == true && new Set(Object.values(canDownload)).size == 1)} onClick={() => prepareOutputSplits(finalOutput.filename.replace(validSpecifier.extension, ""))} title="Prepares output file for combined splits that can be downloaded">
+                        Prepare Output Splits
+                </button>
 
-        {/* File Download */}
-        {finalOutput.output.name.length != 0 &&
-            <React.Fragment>
-            <br/>
-            {(appStatuses.download.header.length > 0) && <StatusBox
-                header={appStatuses.download.header}
-                message={appStatuses.download.message}
-            />}
-            <div title="Download link for output splits file">
-                <h4 className ="sectionTitle">Output Contents:</h4>
-                <label className = "download-splits-name" onClick={() => openContentsInNewTab(finalOutput.output.data, gatherSplitsDataByTag(finalOutput.output.data, "LayoutPath"), !unmaskPaths)} title = "Click on the filename to view its raw contents before downloading">
-                    {finalOutput.output.name}
-                </label><br/>
-                <button className = "download-button-icon" onClick={launchDownload} title="Prepares download for your output splits file">
-                    <BsCloudDownload />
-                </button>
-                <button className = "download-button-icon" onClick={clearOutputData} title="Clear data from your final output splits">
-                    <GoTrash />
-                </button>
-            </div>
-            </React.Fragment>
-        }
+            {/* File Download */}
+            {finalOutput.output.name.length != 0 &&
+                <React.Fragment>
+                <br/><br/>
+                {(appStatuses.download.header.length > 0) && <StatusBox
+                    header={appStatuses.download.header}
+                    message={appStatuses.download.message}
+                />}
+                <div title="Download link for output splits file">
+                    <label className = "download-splits-name" onClick={() => openContentsInNewTab(finalOutput.output.data, gatherSplitsDataByTag(finalOutput.output.data, "LayoutPath"), !unmaskPaths)} title = "Click on the filename to view its raw contents before downloading">
+                        {finalOutput.output.name}
+                    </label><br/>
+                    <button className = "download-button-icon" onClick={launchDownload} title="Prepares download for your output splits file">
+                        <BsCloudDownload />
+                    </button>
+                    <button className = "download-button-icon" onClick={clearOutputData} title="Clear data from your final output splits">
+                        <GoTrash />
+                    </button>
+                </div>
+                </React.Fragment>
+            }
+            </details>
         </React.Fragment>
 
     );

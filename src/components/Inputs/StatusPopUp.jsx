@@ -12,9 +12,9 @@ return (
                 </label><br/>
                 {message.map((line, index) => (
                     <label title="Status text"key={index}>
-                        {line}
+                        {line}<br/>
                     </label>
-                ))}<br/>
+                ))}
             </div>
         </React.Fragment>
     )

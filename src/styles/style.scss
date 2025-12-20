@@ -29,7 +29,21 @@
 }
 
 .sectionTitle{
+  font-weight: bold;
   margin-bottom: 0px;
+}
+
+//Reset
+.reset-button{
+  position: absolute;
+  font-size: 20px;
+  border: none;
+  background-color: transparent;
+}
+
+.reset-button:hover{
+  color: grey;
+  cursor: pointer;
 }
 
 //Status

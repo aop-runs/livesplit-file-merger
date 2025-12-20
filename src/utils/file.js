@@ -19,7 +19,7 @@ export async function gatherFileContents(filename){
         //Gather file contents
         try{
             if(!isAValidFile(filename.name, validSpecifier.extension)){
-                throw new Error("Invalid file: " + filename.name + " uploaded");
+                throw new Error(filename.name + " is an invalid file");
             }
             let fileReader = new FileReader();
             fileReader.onloadend = (e) => {

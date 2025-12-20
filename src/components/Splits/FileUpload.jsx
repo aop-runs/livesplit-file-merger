@@ -90,15 +90,19 @@ export const FileUpload = ({ addListItem, appStatuses, updateStatus }) => {
     return (
         //File upload box
         <React.Fragment>
-            <h4 className ="sectionTitle">File Upload:</h4>
-            {(appStatuses.upload.header.length > 0) && <StatusBox
-                header={appStatuses.upload.header}
-                message={appStatuses.upload.message}
-            />}
-            <div ref={wrapperRef} className="upload" onDragEnter={onDragEnter} onDragLeave={onDragLeave} onDrop={onFileDrop} title="Click to Upload or Drag & Drop your .lss Files Here">
-                <p className="uploadButton"><BsCloudUpload /></p>
-                <input type="file" value= "" accept={validSpecifier.extension} onChange={onFileSelect} multiple/>
-            </div>
+            <details open title="Click to open/close this section">
+                <summary className ="sectionTitle">
+                    File Upload
+                </summary>
+                {(appStatuses.upload.header.length > 0) && <StatusBox
+                    header={appStatuses.upload.header}
+                    message={appStatuses.upload.message}
+                />}
+                <div ref={wrapperRef} className="upload" onDragEnter={onDragEnter} onDragLeave={onDragLeave} onDrop={onFileDrop} title="Click to Upload or Drag & Drop your .lss Files Here">
+                    <p className="uploadButton"><BsCloudUpload /></p>
+                    <input type="file" value= "" accept={validSpecifier.extension} onChange={onFileSelect} multiple/>
+                </div>
+            </details>
         </React.Fragment>
     );
 }

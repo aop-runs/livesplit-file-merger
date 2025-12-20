@@ -3,6 +3,7 @@ import { FileDownload } from './FileDownload.jsx'
 import { FileUpload } from './FileUpload.jsx'
 import { ItemList } from './ItemList.jsx'
 import { OutputSettings } from './OutputSettings.jsx'
+import { MdOutlineResetTv } from "react-icons/md";
 import { defaultSetup, defaultPBComp, iconCache } from "../../utils/livesplit.js";
 import '../../styles/style.scss'
 
@@ -281,14 +282,19 @@ export const ListContainer = () => {
             <div className="flex-container">
                 <div className="flex-item flex-item-1">
                     {/* Application Settings */}
-                    <h4 className ="sectionTitle">Application Settings:</h4>
-                    <label id="unmask" title="Choose whether to unhide absolute filepath names for LiveSplit layouts">
-                        <input type="checkbox" htmlFor="unmask" checked={unmaskPaths} onChange={(e) => setUnmaskPaths(e.target.checked)}/>
-                        Unmask Filepaths
-                    </label><br/><br/>
-                    <button type="button" onClick={resetApplication} title="Remove all entries and revert all settings to default">
-                        Reset Application
-                    </button>
+                    <details open title="Click to open/close this section">
+                        <summary className="sectionTitle">
+                            Application Settings
+                        </summary>
+                        <label id="unmask" title="Choose whether to unhide absolute filepath names for LiveSplit layouts">
+                            <input type="checkbox" htmlFor="unmask" checked={unmaskPaths} onChange={(e) => setUnmaskPaths(e.target.checked)}/>
+                            Unmask Filepaths
+                        </label>
+                        <button className="reset-button" type="button" onClick={resetApplication} title="Remove all entries and revert all settings to default">
+                            <MdOutlineResetTv />
+                        </button>
+                        <br/>
+                    </details>
                     <br/>
                     <FileUpload
                         addListItem={addFileListItem}
@@ -305,7 +311,7 @@ export const ListContainer = () => {
                         reverseEntries={reverseEntries}
                         sortEntries={sortEntries}
                     />
-                    <br/><br/>
+                    <br/>
                     <a className = "top-link" href = "#top" title="Click to go back to the top of the webpage">
                         Back to Top
                     </a>
@@ -324,6 +330,7 @@ export const ListContainer = () => {
                         appStatuses={appStatuses}
                         updateStatus={updateStatus}
                     />
+                    <br/>
                     {/* Output Settings */}
                     <OutputSettings
                         listItems={files}
@@ -337,7 +344,7 @@ export const ListContainer = () => {
                         appStatuses={appStatuses}
                         updateStatus={updateStatus}
                     />
-                    <br/><br/>
+                    <br/>
                     <a className = "top-link" href = "#top" title="Click to go back to the top of the webpage">
                         Back to Top
                     </a>

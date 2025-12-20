@@ -11,8 +11,10 @@ export const ItemList = ({ listItems, unmaskPaths, moveListItem, removeListItem,
     return (
             <React.Fragment> 
                 {/* List of items */}
-                <React.Fragment>
-                    <h4 className ="sectionTitle">Split Entries:</h4>
+                <details open title="Click to open/close this section">
+                    <summary className ="sectionTitle">
+                        Split Entries
+                    </summary>
                     {listItems.length != 0 &&
                         <React.Fragment>
                         <br/>
@@ -29,7 +31,7 @@ export const ItemList = ({ listItems, unmaskPaths, moveListItem, removeListItem,
                         ))}
                         </div>
                         </React.Fragment>
-                    }
+                    }                 
 
                     {/* Buttons for list reordering */}
                     <label title="Number of files used for output splits">
@@ -44,7 +46,7 @@ export const ItemList = ({ listItems, unmaskPaths, moveListItem, removeListItem,
                     <button className = {"list-icon" + (listItems.length < 2 ? " list-icon-disabled" : " list-icon-active")} disabled={listItems.length < 2} onClick={() => sortEntries(true)} title="Sort all of your entries Z-A">
                         <FaSortAlphaDownAlt />
                     </button>
-                </React.Fragment>
+                </details>
             </React.Fragment>
         )
     }

@@ -448,337 +448,361 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
         <React.Fragment>
 
             {/* Split Settings */}
-            <h4 className ="sectionTitle">Split Settings:</h4>
-            <label id="iconbox" title="Choose whether to carry over segment icons from your splits files">
-                <input type="checkbox" disabled={listItems.length < 2} htmlFor="iconbox" checked={outputSettings["toggleSettings"]["icon"]} onChange={(e) => toggleCheckbox("icon", e.target.checked)}/>
-                Carry Over Segment Icons
-            </label><br/>
-            <label id="sobbox" title="Choose whether to carry over your sum of best segments from your split files">
-                <input type="checkbox" disabled={listItems.length < 2} htmlFor="sobbox" checked={outputSettings["toggleSettings"]["sob"]} onChange={(e) => toggleCheckbox("sob", e.target.checked)}/>
-                Carry Over Sum of Best Times
-            </label><br/>
-            <label id="pbbox" title="Choose whether to carry over your pbs from your split files as a new comparison">
-                <input type="checkbox" disabled={listItems.length < 2} htmlFor="pbbox" checked={outputSettings["toggleSettings"]["pb"]} onChange={(e) => toggleCheckbox("pb", e.target.checked)}/>
-                Carry Over PBs
-            </label><br/>
+            <details title="Click to open/close this section">
+                <summary className ="sectionTitle">
+                    Split Settings
+                </summary>
+                <label id="iconbox" title="Choose whether to carry over segment icons from your splits files">
+                    <input type="checkbox" disabled={listItems.length < 2} htmlFor="iconbox" checked={outputSettings["toggleSettings"]["icon"]} onChange={(e) => toggleCheckbox("icon", e.target.checked)}/>
+                    Carry Over Segment Icons
+                </label><br/>
+                <label id="sobbox" title="Choose whether to carry over your sum of best segments from your split files">
+                    <input type="checkbox" disabled={listItems.length < 2} htmlFor="sobbox" checked={outputSettings["toggleSettings"]["sob"]} onChange={(e) => toggleCheckbox("sob", e.target.checked)}/>
+                    Carry Over Sum of Best Times
+                </label><br/>
+                <label id="pbbox" title="Choose whether to carry over your pbs from your split files as a new comparison">
+                    <input type="checkbox" disabled={listItems.length < 2} htmlFor="pbbox" checked={outputSettings["toggleSettings"]["pb"]} onChange={(e) => toggleCheckbox("pb", e.target.checked)}/>
+                    Carry Over PBs
+                </label><br/>
 
-            {/* Game Comparison Name */}
-            {outputSettings["toggleSettings"]["pb"] && 
-                <React.Fragment>
-                {(appStatuses.comp.header.length > 0) && <StatusBox
-                    header={appStatuses.comp.header}
-                    message={appStatuses.comp.message}
+                {/* Game Comparison Name */}
+                {outputSettings["toggleSettings"]["pb"] && 
+                    <React.Fragment>
+                    {(appStatuses.comp.header.length > 0) && <StatusBox
+                        header={appStatuses.comp.header}
+                        message={appStatuses.comp.message}
+                    />}
+                    <TextField
+                        title={"Game PB Comparison Name"}
+                        unmaskCon={true}
+                        moveCursorToEnd={false}
+                        disableCon={listItems.length < 2}
+                        placeholderText={"Comparison Name"}
+                        changeableValue={listItems.length >= 2 ? outputSettings["gameComp"] : ""}
+                        updateFunction={updateComparisonName}
+                        description={"The name of the comparison for current game PBs"}
+                        defaultButton={{
+                            value: defaultPBComp,
+                            description: "Revert back to default game PB comparison name"
+                        }}
+                    />
+                    <br/>
+                    </React.Fragment>
+                }
+                {/* Setup Split Time */}
+                {(appStatuses.setup.header.length > 0) && <StatusBox
+                    header={appStatuses.setup.header}
+                    message={appStatuses.setup.message}
                 />}
                 <TextField
-                    title={"Game PB Comparison Name"}
+                    title={"Setup Split Time"}
                     unmaskCon={true}
                     moveCursorToEnd={false}
                     disableCon={listItems.length < 2}
-                    placeholderText={"Comparison Name"}
-                    changeableValue={listItems.length >= 2 ? outputSettings["gameComp"] : ""}
-                    updateFunction={updateComparisonName}
-                    description={"The name of the comparison for current game PBs"}
+                    placeholderText={"0.00:00:00.0000000"}
+                    changeableValue={listItems.length >= 2 ? outputSettings["setupTime"] : ""}
+                    updateFunction={updateSetupTime}
+                    description={"The time allotted for setup splits for split calculations"}
                     defaultButton={{
-                        value: defaultPBComp,
-                        description: "Revert back to default game PB comparison name"
+                        value: defaultSetup,
+                        description: "Revert back to default setup split time"
                     }}
                 />
-                <br/>
-                </React.Fragment>
-            }
-            {/* Setup Split Time */}
-            {(appStatuses.setup.header.length > 0) && <StatusBox
-                header={appStatuses.setup.header}
-                message={appStatuses.setup.message}
-            />}
-            <TextField
-                title={"Setup Split Time"}
-                unmaskCon={true}
-                moveCursorToEnd={false}
-                disableCon={listItems.length < 2}
-                placeholderText={"0.00:00:00.0000000"}
-                changeableValue={listItems.length >= 2 ? outputSettings["setupTime"] : ""}
-                updateFunction={updateSetupTime}
-                description={"The time allotted for setup splits for split calculations"}
-                defaultButton={{
-                    value: defaultSetup,
-                    description: "Revert back to default setup split time"
-                }}
-            />
+            </details><br/>
 
             {/* Starting Properties */}
-            <h4 className ="sectionTitle">Starting Properties:</h4>
-            <label id="usefirst" title="Choose whether to use the first LiveSplit file's layout filepath and timer offset or custom specified ones">
-                <input type="checkbox" disabled={listItems.length < 2} htmlFor="unfirst" checked={(outputSettings["customInfo"].layout == null && outputSettings["customInfo"].offset == null)} onChange={(e) => toggleFirstInfo(e.target.checked)}/>
-                Use Properties from First Entry
-            </label><br/>
+            <details title="Click to open/close this section">
+                <summary className ="sectionTitle">
+                    Starting Properties
+                </summary>
+                <label id="usefirst" title="Choose whether to use the first LiveSplit file's layout filepath and timer offset or custom specified ones">
+                    <input type="checkbox" disabled={listItems.length < 2} htmlFor="unfirst" checked={(outputSettings["customInfo"].layout == null && outputSettings["customInfo"].offset == null)} onChange={(e) => toggleFirstInfo(e.target.checked)}/>
+                    Use Properties from First Entry
+                </label><br/>
 
-            {/* Custom Layout */}
-            {(appStatuses.layout.header.length > 0) && <StatusBox
-                header={appStatuses.layout.header}
-                message={appStatuses.layout.message}
-            />}
-            {(outputSettings["customInfo"].layout == null) &&
-                <React.Fragment>
-                    <label title="The layout LiveSplit will use for your output splits">
-                        Starting Layout:<br/>{(outputSettings["customInfo"].layout == null && outputSettings["customInfo"].offset == null) && (listItems.length !=0 && listItems[0].layoutPath.length !=0 ? (unmaskPaths ? listItems[0].layoutPath : listItems[0].layoutPath.length + " characters masked") : "N/A")}
-                    </label>
-                    <br/><br/>
-                </React.Fragment>
-            }
-            {(outputSettings["customInfo"].layout != null) &&
-                <React.Fragment>
-                <TextField
-                    title={"Starting Layout"}
-                    unmaskCon={unmaskPaths}
-                    moveCursorToEnd={true}
-                    disableCon={listItems.length < 2}
-                    placeholderText={"filepath\\filename.lsl"}
-                    changeableValue={outputSettings["customInfo"]["layout"]}
-                    updateKey={"layout"}
-                    updateFunction={changeCustomSetting}
-                    description={"The starting layout LiveSplit will use for your output splits"}
-                    defaultButton={{
-                        value: listItems.length != 0 ? listItems[0].layoutPath : "N/A",
-                        description: "Revert back to first entry's starting layout"
-                    }}
-                    miscButton={{
-                        function: promptLayoutFile,
-                        disableCon: outputSettings["customInfo"].layout.length == 0,
-                        description: "Select another layout that exists in your provided directory",
-                        icon: <LiaFileUploadSolid />
-                    }}
-                />
-                <input type="file" className = "layoutUpload" ref={layoutRef} value= "" accept={layoutExtension} onChange={changeLayoutFile} />
-                <br/>
-                </React.Fragment>
-            }
+                {/* Custom Layout */}
+                {(appStatuses.layout.header.length > 0) && <StatusBox
+                    header={appStatuses.layout.header}
+                    message={appStatuses.layout.message}
+                />}
+                {(outputSettings["customInfo"].layout == null) &&
+                    <React.Fragment>
+                        <label title="The layout LiveSplit will use for your output splits">
+                            Starting Layout:<br/>{(outputSettings["customInfo"].layout == null && outputSettings["customInfo"].offset == null) && (listItems.length !=0 && listItems[0].layoutPath.length !=0 ? (unmaskPaths ? listItems[0].layoutPath : listItems[0].layoutPath.length + " characters masked") : "N/A")}
+                        </label>
+                        <br/><br/>
+                    </React.Fragment>
+                }
+                {(outputSettings["customInfo"].layout != null) &&
+                    <React.Fragment>
+                    <TextField
+                        title={"Starting Layout"}
+                        unmaskCon={unmaskPaths}
+                        moveCursorToEnd={true}
+                        disableCon={listItems.length < 2}
+                        placeholderText={"filepath\\filename.lsl"}
+                        changeableValue={outputSettings["customInfo"]["layout"]}
+                        updateKey={"layout"}
+                        updateFunction={changeCustomSetting}
+                        description={"The starting layout LiveSplit will use for your output splits"}
+                        defaultButton={{
+                            value: listItems.length != 0 ? listItems[0].layoutPath : "N/A",
+                            description: "Revert back to first entry's starting layout"
+                        }}
+                        miscButton={{
+                            function: promptLayoutFile,
+                            disableCon: outputSettings["customInfo"].layout.length == 0,
+                            description: "Select another layout that exists in your provided directory",
+                            icon: <LiaFileUploadSolid />
+                        }}
+                    />
+                    <input type="file" className = "layoutUpload" ref={layoutRef} value= "" accept={layoutExtension} onChange={changeLayoutFile} />
+                    <br/>
+                    </React.Fragment>
+                }
 
-            {/* Custom Offset */}
-            {(appStatuses.offset.header.length > 0) && <StatusBox
-                header={appStatuses.offset.header}
-                message={appStatuses.offset.message}
-            />}
-            {(outputSettings["customInfo"].offset == null) && 
-                <label title="The starting offset LiveSplit will use for your output splits">Starting Offset:<br/>
-                {(outputSettings["customInfo"].layout == null && outputSettings["customInfo"].offset == null) && (listItems.length!=0 ? listItems[0].offset : "N/A")}</label>
-            }
-            {(outputSettings["customInfo"].offset != null) && 
-                <React.Fragment>
+                {/* Custom Offset */}
+                {(appStatuses.offset.header.length > 0) && <StatusBox
+                    header={appStatuses.offset.header}
+                    message={appStatuses.offset.message}
+                />}
+                {(outputSettings["customInfo"].offset == null) && 
+                    <label title="The starting offset LiveSplit will use for your output splits">Starting Offset:<br/>
+                    {(outputSettings["customInfo"].layout == null && outputSettings["customInfo"].offset == null) && (listItems.length!=0 ? listItems[0].offset : "N/A")}</label>
+                }
+                {(outputSettings["customInfo"].offset != null) && 
+                    <React.Fragment>
+                    <TextField
+                        title={"Starting Offset"}
+                        unmaskCon={true}
+                        moveCursorToEnd={false}
+                        disableCon={listItems.length < 2}
+                        placeholderText={"-0.00:00:00.0000000"}
+                        changeableValue={outputSettings["customInfo"]["offset"]}
+                        updateKey={"offset"}
+                        updateFunction={changeCustomSetting}
+                        description={"The starting offset LiveSplit will use for your output splits"}
+                        defaultButton={{
+                            value: listItems.length != 0 ? listItems[0].offset : "N/A",
+                            description: "Revert back to first entry's starting offset"
+                        }}
+                    />
+                    </React.Fragment>
+                }
+            </details><br/>
+            
+            {/* Comparisons Present in Each Item */}
+            <details title="Click to open/close this section">
+                <summary className ="sectionTitle">
+                    Transferable Comparisons
+                </summary>
+                {outputSettings["toggleSettings"]["comp"] && outputSettings["usedComparisons"].length == 0 &&
+                    <React.Fragment>
+                    {(appStatuses.found.header.length > 0) && <StatusBox
+                        header={appStatuses.found.header}
+                        message={appStatuses.found.message}
+                    />}
+                    </React.Fragment>
+                }
+                <label id="compbox" title="Choose whether to carry over other comparisons found from your split files">
+                    <input type="checkbox" disabled={listItems.length < 2} htmlFor="compbox" checked={outputSettings["toggleSettings"]["comp"]} onChange={(e) => toggleCheckbox("comp", e.target.checked)}/>
+                    Carry Over Found Comparisons
+                </label>
+                {outputSettings["toggleSettings"]["comp"] && outputSettings["usedComparisons"].length != 0 &&
+                    <div title="Comparisons present in every file that can be toggled whether they can be carried over to your output splits">
+                        <br/>
+                        <label>Comparisons:</label><br/>
+                        {outputSettings["usedComparisons"].map((comp, index) => {
+                            return (
+                                <label id={comp.name} key={index}>
+                                    <input type="checkbox" disabled={listItems.length < 2} htmlFor={comp.name} checked={comp.used} onChange={(e) => toggleComparison(index, e.target.checked)}/>
+                                    {comp.name}<br/>
+                                </label>
+                            );
+                        })}
+                        {!(listItems.length < 2 || outputSettings["usedComparisons"].length == 0 || (Array.from(new Set(outputSettings["usedComparisons"].map((comp) => {return comp.used})))[0] == true && new Set(outputSettings["usedComparisons"].map((comp) => {return comp.used})).size == 1)) &&
+                            <label className = "comparison-icon" onClick={() => toggleAllComparisons(true)} title="Toogle all above comparison settings on">
+                                <TbListCheck />
+                            </label>
+                        }
+                        {!(listItems.length < 2 || outputSettings["usedComparisons"].length == 0 || (Array.from(new Set(outputSettings["usedComparisons"].map((comp) => {return comp.used})))[0] == false && new Set(outputSettings["usedComparisons"].map((comp) => {return comp.used})).size == 1)) &&
+                            <label className = "comparison-icon" onClick={() => toggleAllComparisons(false)} title="Toogle all above comparison settings off">
+                                <FaRegRectangleXmark />
+                            </label>
+                        }
+                    </div>
+                }
+            </details><br/>
+
+            {/* Timing Types */}
+            <details title="Click to open/close this section">
+                <summary className ="sectionTitle">
+                    Timing Methods
+                </summary>
+                <label title="Carry over only real time for segments from your split files">
+                    <input type="radio" name="timings" value="real" disabled={listItems.length < 2} checked={outputSettings["usedTimings"].realTime && !outputSettings["usedTimings"].gameTime} onChange={(e) => updateTimingSelection(e.target.value)}/>Carry Over Real Time
+                </label><br/>
+                <label title="Carry over only game time for segments from your split files">
+                    <input type="radio" name="timings" value="game" disabled={listItems.length < 2} checked={!outputSettings["usedTimings"].realTime && outputSettings["usedTimings"].gameTime} onChange={(e) => updateTimingSelection(e.target.value)}/>Carry Over Game Time
+                </label><br/>
+                <label title="Carry over both real time and game time for segments from your split files">
+                    <input type="radio" name="timings" value="realgame" disabled={listItems.length < 2} checked={outputSettings["usedTimings"].realTime && outputSettings["usedTimings"].gameTime} onChange={(e) => updateTimingSelection(e.target.value)}/>Carry Over Real Time & Game Time
+                </label>
+            </details><br/>
+
+            {/* Splits Templates */}
+            <details title="Click to open/close this section">
+                <summary className ="sectionTitle">
+                    Split Templates
+                </summary>
+                <label id="subsbox" title="Choose whether to create new subsplits for each game (Note: This setting will remove existing subsplits from your splits files if toggled on)">
+                    <input type="checkbox" disabled={listItems.length < 2} htmlFor="subsbox" checked={outputSettings["toggleSettings"]["subs"]} onChange={(e) => toggleCheckbox("subs", e.target.checked)}/>
+                    Create Subsplits for Each Game
+                </label>
+                
+                <br/><br/>
+                {/* Setup Template */}
                 <TextField
-                    title={"Starting Offset"}
+                    title={"Setup Split"}
                     unmaskCon={true}
                     moveCursorToEnd={false}
                     disableCon={listItems.length < 2}
-                    placeholderText={"-0.00:00:00.0000000"}
-                    changeableValue={outputSettings["customInfo"]["offset"]}
-                    updateKey={"offset"}
-                    updateFunction={changeCustomSetting}
-                    description={"The starting offset LiveSplit will use for your output splits"}
-                    defaultButton={{
-                        value: listItems.length != 0 ? listItems[0].offset : "N/A",
-                        description: "Revert back to first entry's starting offset"
+                    placeholderText={"Template Text"}
+                    changeableValue={outputSettings["templateText"]["setup"]}
+                    updateKey={"setup"}
+                    updateFunction={changeTemplateText}
+                    description={"The template that will be used for every setup split in between games"}
+                    dropDown={{
+                        title: "Append Parameter",
+                        updateFunction: addParamaterToText,
+                        description: "Select parameters to add to the setup split template",
+                        choices: templateParameters.map((p, index) => {
+                            return (
+                                <option key={index} value={p.param}>
+                                    {p.name}
+                                </option>
+                            );
+                        })
+                    }}
+                />
+                
+                {/* Subsplit Template */}
+                {outputSettings["toggleSettings"]["subs"] && 
+                <React.Fragment>
+                <br/>
+                <TextField
+                    title={"Game's Final Subsplit"}
+                    unmaskCon={true}
+                    moveCursorToEnd={false}
+                    disableCon={listItems.length < 2}
+                    placeholderText={"Template Text"}
+                    changeableValue={outputSettings["templateText"]["final"]}
+                    updateKey={"final"}
+                    updateFunction={changeTemplateText}
+                    description={"The template that will be used for the last subsplit in each game"}
+                    dropDown={{
+                        title: "Append Parameter",
+                        updateFunction: addParamaterToText,
+                        description: "Select parameters to add to the final subsplit template",
+                        choices: templateParameters.map((p, index) => {
+                            return (
+                                <option key={index} value={p.param}>
+                                    {p.name}
+                                </option>
+                            );
+                        })
                     }}
                 />
                 </React.Fragment>
-            }
-            
-            {/* Comparisons Present in Each Item */}
-            <h4 className ="sectionTitle">Transferable Comparisons:</h4>
-            {outputSettings["toggleSettings"]["comp"] && outputSettings["usedComparisons"].length == 0 &&
-                <React.Fragment>
-                {(appStatuses.found.header.length > 0) && <StatusBox
-                    header={appStatuses.found.header}
-                    message={appStatuses.found.message}
-                />}
-                </React.Fragment>
-            }
-            <label id="compbox" title="Choose whether to carry over other comparisons found from your split files">
-                <input type="checkbox" disabled={listItems.length < 2} htmlFor="compbox" checked={outputSettings["toggleSettings"]["comp"]} onChange={(e) => toggleCheckbox("comp", e.target.checked)}/>
-                Carry Over Found Comparisons
-            </label><br/>
-            {outputSettings["toggleSettings"]["comp"] && outputSettings["usedComparisons"].length != 0 &&
-                <div title="Comparisons present in every file that can be toggled whether they can be carried over to your output splits">
-                    <label>Comparison List:</label><br/>
-                    {outputSettings["usedComparisons"].map((comp, index) => {
-                        return (
-                            <label id={comp.name} key={index}>
-                                <input type="checkbox" disabled={listItems.length < 2} htmlFor={comp.name} checked={comp.used} onChange={(e) => toggleComparison(index, e.target.checked)}/>
-                                {comp.name}<br/>
-                            </label>
-                        );
-                    })}
-                    {!(listItems.length < 2 || outputSettings["usedComparisons"].length == 0 || (Array.from(new Set(outputSettings["usedComparisons"].map((comp) => {return comp.used})))[0] == true && new Set(outputSettings["usedComparisons"].map((comp) => {return comp.used})).size == 1)) &&
-                        <label className = "comparison-icon" onClick={() => toggleAllComparisons(true)} title="Toogle all above comparison settings on">
-                            <TbListCheck />
-                        </label>
-                    }
-                    {!(listItems.length < 2 || outputSettings["usedComparisons"].length == 0 || (Array.from(new Set(outputSettings["usedComparisons"].map((comp) => {return comp.used})))[0] == false && new Set(outputSettings["usedComparisons"].map((comp) => {return comp.used})).size == 1)) &&
-                        <label className = "comparison-icon" onClick={() => toggleAllComparisons(false)} title="Toogle all above comparison settings off">
-                            <FaRegRectangleXmark />
-                        </label>
-                    }
-                    <br/>
-                </div>
-            }
-
-            {/* Timing Types */}
-            <h4 className ="sectionTitle">Timing Methods:</h4>
-            <label title="Carry over only real time for segments from your split files">
-                <input type="radio" name="timings" value="real" disabled={listItems.length < 2} checked={outputSettings["usedTimings"].realTime && !outputSettings["usedTimings"].gameTime} onChange={(e) => updateTimingSelection(e.target.value)}/>Carry Over Real Time
-            </label><br/>
-            <label title="Carry over only game time for segments from your split files">
-                <input type="radio" name="timings" value="game" disabled={listItems.length < 2} checked={!outputSettings["usedTimings"].realTime && outputSettings["usedTimings"].gameTime} onChange={(e) => updateTimingSelection(e.target.value)}/>Carry Over Game Time
-            </label><br/>
-            <label title="Carry over both real time and game time for segments from your split files">
-                <input type="radio" name="timings" value="realgame" disabled={listItems.length < 2} checked={outputSettings["usedTimings"].realTime && outputSettings["usedTimings"].gameTime} onChange={(e) => updateTimingSelection(e.target.value)}/>Carry Over Real Time & Game Time
-            </label><br/>
-
-            {/* Splits Templates */}
-            <h4 className ="sectionTitle">Split Templates:</h4>
-            <label id="subsbox" title="Choose whether to create new subsplits for each game (Note: This setting will remove existing subsplits from your splits files if toggled on)">
-                <input type="checkbox" disabled={listItems.length < 2} htmlFor="subsbox" checked={outputSettings["toggleSettings"]["subs"]} onChange={(e) => toggleCheckbox("subs", e.target.checked)}/>
-                Create Subsplits for Each Game
-            </label>
-            
-            <br/><br/>
-            {/* Setup Template */}
-            <TextField
-                title={"Setup Split"}
-                unmaskCon={true}
-                moveCursorToEnd={false}
-                disableCon={listItems.length < 2}
-                placeholderText={"Template Text"}
-                changeableValue={outputSettings["templateText"]["setup"]}
-                updateKey={"setup"}
-                updateFunction={changeTemplateText}
-                description={"The template that will be used for every setup split in between games"}
-                dropDown={{
-                    title: "Append Parameter",
-                    updateFunction: addParamaterToText,
-                    description: "Select parameters to add to the setup split template",
-                    choices: templateParameters.map((p, index) => {
-                        return (
-                            <option key={index} value={p.param}>
-                                {p.name}
-                            </option>
-                        );
-                    })
-                }}
-            />
-            
-            {/* Subsplit Template */}
-            {outputSettings["toggleSettings"]["subs"] && 
-            <React.Fragment>
-            <br/>
-            <TextField
-                title={"Game's Final Subsplit"}
-                unmaskCon={true}
-                moveCursorToEnd={false}
-                disableCon={listItems.length < 2}
-                placeholderText={"Template Text"}
-                changeableValue={outputSettings["templateText"]["final"]}
-                updateKey={"final"}
-                updateFunction={changeTemplateText}
-                description={"The template that will be used for the last subsplit in each game"}
-                dropDown={{
-                    title: "Append Parameter",
-                    updateFunction: addParamaterToText,
-                    description: "Select parameters to add to the final subsplit template",
-                    choices: templateParameters.map((p, index) => {
-                        return (
-                            <option key={index} value={p.param}>
-                                {p.name}
-                            </option>
-                        );
-                    })
-                }}
-            />
-            </React.Fragment>
-            }
+                }
+            </details><br/>
 
             {/* Run Name */}
-            <h4 className ="sectionTitle">Run Name:</h4>
-            {/* Game Name */}
-            {(appStatuses.game.header.length > 0) && <StatusBox
-                header={appStatuses.game.header}
-                message={appStatuses.game.message}
-            />}
-            <TextField
-                title={"Game Name"}
-                unmaskCon={true}
-                moveCursorToEnd={false}
-                disableCon={listItems.length < 2}
-                placeholderText={"Game"}
-                changeableValue={outputSettings["runName"]["game"]}
-                updateKey={"game"}
-                updateFunction={changeRunName}
-                enterFunction={fetchGameFromSRC}
-                description={"The name of the game for the output splits file"}
-            />
-                <button type="button" disabled={listItems.length < 2 || outputSettings["runName"]["game"].length == 0} onClick={() => fetchGameFromSRC()} title="Fetches list of games fuzzy searched from Speedrun.com">
-                    Fetch Games from Input
-                </button>
-                {requestData.game.length != 0 &&
-                    <DropDown
-                        title={"Select Game"}
-                        setValue={requestData.selectedGame != null ? requestData.selectedGame.name : ""}
-                        disableCon={listItems.length < 2 || requestData.game.length == 0}
-                        updateFunction={updateGameName}
-                        description={"Select game name for your output splits from Speedrun.com request"}
-                        choices={requestData.game.map((g, index) => {
-                            return (
-                                <option key={index} value={g.name}>
-                                    {g.name}
-                                </option>
-                            );
-                        })}
-                        clearButton={{
-                            clearFunction: clearGameData,
-                            description: "Clear game selection results from Speedrun.com request"
-                        }}
-                    />
-                }
-            <br/><br/>
-            {/* Category Name */}
-            {(appStatuses.category.header.length > 0) && <StatusBox
-                header={appStatuses.category.header}
-                message={appStatuses.category.message}
-            />}
-            <TextField
-                title={"Category Name"}
-                unmaskCon={true}
-                moveCursorToEnd={false}
-                disableCon={listItems.length < 2}
-                placeholderText={"Category"}
-                changeableValue={outputSettings["runName"]["category"]}
-                updateKey={"category"}
-                updateFunction={changeRunName}
-                description={"The name of the category for the output splits file"}
-            />
-                <button type="button" disabled={listItems.length < 2 || requestData.selectedGame == null} onClick={() => fetchCategoriesFromSRC()} title="Fetches category of a requested game from Speedrun.com">
-                    {requestData.selectedGame != null ? "Fetch Categories from " + requestData.selectedGame.name : "Fetch a Game First"}
-                </button>
-                {requestData.category.length != 0 &&
-                    <DropDown
-                        title={"Select Category"}
-                        setValue={requestData.selectedCategory != null ? requestData.selectedCategory.name : ""}
-                        disableCon={listItems.length < 2 || requestData.category.length == 0}
-                        updateFunction={updateCategoryName}
-                        description={"Select category name for your output splits from requested Speedrun.com game"}
-                        choices={requestData.category.map((c, index) => {
-                            return (
-                                <option key={index} value={c.name}>
-                                    {c.name}
-                                </option>
-                            );
-                        })}
-                        clearButton={{
-                            clearFunction: clearCategoryData,
-                            description: "Clear category selection results from Speedrun.com request"
-                        }}
-                    />
-                }
+            <details title="Click to open/close this section">
+                <summary className ="sectionTitle">
+                    Run Name
+                </summary>
+                {/* Game Name */}
+                {(appStatuses.game.header.length > 0) && <StatusBox
+                    header={appStatuses.game.header}
+                    message={appStatuses.game.message}
+                />}
+                <TextField
+                    title={"Game Name"}
+                    unmaskCon={true}
+                    moveCursorToEnd={false}
+                    disableCon={listItems.length < 2}
+                    placeholderText={"Game"}
+                    changeableValue={outputSettings["runName"]["game"]}
+                    updateKey={"game"}
+                    updateFunction={changeRunName}
+                    enterFunction={fetchGameFromSRC}
+                    description={"The name of the game for the output splits file"}
+                />
+                    <button type="button" disabled={listItems.length < 2 || outputSettings["runName"]["game"].length == 0} onClick={() => fetchGameFromSRC()} title="Fetches list of games fuzzy searched from Speedrun.com">
+                        Fetch Games from Input
+                    </button>
+                    {requestData.game.length != 0 &&
+                        <DropDown
+                            title={"Select Game"}
+                            setValue={requestData.selectedGame != null ? requestData.selectedGame.name : ""}
+                            disableCon={listItems.length < 2 || requestData.game.length == 0}
+                            updateFunction={updateGameName}
+                            description={"Select game name for your output splits from Speedrun.com request"}
+                            choices={requestData.game.map((g, index) => {
+                                return (
+                                    <option key={index} value={g.name}>
+                                        {g.name}
+                                    </option>
+                                );
+                            })}
+                            clearButton={{
+                                clearFunction: clearGameData,
+                                description: "Clear game selection results from Speedrun.com request"
+                            }}
+                        />
+                    }
+                <br/><br/>
+                {/* Category Name */}
+                {(appStatuses.category.header.length > 0) && <StatusBox
+                    header={appStatuses.category.header}
+                    message={appStatuses.category.message}
+                />}
+                <TextField
+                    title={"Category Name"}
+                    unmaskCon={true}
+                    moveCursorToEnd={false}
+                    disableCon={listItems.length < 2}
+                    placeholderText={"Category"}
+                    changeableValue={outputSettings["runName"]["category"]}
+                    updateKey={"category"}
+                    updateFunction={changeRunName}
+                    description={"The name of the category for the output splits file"}
+                />
+                    <button type="button" disabled={listItems.length < 2 || requestData.selectedGame == null} onClick={() => fetchCategoriesFromSRC()} title="Fetches category of a requested game from Speedrun.com">
+                        {requestData.selectedGame != null ? "Fetch Categories from " + requestData.selectedGame.name : "Fetch a Game First"}
+                    </button>
+                    {requestData.category.length != 0 &&
+                        <DropDown
+                            title={"Select Category"}
+                            setValue={requestData.selectedCategory != null ? requestData.selectedCategory.name : ""}
+                            disableCon={listItems.length < 2 || requestData.category.length == 0}
+                            updateFunction={updateCategoryName}
+                            description={"Select category name for your output splits from requested Speedrun.com game"}
+                            choices={requestData.category.map((c, index) => {
+                                return (
+                                    <option key={index} value={c.name}>
+                                        {c.name}
+                                    </option>
+                                );
+                            })}
+                            clearButton={{
+                                clearFunction: clearCategoryData,
+                                description: "Clear category selection results from Speedrun.com request"
+                            }}
+                        />
+                    }
+            </details>
 
         </React.Fragment>
 
