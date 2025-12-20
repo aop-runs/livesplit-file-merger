@@ -159,9 +159,9 @@ export const ListContainer = () => {
                 }
             )
             checkGameComp(updatedSettings)
-            if(updatedSettings["usedComparisons"].length == 0){
+            if(updatedSettings["usedComparisons"].length == 0 && files.length != 0){
                 updateStatus("found", {
-                    header: "Warning",
+                    header: "Info",
                     message: ["No comparisons found that exist in each entry"]
                 })
             }
@@ -277,64 +277,72 @@ export const ListContainer = () => {
     return (
         <React.Fragment>
 
-            {/* Application Settings */}
-            <h4>Application Settings:</h4>
-            <label id="unmask" title="Choose whether to unhide absolute filepath names for LiveSplit layouts">
-                <input type="checkbox" htmlFor="unmask" checked={unmaskPaths} onChange={(e) => setUnmaskPaths(e.target.checked)}/>
-                Unmask Filepaths
-            </label>
-            <br/>
-            <button type="button" onClick={resetApplication} title="Remove all entries and revert all settings to default">
-                Reset Application
-            </button>
-
             {/* Upload Files */}
+            <div className="flex-container">
+                <div className="flex-item flex-item-1">
+                    {/* Application Settings */}
+                    <h4 className ="sectionTitle">Application Settings:</h4>
+                    <label id="unmask" title="Choose whether to unhide absolute filepath names for LiveSplit layouts">
+                        <input type="checkbox" htmlFor="unmask" checked={unmaskPaths} onChange={(e) => setUnmaskPaths(e.target.checked)}/>
+                        Unmask Filepaths
+                    </label><br/><br/>
+                    <button type="button" onClick={resetApplication} title="Remove all entries and revert all settings to default">
+                        Reset Application
+                    </button>
+                    <br/>
+                    <FileUpload
+                        addListItem={addFileListItem}
+                        appStatuses={appStatuses}
+                        updateStatus={updateStatus}
+                    />
+                    {/* List entries */}
+                    <br/>
+                    <ItemList
+                        listItems={files}
+                        unmaskPaths={unmaskPaths}
+                        moveListItem={moveFileListItem}
+                        removeListItem={removeFileListItem}
+                        reverseEntries={reverseEntries}
+                        sortEntries={sortEntries}
+                    />
+                    <br/><br/>
+                    <a className = "top-link" href = "#top" title="Click to go back to the top of the webpage">
+                        Back to Top
+                    </a>
+                </div>
 
-            <FileUpload
-                addListItem={addFileListItem}
-                appStatuses={appStatuses}
-                updateStatus={updateStatus}
-            />
-
-            {/* List entries */}
-            <br/>
-            <ItemList
-                listItems={files}
-                unmaskPaths={unmaskPaths}
-                moveListItem={moveFileListItem}
-                removeListItem={removeFileListItem}
-                reverseEntries={reverseEntries}
-                sortEntries={sortEntries}
-            />
-
-            {/* Output Settings */}
-            <br/>
-            <OutputSettings
-                listItems={files}
-                unmaskPaths={unmaskPaths}
-                updateCanDownload={updateCanDownload}
-                outputSettings={outputSettings}
-                setOutputSettings={setOutputSettings}
-                requestData={requestData}
-                setRequestData={setRequestData}
-                checkGameComp={checkGameComp}
-                appStatuses={appStatuses}
-                updateStatus={updateStatus}
-            />
-
-            {/* Download merged contents */}
-            <br/>
-            <FileDownload
-                listItems={files}
-                unmaskPaths={unmaskPaths}
-                outputSettings={outputSettings}
-                canDownload={canDownload}
-                updateCanDownload={updateCanDownload}
-                finalOutput={finalOutput}
-                setFinalOutput={setFinalOutput}
-                appStatuses={appStatuses}
-                updateStatus={updateStatus}
-            />
+                {/* Download merged contents */}
+                <div className="flex-item flex-item-2">
+                    <FileDownload
+                        listItems={files}
+                        unmaskPaths={unmaskPaths}
+                        outputSettings={outputSettings}
+                        canDownload={canDownload}
+                        updateCanDownload={updateCanDownload}
+                        finalOutput={finalOutput}
+                        setFinalOutput={setFinalOutput}
+                        appStatuses={appStatuses}
+                        updateStatus={updateStatus}
+                    />
+                    {/* Output Settings */}
+                    <OutputSettings
+                        listItems={files}
+                        unmaskPaths={unmaskPaths}
+                        updateCanDownload={updateCanDownload}
+                        outputSettings={outputSettings}
+                        setOutputSettings={setOutputSettings}
+                        requestData={requestData}
+                        setRequestData={setRequestData}
+                        checkGameComp={checkGameComp}
+                        appStatuses={appStatuses}
+                        updateStatus={updateStatus}
+                    />
+                    <br/><br/>
+                    <a className = "top-link" href = "#top" title="Click to go back to the top of the webpage">
+                        Back to Top
+                    </a>
+                </div>
+            </div>
         </React.Fragment>
     )
 }

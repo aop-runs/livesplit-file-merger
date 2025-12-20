@@ -17,9 +17,9 @@ export const DropDown = ({ title, setValue, disableCon, updateKey, updateFunctio
                 {choices}
             </select>
             {clearButton !== undefined &&
-                <label className = "dropdown-clear-icon" onClick={clearButton.clearFunction} title={clearButton.description}>
+                <button className = "dropdown-clear-icon" onClick={clearButton.clearFunction} title={clearButton.description}>
                     <MdOutlinePlaylistRemove />
-                </label>
+                </button>
             }
         </React.Fragment>
     )

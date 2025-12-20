@@ -1,6 +1,6 @@
 //Based on: https://www.geeksforgeeks.org/reactjs/drag-and-drop-file-upload-component-with-react-hooks/ & https://medium.com/@dprincecoder/creating-a-drag-and-drop-file-upload-component-in-react-a-step-by-step-guide-4d93b6cc21e0
 import React, { useRef } from 'react';
-import { StatusBox } from '../Inputs/StatusBox.jsx'
+import { StatusBox } from '../Inputs/StatusPopUp.jsx'
 import { BsCloudUpload } from "react-icons/bs";
 import { gatherFileContents, validSpecifier } from '../../utils/file.js'
 import { cleanSplitsFile, gatherRunName, findCustomComparisons, gatherSplitsDataByTag } from '../../utils/livesplit.js'
@@ -90,7 +90,7 @@ export const FileUpload = ({ addListItem, appStatuses, updateStatus }) => {
     return (
         //File upload box
         <React.Fragment>
-            <h4>File Upload:</h4>
+            <h4 className ="sectionTitle">File Upload:</h4>
             {(appStatuses.upload.header.length > 0) && <StatusBox
                 header={appStatuses.upload.header}
                 message={appStatuses.upload.message}

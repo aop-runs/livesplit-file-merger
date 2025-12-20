@@ -1,7 +1,7 @@
 import React from 'react';
 import { BsCloudDownload } from "react-icons/bs";
 import { GoTrash } from "react-icons/go";
-import { StatusBox } from '../Inputs/StatusBox.jsx'
+import { StatusBox } from '../Inputs/StatusPopUp.jsx'
 import { TextField } from '../Inputs/TextField.jsx'
 import { downloadFile, downloadFileAs, validSpecifier, isAValidFile, openContentsInNewTab } from '../../utils/file.js'
 import { gatherSplitsDataByTag, createOutputSplits } from '../../utils/livesplit.js'
@@ -145,7 +145,7 @@ export const FileDownload = ({ listItems, unmaskPaths, outputSettings, canDownlo
     return (
         
         <React.Fragment>
-            <h4>Output Download:</h4>
+            <h4 className ="sectionTitle">Output Download:</h4>
             {/* File Preparation */}
             {(appStatuses.output.header.length > 0) && <StatusBox
                 header={appStatuses.output.header}
@@ -166,6 +166,8 @@ export const FileDownload = ({ listItems, unmaskPaths, outputSettings, canDownlo
                     description: "Set default output filename based on the name of the run"
                 }}
             />
+            
+            <br/>
             <button type="button" disabled={listItems.length < 2 || finalOutput.filename.length == 0 || !(Array.from(new Set(Object.values(canDownload)))[0] == true && new Set(Object.values(canDownload)).size == 1)} onClick={() => prepareOutputSplits(finalOutput.filename.replace(validSpecifier.extension, ""))} title="Prepares output file for combined splits that can be downloaded">
                     Prepare Output Splits
             </button><br/>
@@ -179,7 +181,7 @@ export const FileDownload = ({ listItems, unmaskPaths, outputSettings, canDownlo
                 message={appStatuses.download.message}
             />}
             <div title="Download link for output splits file">
-                <label>Output Contents:</label><br/>
+                <h4 className ="sectionTitle">Output Contents:</h4>
                 <label className = "download-splits-name" onClick={() => openContentsInNewTab(finalOutput.output.data, gatherSplitsDataByTag(finalOutput.output.data, "LayoutPath"), !unmaskPaths)} title = "Click on the filename to view its raw contents before downloading">
                     {finalOutput.output.name}
                 </label><br/>

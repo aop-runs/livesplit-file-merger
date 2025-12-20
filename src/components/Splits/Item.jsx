@@ -76,7 +76,7 @@ export const Item = ({ index, listSize, unmaskPaths, itemData, moveListItem, rem
             
             {/*Make items being dragged transparent, so it's easier to see where we drop them*/}
             <div onClick={!isModalOpen ? openModal : undefined} ref={dragDropRef} className={[
-                "entry", 
+                "list-entry", 
                 isModalOpen ? "defaultCursor" : "moveCursor", 
                 isDragging ? "itemDrag" : "itemNoDrag"
                 ].join(" ")}

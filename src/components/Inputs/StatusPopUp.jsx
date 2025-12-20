@@ -7,14 +7,14 @@ return (
         //Modal div upon item click
         <React.Fragment>
             <div className="status" title="Status tab">
-                <h4 title="Status header">
+                <label className="status-header" title="Status header">
                     {header}
-                </h4>
+                </label><br/>
                 {message.map((line, index) => (
-                    <p title="Status text"key={index}>
+                    <label title="Status text"key={index}>
                         {line}
-                    </p>
-                ))}
+                    </label>
+                ))}<br/>
             </div>
         </React.Fragment>
     )

@@ -41,14 +41,14 @@ export const TextField = ({ title, unmaskCon, moveCursorToEnd, disableCon, place
                     </button>
                 </div>
                 {defaultButton !== undefined &&
-                    <label className={"textfield-extra-button" + (disableCon ? " textfield-disabled-button" : " textfield-active-button")} onClick={() => updateFieldValue(defaultButton.value, !disableCon)} title={defaultButton.description}>
+                    <button className={"textfield-extra-button" + (disableCon ? " textfield-disabled-button" : " textfield-active-button")} onClick={() => updateFieldValue(defaultButton.value, !disableCon)} title={defaultButton.description}>
                         <HiArrowPath />
-                    </label>
+                    </button>
                 }
                 {miscButton !== undefined &&
-                    <label className={"textfield-misc-button" + (miscButton.disableCon ? " textfield-disabled-button" : " textfield-active-button")} onClick={miscButton.function} title={miscButton.description}>
+                    <button className={"textfield-misc-button" + (miscButton.disableCon ? " textfield-disabled-button" : " textfield-active-button")} onClick={miscButton.function} title={miscButton.description}>
                         {miscButton.icon}
-                    </label>
+                    </button>
                 }
                 {dropDown !== undefined &&
                     <DropDown

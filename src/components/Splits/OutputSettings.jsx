@@ -1,7 +1,7 @@
 //Based on: https://medium.com/@aren.talb00/creating-a-custom-file-input-using-react-and-useref-233f5d4abfc9 & https://www.geeksforgeeks.org/reactjs/axios-in-react-a-guide-for-beginners/
 import React, { useRef } from 'react'
 import { DropDown } from '../Inputs/DropDown.jsx'
-import { StatusBox } from '../Inputs/StatusBox.jsx'
+import { StatusBox } from '../Inputs/StatusPopUp.jsx'
 import { TextField } from '../Inputs/TextField.jsx'
 import { TbListCheck } from "react-icons/tb";
 import { FaRegRectangleXmark } from "react-icons/fa6";
@@ -290,7 +290,7 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
                 checkGameComp(updatedSettings)
                 if(updatedSettings["usedComparisons"].length == 0){
                     updateStatus("found", {
-                        header: "Warning",
+                        header: "Info",
                         message: ["No comparisons found that exist in each entry"]
                     })
                 }
@@ -448,18 +448,18 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
         <React.Fragment>
 
             {/* Split Settings */}
-            <h4>Split Settings:</h4>
+            <h4 className ="sectionTitle">Split Settings:</h4>
             <label id="iconbox" title="Choose whether to carry over segment icons from your splits files">
                 <input type="checkbox" disabled={listItems.length < 2} htmlFor="iconbox" checked={outputSettings["toggleSettings"]["icon"]} onChange={(e) => toggleCheckbox("icon", e.target.checked)}/>
-                Carry over Segment Icons
+                Carry Over Segment Icons
             </label><br/>
             <label id="sobbox" title="Choose whether to carry over your sum of best segments from your split files">
                 <input type="checkbox" disabled={listItems.length < 2} htmlFor="sobbox" checked={outputSettings["toggleSettings"]["sob"]} onChange={(e) => toggleCheckbox("sob", e.target.checked)}/>
-                Carry over Sum of Best Times
+                Carry Over Sum of Best Times
             </label><br/>
             <label id="pbbox" title="Choose whether to carry over your pbs from your split files as a new comparison">
                 <input type="checkbox" disabled={listItems.length < 2} htmlFor="pbbox" checked={outputSettings["toggleSettings"]["pb"]} onChange={(e) => toggleCheckbox("pb", e.target.checked)}/>
-                Carry over PBs
+                Carry Over PBs
             </label><br/>
 
             {/* Game Comparison Name */}
@@ -483,6 +483,7 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
                         description: "Revert back to default game PB comparison name"
                     }}
                 />
+                <br/>
                 </React.Fragment>
             }
             {/* Setup Split Time */}
@@ -506,7 +507,7 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
             />
 
             {/* Starting Properties */}
-            <h4>Starting Properties:</h4>
+            <h4 className ="sectionTitle">Starting Properties:</h4>
             <label id="usefirst" title="Choose whether to use the first LiveSplit file's layout filepath and timer offset or custom specified ones">
                 <input type="checkbox" disabled={listItems.length < 2} htmlFor="unfirst" checked={(outputSettings["customInfo"].layout == null && outputSettings["customInfo"].offset == null)} onChange={(e) => toggleFirstInfo(e.target.checked)}/>
                 Use Properties from First Entry
@@ -520,9 +521,9 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
             {(outputSettings["customInfo"].layout == null) &&
                 <React.Fragment>
                     <label title="The layout LiveSplit will use for your output splits">
-                        Starting Layout:<br/>{(outputSettings["customInfo"].layout == null && outputSettings["customInfo"].offset == null) && (listItems.length !=0 && listItems[0].layoutPath.length !=0 ? (unmaskPaths ? listItems[0].layoutPath : "*".repeat(listItems[0].layoutPath.length)) : "N/A")}
+                        Starting Layout:<br/>{(outputSettings["customInfo"].layout == null && outputSettings["customInfo"].offset == null) && (listItems.length !=0 && listItems[0].layoutPath.length !=0 ? (unmaskPaths ? listItems[0].layoutPath : listItems[0].layoutPath.length + " characters masked") : "N/A")}
                     </label>
-                    <br/>
+                    <br/><br/>
                 </React.Fragment>
             }
             {(outputSettings["customInfo"].layout != null) &&
@@ -549,6 +550,7 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
                     }}
                 />
                 <input type="file" className = "layoutUpload" ref={layoutRef} value= "" accept={layoutExtension} onChange={changeLayoutFile} />
+                <br/>
                 </React.Fragment>
             }
 
@@ -582,7 +584,7 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
             }
             
             {/* Comparisons Present in Each Item */}
-            <h4>Transferable Comparisons:</h4>
+            <h4 className ="sectionTitle">Transferable Comparisons:</h4>
             {outputSettings["toggleSettings"]["comp"] && outputSettings["usedComparisons"].length == 0 &&
                 <React.Fragment>
                 {(appStatuses.found.header.length > 0) && <StatusBox
@@ -593,7 +595,7 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
             }
             <label id="compbox" title="Choose whether to carry over other comparisons found from your split files">
                 <input type="checkbox" disabled={listItems.length < 2} htmlFor="compbox" checked={outputSettings["toggleSettings"]["comp"]} onChange={(e) => toggleCheckbox("comp", e.target.checked)}/>
-                Carry over Other Comparisons
+                Carry Over Found Comparisons
             </label><br/>
             {outputSettings["toggleSettings"]["comp"] && outputSettings["usedComparisons"].length != 0 &&
                 <div title="Comparisons present in every file that can be toggled whether they can be carried over to your output splits">
@@ -621,19 +623,19 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
             }
 
             {/* Timing Types */}
-            <h4>Timing Methods:</h4>
+            <h4 className ="sectionTitle">Timing Methods:</h4>
             <label title="Carry over only real time for segments from your split files">
-                <input type="radio" name="timings" value="real" disabled={listItems.length < 2} checked={outputSettings["usedTimings"].realTime && !outputSettings["usedTimings"].gameTime} onChange={(e) => updateTimingSelection(e.target.value)}/>Carry over Real Time
+                <input type="radio" name="timings" value="real" disabled={listItems.length < 2} checked={outputSettings["usedTimings"].realTime && !outputSettings["usedTimings"].gameTime} onChange={(e) => updateTimingSelection(e.target.value)}/>Carry Over Real Time
             </label><br/>
             <label title="Carry over only game time for segments from your split files">
-                <input type="radio" name="timings" value="game" disabled={listItems.length < 2} checked={!outputSettings["usedTimings"].realTime && outputSettings["usedTimings"].gameTime} onChange={(e) => updateTimingSelection(e.target.value)}/>Carry over Game Time
+                <input type="radio" name="timings" value="game" disabled={listItems.length < 2} checked={!outputSettings["usedTimings"].realTime && outputSettings["usedTimings"].gameTime} onChange={(e) => updateTimingSelection(e.target.value)}/>Carry Over Game Time
             </label><br/>
             <label title="Carry over both real time and game time for segments from your split files">
-                <input type="radio" name="timings" value="realgame" disabled={listItems.length < 2} checked={outputSettings["usedTimings"].realTime && outputSettings["usedTimings"].gameTime} onChange={(e) => updateTimingSelection(e.target.value)}/>Carry over Real Time & Game Time
+                <input type="radio" name="timings" value="realgame" disabled={listItems.length < 2} checked={outputSettings["usedTimings"].realTime && outputSettings["usedTimings"].gameTime} onChange={(e) => updateTimingSelection(e.target.value)}/>Carry Over Real Time & Game Time
             </label><br/>
 
             {/* Splits Templates */}
-            <h4>Split Templates:</h4>
+            <h4 className ="sectionTitle">Split Templates:</h4>
             <label id="subsbox" title="Choose whether to create new subsplits for each game (Note: This setting will remove existing subsplits from your splits files if toggled on)">
                 <input type="checkbox" disabled={listItems.length < 2} htmlFor="subsbox" checked={outputSettings["toggleSettings"]["subs"]} onChange={(e) => toggleCheckbox("subs", e.target.checked)}/>
                 Create Subsplits for Each Game
@@ -652,7 +654,7 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
                 updateFunction={changeTemplateText}
                 description={"The template that will be used for every setup split in between games"}
                 dropDown={{
-                    title: "Add Parameter to Template",
+                    title: "Append Parameter",
                     updateFunction: addParamaterToText,
                     description: "Select parameters to add to the setup split template",
                     choices: templateParameters.map((p, index) => {
@@ -680,7 +682,7 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
                 updateFunction={changeTemplateText}
                 description={"The template that will be used for the last subsplit in each game"}
                 dropDown={{
-                    title: "Add Parameter to Template",
+                    title: "Append Parameter",
                     updateFunction: addParamaterToText,
                     description: "Select parameters to add to the final subsplit template",
                     choices: templateParameters.map((p, index) => {
@@ -696,7 +698,7 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
             }
 
             {/* Run Name */}
-            <h4>Run Name:</h4>
+            <h4 className ="sectionTitle">Run Name:</h4>
             {/* Game Name */}
             {(appStatuses.game.header.length > 0) && <StatusBox
                 header={appStatuses.game.header}
