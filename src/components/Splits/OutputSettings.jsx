@@ -621,14 +621,14 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
                             );
                         })}
                         {!(listItems.length < 2 || outputSettings["usedComparisons"].length == 0 || (Array.from(new Set(outputSettings["usedComparisons"].map((comp) => {return comp.used})))[0] == true && new Set(outputSettings["usedComparisons"].map((comp) => {return comp.used})).size == 1)) &&
-                            <label className = "comparison-icon" onClick={() => toggleAllComparisons(true)} title="Toogle all above comparison settings on">
+                            <button className = "comparison-icon" onClick={() => toggleAllComparisons(true)} title="Toogle all above comparison settings on">
                                 <TbListCheck />
-                            </label>
+                            </button>
                         }
                         {!(listItems.length < 2 || outputSettings["usedComparisons"].length == 0 || (Array.from(new Set(outputSettings["usedComparisons"].map((comp) => {return comp.used})))[0] == false && new Set(outputSettings["usedComparisons"].map((comp) => {return comp.used})).size == 1)) &&
-                            <label className = "comparison-icon" onClick={() => toggleAllComparisons(false)} title="Toogle all above comparison settings off">
+                            <button className = "comparison-icon" onClick={() => toggleAllComparisons(false)} title="Toogle all above comparison settings off">
                                 <FaRegRectangleXmark />
-                            </label>
+                            </button>
                         }
                     </div>
                 }
