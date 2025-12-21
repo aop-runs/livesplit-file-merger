@@ -1,10 +1,9 @@
 //Based on: https://medium.com/@liadshiran92/easy-drag-and-drop-in-react-22778b30ba37
 import React, { useState, useRef } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
-import { TbArrowMoveUp } from "react-icons/tb";
-import { TbArrowMoveDown } from "react-icons/tb";
-import { GoTrash } from "react-icons/go";
 import { ItemModal } from './ItemModal'
+import { GoTrash } from "react-icons/go";
+import { TbArrowMoveUp, TbArrowMoveDown } from "react-icons/tb";
 import '../../styles/style.scss'
 
 export const Item = ({ index, listSize, unmaskPaths, itemData, moveListItem, removeListItem }) => {

@@ -1,7 +1,7 @@
 import React from 'react'
 import '../../styles/style.scss'
 
-export const StatusBox = ({ header, message }) => {
+export const StatusPopUp = ({ header, message }) => {
     
 return (
         //Modal div upon item click

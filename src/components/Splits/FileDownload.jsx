@@ -1,7 +1,7 @@
 import React from 'react';
 import { BsCloudDownload } from "react-icons/bs";
 import { GoTrash } from "react-icons/go";
-import { StatusBox } from '../Inputs/StatusPopUp.jsx'
+import { StatusPopUp } from '../Inputs/StatusPopUp.jsx'
 import { TextField } from '../Inputs/TextField.jsx'
 import { downloadFile, downloadFileAs, validSpecifier, isAValidFile, openContentsInNewTab } from '../../utils/file.js'
 import { gatherSplitsDataByTag, createOutputSplits } from '../../utils/livesplit.js'
@@ -150,7 +150,7 @@ export const FileDownload = ({ listItems, unmaskPaths, outputSettings, canDownlo
                     Output Download
                 </summary>
                 {/* File Preparation */}
-                {(appStatuses.output.header.length > 0) && <StatusBox
+                {(appStatuses.output.header.length > 0) && <StatusPopUp
                     header={appStatuses.output.header}
                     message={appStatuses.output.message}
                 />}
@@ -178,7 +178,7 @@ export const FileDownload = ({ listItems, unmaskPaths, outputSettings, canDownlo
             {finalOutput.output.name.length != 0 &&
                 <React.Fragment>
                 <br/><br/>
-                {(appStatuses.download.header.length > 0) && <StatusBox
+                {(appStatuses.download.header.length > 0) && <StatusPopUp
                     header={appStatuses.download.header}
                     message={appStatuses.download.message}
                 />}

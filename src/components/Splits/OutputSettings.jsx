@@ -1,11 +1,11 @@
 //Based on: https://medium.com/@aren.talb00/creating-a-custom-file-input-using-react-and-useref-233f5d4abfc9 & https://www.geeksforgeeks.org/reactjs/axios-in-react-a-guide-for-beginners/
 import React, { useRef } from 'react'
 import { DropDown } from '../Inputs/DropDown.jsx'
-import { StatusBox } from '../Inputs/StatusPopUp.jsx'
+import { StatusPopUp } from '../Inputs/StatusPopUp.jsx'
 import { TextField } from '../Inputs/TextField.jsx'
-import { TbListCheck } from "react-icons/tb";
 import { FaRegRectangleXmark } from "react-icons/fa6";
 import { LiaFileUploadSolid } from "react-icons/lia";
+import { TbListCheck } from "react-icons/tb";
 import { isAValidFile, layoutExtension } from '../../utils/file.js'
 import { templateParameters, defaultSetup, defaultPBComp, timeToSeconds } from "../../utils/livesplit.js";
 import { fuzzySearchGames, searchCategoriesFromGame, cacheNewData } from "../../utils/srcapi.js";
@@ -38,7 +38,7 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
                 return updatedSettings
             })
             updateStatus("layout", {
-                header: "Caution",
+                header: "Info",
                 message: ["Due to JavaScript restrictions, selecting another layout name through the file picker will assume the new layout is in the same directory as before. You can always copy & paste the full filepath of the new layout too."]
             })
         }
@@ -468,7 +468,7 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
                 {/* Game Comparison Name */}
                 {outputSettings["toggleSettings"]["pb"] && 
                     <React.Fragment>
-                    {(appStatuses.comp.header.length > 0) && <StatusBox
+                    {(appStatuses.comp.header.length > 0) && <StatusPopUp
                         header={appStatuses.comp.header}
                         message={appStatuses.comp.message}
                     />}
@@ -490,7 +490,7 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
                     </React.Fragment>
                 }
                 {/* Setup Split Time */}
-                {(appStatuses.setup.header.length > 0) && <StatusBox
+                {(appStatuses.setup.header.length > 0) && <StatusPopUp
                     header={appStatuses.setup.header}
                     message={appStatuses.setup.message}
                 />}
@@ -521,7 +521,7 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
                 </label><br/>
 
                 {/* Custom Layout */}
-                {(appStatuses.layout.header.length > 0) && <StatusBox
+                {(appStatuses.layout.header.length > 0) && <StatusPopUp
                     header={appStatuses.layout.header}
                     message={appStatuses.layout.message}
                 />}
@@ -562,7 +562,7 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
                 }
 
                 {/* Custom Offset */}
-                {(appStatuses.offset.header.length > 0) && <StatusBox
+                {(appStatuses.offset.header.length > 0) && <StatusPopUp
                     header={appStatuses.offset.header}
                     message={appStatuses.offset.message}
                 />}
@@ -598,7 +598,7 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
                 </summary>
                 {outputSettings["toggleSettings"]["comp"] && outputSettings["usedComparisons"].length == 0 &&
                     <React.Fragment>
-                    {(appStatuses.found.header.length > 0) && <StatusBox
+                    {(appStatuses.found.header.length > 0) && <StatusPopUp
                         header={appStatuses.found.header}
                         message={appStatuses.found.message}
                     />}
@@ -723,7 +723,7 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
                     Run Name
                 </summary>
                 {/* Game Name */}
-                {(appStatuses.game.header.length > 0) && <StatusBox
+                {(appStatuses.game.header.length > 0) && <StatusPopUp
                     header={appStatuses.game.header}
                     message={appStatuses.game.message}
                 />}
@@ -764,7 +764,7 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
                     }
                 <br/><br/>
                 {/* Category Name */}
-                {(appStatuses.category.header.length > 0) && <StatusBox
+                {(appStatuses.category.header.length > 0) && <StatusPopUp
                     header={appStatuses.category.header}
                     message={appStatuses.category.message}
                 />}
