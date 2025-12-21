@@ -80,7 +80,7 @@ export const Item = ({ index, listSize, unmaskPaths, itemData, moveListItem, rem
                 isDragging ? "itemDrag" : "itemNoDrag"
                 ].join(" ")}
                 title="Click here to open contents for this entry">
-                {itemData.runName}<br/>
+                <span className="list-entry-text">{itemData.runName}</span><br/>
                 <button className = {"list-icon" + (index == 0 ? " list-icon-disabled" : " list-icon-active")} onClick={moveItemUp} disabled={index==0} title="Move this file up one spot in your entries">
                     <TbArrowMoveUp />
                 </button>

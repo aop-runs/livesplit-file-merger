@@ -16,16 +16,19 @@ export const TextField = ({ title, unmaskCon, moveCursorToEnd, disableCon, place
     }
 
     //Update value within textfield and respetive state function
-    const updateFieldValue = (name, canChange) => {
+    const updateFieldValue = (value, canChange) => {
         if(canChange){
-            updateKey !== undefined ? updateFunction(updateKey, name) : updateFunction(name)
+            updateKey !== undefined ? updateFunction(updateKey, value) : updateFunction(value)
         }
     }
 
     //Run a requested function if the user has prsssed enter
-    const checkForEnter = (pressedKey) => {
+    const checkForKey = (pressedKey) => {
         if(changeableValue.length != 0 && pressedKey == "Enter" && enterFunction !== undefined){
             enterFunction()
+        }
+        else if(changeableValue.length != 0 && pressedKey == "Delete"){
+            updateKey !== undefined ? updateFunction(updateKey, "") : updateFunction("")
         }
     }
 
@@ -35,7 +38,7 @@ export const TextField = ({ title, unmaskCon, moveCursorToEnd, disableCon, place
             <div title={description}>
                 <label>{title}: </label><br/>
                 <div className="textfield-wrapper">
-                    <input ref={inputRef} type={unmaskCon ? "text" : "password"} disabled={disableCon} placeholder={placeholderText} value={changeableValue} onChange={(e) => updateFieldValue(e.target.value, true)} onKeyDown={(e) => checkForEnter(e.key)} onClick={setCursorToEnd}/>
+                    <input ref={inputRef} type={unmaskCon ? "text" : "password"} disabled={disableCon} placeholder={placeholderText} value={changeableValue} onChange={(e) => updateFieldValue(e.target.value, true)} onKeyDown={(e) => checkForKey(e.key)} onClick={setCursorToEnd}/>
                     <button className={changeableValue.length != 0 ? "textfield-active-button" : ""} disabled={disableCon || changeableValue.length == 0} onClick={() => updateFieldValue("", true)}>
                         <TiDeleteOutline />
                     </button>

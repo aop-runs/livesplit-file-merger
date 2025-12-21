@@ -28,6 +28,7 @@ export const ItemList = ({ listItems, unmaskPaths, moveListItem, removeListItem,
                             />
                         ))}
                         </div>
+                        <br/>
                         </React.Fragment>
                     }                 
 
