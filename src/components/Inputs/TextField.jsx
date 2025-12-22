@@ -24,8 +24,8 @@ export const TextField = ({ title, unmaskCon, moveCursorToEnd, disableCon, place
 
     //Run a requested function if the user has prsssed enter
     const checkForKey = (pressedKey) => {
-        if(changeableValue.length != 0 && pressedKey == "Enter" && enterFunction !== undefined){
-            enterFunction()
+        if(enterFunction !== undefined && enterFunction.enableCon && pressedKey == "Enter"){
+            enterFunction.function()
         }
         else if(changeableValue.length != 0 && pressedKey == "Delete"){
             updateKey !== undefined ? updateFunction(updateKey, "") : updateFunction("")

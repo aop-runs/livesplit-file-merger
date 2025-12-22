@@ -22,7 +22,7 @@ return (
         <React.Fragment>
             <div className={"status " + getColorClass(header)} title="Status Pop-Up">
                 <label className="status-header">
-                    {header}:
+                    {header + (!header.endsWith(".") ? ":" : "")}
                 </label><br/>
                 {message.map((line, index) => (
                     <label key={index}>

@@ -8,11 +8,14 @@ export const DropDown = ({ title, setValue, disableCon, updateKey, updateFunctio
     const updateSelectValue = (name) => {
         updateKey !== undefined ? updateFunction(updateKey, name) : updateFunction(name)
     }
+    const refreshSelectValue = (name) => {
+        updateKey !== undefined ? updateFunction(updateKey, name) : updateFunction(name)
+    }
 
     return (
         //Textfield with label and clear button
         <React.Fragment>
-            <select className="dropdown" value={setValue} disabled={disableCon} onChange={(e) => updateSelectValue(e.target.value)} title={description}>
+            <select className="dropdown" value={setValue} disabled={disableCon} onChange={(e) => updateSelectValue(e.target.value)} title={description} onClick={(e) => refreshSelectValue(e.target.value)}>
                 <option value="">{title}</option>
                 {choices}
             </select>

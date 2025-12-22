@@ -357,7 +357,7 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
     }
 
     //Speedrun.com Request to gather list of fuzzy searched games based on input
-    const fetchGameFromSRC = () => {
+    const fetchGamesFromSRC = () => {
         updateStatus("game", {
             header: "Loading...",
             message: ["Searching for game names matching " + outputSettings["runName"]["game"] + " on Speedrun.com"]
@@ -418,7 +418,18 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
                 let categories = []
                 for(let foundCategory of response.data.data.categories.data){
                     if(foundCategory.type == "per-game"){
-                        categories.push({name: foundCategory.name})
+                        categories.push({
+                            name: foundCategory.name,
+                            emuAllowed: response.data.data.ruleset["emulators-allowed"],
+                            platforms: response.data.data.platforms.data.map(p => p.name),
+                            regions: response.data.data.regions.data.map(r => r.name),
+                            variables: foundCategory.variables.data.map(v => {
+                                const obj = {}
+                                obj["name"] = v.name,
+                                obj["choices"] = Object.keys(v.values.values).map(id => v.values.values[id].label)
+                                return obj
+                            })
+                        })
                     }
                 }
                 updateRequestData("category", categories)
@@ -437,10 +448,115 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
             })
         })
     }
+    const fetchCategoriesFromSRCNoID = () => {
+        updateStatus("category", {
+            header: "Loading...",
+            message: ["Searching for game id for " + outputSettings["runName"]["game"] + " on Speedrun.com"]
+        })
+        const gameQuery = fuzzySearchGames(outputSettings["runName"]["game"])
+        gameQuery.then(
+            (response) => {
+            updateRequestData("selectedGame", null)
+            let games = []
+            if(response.data.data.length == 0){
+                updateStatus("category", {
+                    header: "Error",
+                    message: ["No results were found on Speedrun.com matching " + outputSettings["runName"]["game"]]
+                })
+            }
+            else{
+                for(let foundGame of response.data.data){
+                    games.push({id: foundGame.id, name: foundGame.names.international})
+                }
+                updateRequestData("game", games)
+            }
+            cacheNewData("Game", outputSettings["runName"]["game"], response.data)
+            
+            //Request catgory once the respective game's ID is found
+            let gameID = games.find(g => g.name == outputSettings["runName"]["game"]) 
+            if(gameID != undefined){
+                updateRequestData("selectedGame", gameID)
+                updateStatus("category", {
+                    header: "Loading...",
+                    message: ["Searching for categories for " + gameID.name + " on Speedrun.com"]
+                })
+                const categoryQuery = searchCategoriesFromGame(gameID.id)
+                categoryQuery.then(
+                    (response) => {
+                    if(response.data.data.length == 0){
+                        updateStatus("category", {
+                            header: "Error",
+                            message: ["No categories were found on Speedrun.com for " + gameID.name]
+                        })
+                    }
+                    else{
+                        let categories = []
+                        for(let foundCategory of response.data){
+                            if(foundCategory.type == "per-game"){
+                                categories.push({
+                                    name: foundCategory.name,
+                                    emuAllowed: response.data.data.ruleset["emulators-allowed"],
+                                    platforms: response.data.data.platforms.data.map(p => p.name),
+                                    regions: response.data.data.regions.data.map(r => r.name),
+                                    variables: foundCategory.variables.data.map(v => {
+                                        const obj = {}
+                                        obj["name"] = v.name,
+                                        obj["choices"] = Object.keys(v.values.values).map(id => v.values.values[id].label)
+                                        return obj
+                                    })
+                                })
+                            }
+                        }
+                        updateRequestData("category", categories)
+                        updateStatus("category", {
+                            header: "Success",
+                            message: ["Found " + categories.length + " categor" + (categories.length != 1 ? "ies" : "y") + " for " + gameID.name + " on Speedrun.com"]
+                        })
+                    }
+                    cacheNewData("Category", gameID.id, response.data)
+                })
+                categoryQuery.catch(
+                    (error) => {
+                    updateStatus("category", {
+                        header: "Error",
+                        message: ["Unable to fetch category names from Speedrun.com - " + error]
+                    })
+                })
+            }
+            else{
+                updateStatus("category", {
+                    header: "Error",
+                    message: ["No game id was found on Speedrun.com matching " + outputSettings["runName"]["game"]]
+                })
+            }
+        })
+        gameQuery.catch(
+            (error) => {
+            updateStatus("category", {
+                header: "Error",
+                message: ["Unable to fetch game names from Speedrun.com - " + error]
+            })
+        })
+    }
     const clearCategoryData = () => {
         updateRequestData("category", [])
         updateRequestData("selectedCategory", null)
         updateStatus("category")
+    }
+
+    //Manage SRC Requests
+    const runRequestFromSRC = (type) => {
+        if(type == "game"){
+            fetchGamesFromSRC()
+        }
+        else if(type == "category"){
+            if(requestData.selectedGame != null){
+                fetchCategoriesFromSRC()
+            }
+            else{
+                fetchCategoriesFromSRCNoID()
+            }      
+        }
     }
 
     return (
@@ -736,10 +852,13 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
                     changeableValue={outputSettings["runName"]["game"]}
                     updateKey={"game"}
                     updateFunction={changeRunName}
-                    enterFunction={fetchGameFromSRC}
+                    enterFunction={{
+                        function: fetchGamesFromSRC,
+                        enableCon: outputSettings["runName"]["game"].length != 0
+                    }}
                     description={"The name of the game for the output splits file"}
                 />
-                    <button type="button" disabled={listItems.length < 2 || outputSettings["runName"]["game"].length == 0} onClick={() => fetchGameFromSRC()} title="Fetches list of games fuzzy searched from Speedrun.com">
+                    <button type="button" disabled={listItems.length < 2 || outputSettings["runName"]["game"].length == 0} onClick={() => runRequestFromSRC("game")} title="Fetches list of games fuzzy searched from Speedrun.com">
                         Fetch Games from Input
                     </button>
                     {requestData.game.length != 0 &&
@@ -777,10 +896,14 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
                     changeableValue={outputSettings["runName"]["category"]}
                     updateKey={"category"}
                     updateFunction={changeRunName}
+                    enterFunction={{
+                        function: requestData.selectedGame != null ? fetchCategoriesFromSRC : fetchCategoriesFromSRCNoID,
+                        enableCon: outputSettings["runName"]["game"].length != 0
+                    }}
                     description={"The name of the category for the output splits file"}
                 />
-                    <button type="button" disabled={listItems.length < 2 || requestData.selectedGame == null} onClick={() => fetchCategoriesFromSRC()} title="Fetches category of a requested game from Speedrun.com">
-                        {requestData.selectedGame != null ? "Fetch Categories from " + requestData.selectedGame.name : "Fetch a Game First"}
+                    <button type="button" disabled={listItems.length < 2 || outputSettings["runName"]["game"].length == 0} onClick={() => runRequestFromSRC("category")} title="Fetches category of a requested game from Speedrun.com">
+                        {"Fetch Categories from " + (requestData.selectedGame != null ? requestData.selectedGame.name : "Above Game")}
                     </button>
                     {requestData.category.length != 0 &&
                         <DropDown

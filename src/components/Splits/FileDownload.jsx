@@ -162,7 +162,10 @@ export const FileDownload = ({ listItems, unmaskPaths, outputSettings, canDownlo
                     placeholderText={"filename.lss"}
                     changeableValue={finalOutput.filename}
                     updateFunction={updateFilename}
-                    enterFunction={forcePrepareOutput}
+                    enterFunction={{
+                        function: forcePrepareOutput,
+                        enableCon: finalOutput.filename.length != 0
+                    }}
                     description={"Filename for output splits file"}
                     defaultButton={{
                         value: getDefaultFilename(),
