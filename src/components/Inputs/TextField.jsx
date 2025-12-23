@@ -60,6 +60,7 @@ export const TextField = ({ title, unmaskCon, moveCursorToEnd, disableCon, place
                         disableCon={disableCon}
                         updateKey={updateKey}
                         updateFunction={dropDown.updateFunction}
+                        canClickToRefresh={true}
                         description={dropDown.description}
                         choices={dropDown.choices}
                     />

@@ -14,7 +14,7 @@ export const templateParameters = [
 export let iconCache = [];
 
 // Splits template
-export function gatherFullTemplate(){
+export function gatherFullTemplate(emuUsage){
     return `<?xml version="1.0" encoding="UTF-8"?>
 <Run version="1.7.0">
 <GameIcon />
@@ -26,7 +26,7 @@ export function gatherFullTemplate(){
 </LayoutPath>
 <Metadata>
     <Run id="" />
-    <Platform usesEmulator="False">
+    <Platform usesEmulator="${emuUsage ? "True" : "False"}">
     </Platform>
     <Region>
     </Region>
@@ -48,6 +48,11 @@ function gatherComparisonTemplate(compName){
 <RealTime></RealTime>
 <GameTime></GameTime>
 </SplitTime>`;
+}
+// Comparison template for carrying over Game PBs and other useable comparisons
+function gatherVariableTemplate(name){
+    return `<Variable name="${name}">
+</Variable>`;
 }
 
 // Segment template
@@ -185,13 +190,20 @@ function secondsToTime(time){
 export function createOutputSplits(files, outputSettings){
     
     //Everything outside segments
-    let finalOutput = new DOMParser().parseFromString(gatherFullTemplate(), validSpecifier.streamType);
+    let finalOutput = new DOMParser().parseFromString(gatherFullTemplate(outputSettings["toggleSettings"].emu), validSpecifier.streamType);
     finalOutput.getElementsByTagName("GameName")[0].textContent = outputSettings["runName"].game;
     finalOutput.getElementsByTagName("CategoryName")[0].textContent = outputSettings["runName"].category;
     let layout = outputSettings["customInfo"].layout == null ? files[0].layoutPath : outputSettings["customInfo"].layout;
     let offset = outputSettings["customInfo"].offset == null ? files[0].offset : outputSettings["customInfo"].offset;
     finalOutput.getElementsByTagName("LayoutPath")[0].textContent = layout;
     finalOutput.getElementsByTagName("Offset")[0].textContent = offset;
+    finalOutput.getElementsByTagName("Metadata")[0].getElementsByTagName("Region")[0].textContent = outputSettings.runMetadata.region;
+    finalOutput.getElementsByTagName("Metadata")[0].getElementsByTagName("Platform")[0].textContent = outputSettings.runMetadata.platform;
+    for(let variable of outputSettings["runMetadata"].variables){
+        let newVar = new DOMParser().parseFromString(gatherVariableTemplate(variable.name), validSpecifier.streamType);
+        newVar.getElementsByTagName("Variable")[0].textContent = variable.choice;
+        finalOutput.getElementsByTagName("Variables")[0].appendChild(newVar.documentElement);
+    }
 
     //Determine what comparisons will be used depending on whether game PBs and other comparisons present in each file are toggled
     let comparisons = outputSettings["toggleSettings"].comp ? outputSettings["usedComparisons"].filter(comp => comp.used).map(comp => comp.name) : [];

@@ -37,12 +37,18 @@ export const ListContainer = () => {
                 game: "",
                 category: ""
             },
+            runMetadata: {
+                region: "",
+                platform: "",
+                variables: []
+            },
             toggleSettings: {
                 pb: true,
                 sob: true,
                 comp: true,
                 icon: true,
-                subs: true
+                subs: true,
+                emu: false
             }
         }
     }

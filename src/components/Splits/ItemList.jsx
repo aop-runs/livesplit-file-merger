@@ -13,6 +13,9 @@ export const ItemList = ({ listItems, unmaskPaths, moveListItem, removeListItem,
                     <summary className ="sectionTitle">
                         Split Entries
                     </summary>
+                    <br/><label title="Number of files used for output splits">
+                        Entries: {listItems.length}
+                    </label><br/>
                     {listItems.length != 0 &&
                         <React.Fragment>
                         <br/>
@@ -29,22 +32,18 @@ export const ItemList = ({ listItems, unmaskPaths, moveListItem, removeListItem,
                         ))}
                         </div>
                         <br/>
+                        {/* Buttons for list reordering */}
+                        <button className = {"list-icon" + (listItems.length < 2 ? " list-icon-disabled" : " list-icon-active")} disabled={listItems.length < 2} onClick={reverseEntries} title="Reverses all of your entries">
+                            <FaSortAmountDown />
+                        </button>
+                        <button className = {"list-icon" + (listItems.length < 2 ? " list-icon-disabled" : " list-icon-active")} disabled={listItems.length < 2} onClick={() => sortEntries(false)} title="Sort all of your entries A-Z">
+                            <FaSortAlphaUp />
+                        </button>
+                        <button className = {"list-icon" + (listItems.length < 2 ? " list-icon-disabled" : " list-icon-active")} disabled={listItems.length < 2} onClick={() => sortEntries(true)} title="Sort all of your entries Z-A">
+                            <FaSortAlphaDownAlt />
+                        </button><br/>
                         </React.Fragment>
-                    }                 
-
-                    {/* Buttons for list reordering */}
-                    <label title="Number of files used for output splits">
-                        Entries: {listItems.length}
-                    </label><br/>
-                    <button className = {"list-icon" + (listItems.length < 2 ? " list-icon-disabled" : " list-icon-active")} disabled={listItems.length < 2} onClick={reverseEntries} title="Reverses all of your entries">
-                        <FaSortAmountDown />
-                    </button>
-                    <button className = {"list-icon" + (listItems.length < 2 ? " list-icon-disabled" : " list-icon-active")} disabled={listItems.length < 2} onClick={() => sortEntries(false)} title="Sort all of your entries A-Z">
-                        <FaSortAlphaUp />
-                    </button>
-                    <button className = {"list-icon" + (listItems.length < 2 ? " list-icon-disabled" : " list-icon-active")} disabled={listItems.length < 2} onClick={() => sortEntries(true)} title="Sort all of your entries Z-A">
-                        <FaSortAlphaDownAlt />
-                    </button>
+                    }
                 </details>
             </React.Fragment>
         )

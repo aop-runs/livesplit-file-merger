@@ -325,6 +325,43 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
         changeTemplateText(key, outputSettings["templateText"][key] + value)
     }
 
+    //Update run metadata
+    const changeRunMetadata = (key, value) => {
+        setOutputSettings(outputSettings => {
+            const updatedSettings = {...outputSettings}
+            updatedSettings["runMetadata"][key] = value
+            return updatedSettings
+        })
+    }
+    const clearRunMetadata = () => {
+        changeRunMetadata("region", "")
+        changeRunMetadata("platform", "")
+        changeRunMetadata("variables", [])
+        toggleCheckbox("emu", false)
+    }
+
+    //Update variable value
+    const updateVariableValue = (name, choice) => {
+        let foundIndex = outputSettings["runMetadata"]["variables"].indexOf(outputSettings["runMetadata"]["variables"].find(v => v.name == name))
+        setOutputSettings(outputSettings => {
+            const updatedSettings = {...outputSettings}
+            if(foundIndex == -1){
+                if(choice != ""){
+                    updatedSettings["runMetadata"]["variables"].push({name: name, choice: choice})
+                }
+            }
+            else{
+                if(choice != ""){
+                    updatedSettings["runMetadata"]["variables"][foundIndex] = {name: name, choice: choice}
+                }
+                else{
+                    updatedSettings["runMetadata"]["variables"].splice(foundIndex, 1)
+                }
+            }
+            return updatedSettings
+        })
+    }
+
     //Update run name
     const changeRunName = (key, value) => {
         setOutputSettings(outputSettings => {
@@ -337,13 +374,19 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
     //Change game and category names from Speedrun.com Request
     const updateGameName = (name) => {
         if(name.length != 0){
+            if(name != outputSettings["runName"]["game"] && outputSettings["runName"]["game"].length != 0){
+                clearRunMetadata()
+                clearCategoryData()
+            }
             changeRunName("game", name)
             updateRequestData("selectedGame", requestData.game.find(g => g.name == name))
-            clearCategoryData()
         }
     }
     const updateCategoryName = (name) => {
         if(name.length != 0){
+            if(name != outputSettings["runName"]["category"] && outputSettings["runName"]["category"].length != 0){
+                changeRunMetadata("variables", [])
+            }
             changeRunName("category", name)
             updateRequestData("selectedCategory", requestData.category.find(c => c.name == name))
         }
@@ -394,6 +437,7 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
         })
     }
     const clearGameData = () => {
+        clearCategoryData()
         updateRequestData("game", [])
         updateRequestData("selectedGame", null)
         updateStatus("game")
@@ -455,22 +499,22 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
         })
         const gameQuery = fuzzySearchGames(outputSettings["runName"]["game"])
         gameQuery.then(
-            (response) => {
+            (response1) => {
             updateRequestData("selectedGame", null)
             let games = []
-            if(response.data.data.length == 0){
+            if(response1.data.data.length == 0){
                 updateStatus("category", {
                     header: "Error",
                     message: ["No results were found on Speedrun.com matching " + outputSettings["runName"]["game"]]
                 })
             }
             else{
-                for(let foundGame of response.data.data){
+                for(let foundGame of response1.data.data){
                     games.push({id: foundGame.id, name: foundGame.names.international})
                 }
                 updateRequestData("game", games)
             }
-            cacheNewData("Game", outputSettings["runName"]["game"], response.data)
+            cacheNewData("Game", outputSettings["runName"]["game"], response1.data)
             
             //Request catgory once the respective game's ID is found
             let gameID = games.find(g => g.name == outputSettings["runName"]["game"]) 
@@ -482,8 +526,8 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
                 })
                 const categoryQuery = searchCategoriesFromGame(gameID.id)
                 categoryQuery.then(
-                    (response) => {
-                    if(response.data.data.length == 0){
+                    (response2) => {
+                    if(response2.data.data.length == 0){
                         updateStatus("category", {
                             header: "Error",
                             message: ["No categories were found on Speedrun.com for " + gameID.name]
@@ -491,13 +535,13 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
                     }
                     else{
                         let categories = []
-                        for(let foundCategory of response.data){
+                        for(let foundCategory of response2.data.data.categories.data){
                             if(foundCategory.type == "per-game"){
                                 categories.push({
                                     name: foundCategory.name,
-                                    emuAllowed: response.data.data.ruleset["emulators-allowed"],
-                                    platforms: response.data.data.platforms.data.map(p => p.name),
-                                    regions: response.data.data.regions.data.map(r => r.name),
+                                    emuAllowed: response2.data.data.ruleset["emulators-allowed"],
+                                    platforms: response2.data.data.platforms.data.map(p => p.name),
+                                    regions: response2.data.data.regions.data.map(r => r.name),
                                     variables: foundCategory.variables.data.map(v => {
                                         const obj = {}
                                         obj["name"] = v.name,
@@ -513,7 +557,7 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
                             message: ["Found " + categories.length + " categor" + (categories.length != 1 ? "ies" : "y") + " for " + gameID.name + " on Speedrun.com"]
                         })
                     }
-                    cacheNewData("Category", gameID.id, response.data)
+                    cacheNewData("Category", gameID.id, response2.data)
                 })
                 categoryQuery.catch(
                     (error) => {
@@ -539,6 +583,7 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
         })
     }
     const clearCategoryData = () => {
+        clearRunMetadata()
         updateRequestData("category", [])
         updateRequestData("selectedCategory", null)
         updateStatus("category")
@@ -546,6 +591,8 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
 
     //Manage SRC Requests
     const runRequestFromSRC = (type) => {
+        clearRunMetadata()
+        changeRunName("category", "")
         if(type == "game"){
             fetchGamesFromSRC()
         }
@@ -867,6 +914,7 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
                             setValue={requestData.selectedGame != null ? requestData.selectedGame.name : ""}
                             disableCon={listItems.length < 2 || requestData.game.length == 0}
                             updateFunction={updateGameName}
+                            canClickToRefresh={true}
                             description={"Select game name for your output splits from Speedrun.com request"}
                             choices={requestData.game.map((g, index) => {
                                 return (
@@ -911,6 +959,7 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
                             setValue={requestData.selectedCategory != null ? requestData.selectedCategory.name : ""}
                             disableCon={listItems.length < 2 || requestData.category.length == 0}
                             updateFunction={updateCategoryName}
+                            canClickToRefresh={true}
                             description={"Select category name for your output splits from requested Speedrun.com game"}
                             choices={requestData.category.map((c, index) => {
                                 return (
@@ -925,6 +974,97 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
                             }}
                         />
                     }
+                {/* Category Metadata */}
+                {requestData.selectedCategory != null &&
+                    <React.Fragment>
+                    <br/>
+                    {requestData.selectedCategory.regions.length != 0 &&
+                        <React.Fragment>
+                        <br/>
+                        <DropDown
+                            title={"Select Region"}
+                            header={"Region"}
+                            disableCon={listItems.length < 2 || requestData.category.length == 0}
+                            updateKey={"region"}
+                            updateFunction={changeRunMetadata}
+                            canClickToRefresh={false}
+                            description={"Select region name for your output splits from requested Speedrun.com game"}
+                            choices={requestData.selectedCategory.regions.map((r, index) => {
+                                return (
+                                    <option key={index} value={r}>
+                                        {r}
+                                    </option>
+                                );
+                            })}
+                        />
+                        <br/>
+                        </React.Fragment>
+                    }
+                    {requestData.selectedCategory.platforms.length != 0 &&
+                        <React.Fragment>
+                        <br/>
+                        <DropDown
+                            title={"Select Platform"}
+                            header={"Platform"}
+                            disableCon={listItems.length < 2 || requestData.category.length == 0}
+                            updateKey={"platform"}
+                            updateFunction={changeRunMetadata}
+                            canClickToRefresh={false}
+                            description={"Select platform name for your output splits from requested Speedrun.com game"}
+                            choices={requestData.selectedCategory.platforms.map((p, index) => {
+                                return (
+                                    <option key={index} value={p}>
+                                        {p}
+                                    </option>
+                                );
+                            })}
+                        /><br/>
+                        </React.Fragment>
+                    }
+                    {requestData.selectedCategory.emuAllowed &&
+                        <React.Fragment>
+                        <label id="emubox" title="Choose whether you are using an emulator for your run">
+                            <input type="checkbox" disabled={listItems.length < 2 || requestData.category.length == 0} htmlFor="emubox" checked={outputSettings["toggleSettings"]["emu"]} onChange={(e) => toggleCheckbox("emu", e.target.checked)}/>
+                            Use Emulator
+                        </label><br/>
+                        </React.Fragment>
+                    }
+                    {/* Variables */}
+                    {requestData.selectedCategory.variables.length != 0 &&
+                        <React.Fragment>
+                        <br/><label>Variables:</label><br/><br/>
+                        {requestData.selectedCategory.variables.map((v, index) => {
+                                return (
+                                    <React.Fragment key={index}>
+                                    <DropDown
+                                        title={"Select Choice"}
+                                        header={v.name}
+                                        setValue={outputSettings["runMetadata"]["variables"].find(va => va.name == v.name) !== undefined ? outputSettings["runMetadata"]["variables"].find(va => va.name == v.name).choice : ""}
+                                        updateKey={v.name}
+                                        updateFunction={updateVariableValue}
+                                        canClickToRefresh={false}
+                                        description={"Select this variable's name for your output splits from requested Speedrun.com game"}
+                                        choices={v.choices.map((v, index) => {
+                                            return (
+                                                <option key={index} value={v}>
+                                                    {v}
+                                                </option>
+                                            );
+                                        })}
+                                        />
+                                    <br/>
+                                    {index != requestData.selectedCategory.variables.length - 1 &&
+                                        <br/>
+                                    }
+                                    </React.Fragment>
+                                );
+                            })}
+                        </React.Fragment>
+                    }
+                    </React.Fragment>
+                }
+                
+
             </details>
 
         </React.Fragment>
