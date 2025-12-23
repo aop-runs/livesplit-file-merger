@@ -401,6 +401,8 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
 
     //Speedrun.com Request to gather list of fuzzy searched games based on input
     const fetchGamesFromSRC = () => {
+        clearRunMetadata()
+        changeRunName("category", "")
         updateStatus("game", {
             header: "Loading...",
             message: ["Searching for game names matching " + outputSettings["runName"]["game"] + " on Speedrun.com"]
@@ -445,6 +447,8 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
 
     //Speedrun.com Request to categories from Speedrun.com for currently selected game
     const fetchCategoriesFromSRC = () => {
+        clearRunMetadata()
+        changeRunName("category", "")
         updateStatus("category", {
             header: "Loading...",
             message: ["Searching for categories for " + requestData.selectedGame.name + " on Speedrun.com"]
@@ -493,6 +497,8 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
         })
     }
     const fetchCategoriesFromSRCNoID = () => {
+        clearRunMetadata()
+        changeRunName("category", "")
         updateStatus("category", {
             header: "Loading...",
             message: ["Searching for game id for " + outputSettings["runName"]["game"] + " on Speedrun.com"]
@@ -591,8 +597,6 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
 
     //Manage SRC Requests
     const runRequestFromSRC = (type) => {
-        clearRunMetadata()
-        changeRunName("category", "")
         if(type == "game"){
             fetchGamesFromSRC()
         }
