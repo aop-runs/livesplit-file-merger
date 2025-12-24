@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React from 'react'
 import { FileDownload } from './FileDownload.jsx'
 import { FileUpload } from './FileUpload.jsx'
 import { ItemList } from './ItemList.jsx'
@@ -36,91 +36,6 @@ export const SplitsColumn = ({ listItems, setListItems, unmaskPaths, setUnmaskPa
         })
     }
 
-    //Pre-included move function
-    const moveFileListItem = useCallback(
-        (dragIndex, hoverIndex) => {
-            const dragItem = listItems[dragIndex]
-            const hoverItem = listItems[hoverIndex]
-            // Swap places of dragItem and hoverItem in the files array
-            setListItems(listItems => {
-                const updatedFiles = [...listItems]
-                updatedFiles[dragIndex] = hoverItem
-                updatedFiles[hoverIndex] = dragItem
-                refreshComparisons(updatedFiles)
-                return updatedFiles
-            })
-        },
-        [listItems],
-    )
-
-    //Add entry to list
-    const addFileListItem = useCallback(
-        (itemData) => {
-            setListItems(listItems => {
-                const updatedFiles = [...listItems]
-                updatedFiles.push({
-                    ...{id: listItems.length+1},
-                    ...itemData
-                })
-                refreshComparisons(updatedFiles)
-                return updatedFiles
-            })
-        },
-        [listItems],
-    )
-
-    //Remove entry from list and refresh keys
-    const removeFileListItem = useCallback(
-        (index) => {
-            setListItems(listItems => {
-                const updatedFiles = [...listItems]
-                updatedFiles.splice(index, 1)
-                for(let i = 0; i < updatedFiles.length; i++) {
-                    updatedFiles[i].id = i+1;
-                }
-                refreshComparisons(updatedFiles)
-                return updatedFiles
-            })
-        },
-        [listItems],
-    )
-
-    //Reverse entries
-    const reverseEntries = useCallback(
-        () => {
-            setListItems(listItems => {
-                const updatedFiles = [...listItems]
-                updatedFiles.reverse()
-                for(let i = 0; i < updatedFiles.length; i++) {
-                    updatedFiles[i].id = i+1;
-                }
-                refreshComparisons(updatedFiles)
-                return updatedFiles
-            })
-        },
-        [listItems],
-    )
-
-    //Sort entries
-    const sortEntries = useCallback(
-        (reversed) => {
-            setListItems(listItems => {
-                const updatedFiles = [...listItems]
-                const { compare } = Intl.Collator('en-US');
-                updatedFiles.sort((a, b) => compare(a.runName, b.runName));
-                if(reversed){
-                    updatedFiles.reverse()
-                }
-                for(let i = 0; i < updatedFiles.length; i++) {
-                    updatedFiles[i].id = i+1;
-                }
-                refreshComparisons(updatedFiles)
-                return updatedFiles
-            })
-        },
-        [listItems],
-    )
-
 return (
         <React.Fragment>
         <details open title="Click to open/close this section">
@@ -138,18 +53,18 @@ return (
         </details>
         <br/>
         <FileUpload
-            addListItem={addFileListItem}
+            listItems={listItems}
+            setListItems={setListItems}
+            refreshComparisons={refreshComparisons}
             appStatuses={appStatuses}
             updateStatus={updateStatus}
         />
         <br/>
         <ItemList
             listItems={listItems}
+            setListItems={setListItems}
             unmaskPaths={unmaskPaths}
-            moveListItem={moveFileListItem}
-            removeListItem={removeFileListItem}
-            reverseEntries={reverseEntries}
-            sortEntries={sortEntries}
+            refreshComparisons={refreshComparisons}
         />
         <br/>
         <FileDownload

@@ -1,12 +1,12 @@
 //Based on: https://www.geeksforgeeks.org/reactjs/drag-and-drop-file-upload-component-with-react-hooks/ & https://medium.com/@dprincecoder/creating-a-drag-and-drop-file-upload-component-in-react-a-step-by-step-guide-4d93b6cc21e0
-import React, { useRef } from 'react';
+import React, { useRef, useCallback } from 'react';
 import { StatusPopUp } from '../Inputs/StatusPopUp.jsx'
 import { BsCloudUpload } from "react-icons/bs";
 import { gatherFileContents, validSpecifier } from '../../utils/file.js'
 import { cleanSplitsFile, gatherRunName, findCustomComparisons, gatherSplitsDataByTag } from '../../utils/livesplit.js'
 import '../../styles/style.scss'
 
-export const FileUpload = ({ addListItem, appStatuses, updateStatus }) => {
+export const FileUpload = ({ listItems, setListItems, refreshComparisons, appStatuses, updateStatus }) => {
 
     //Pre-included wrappers
     const wrapperRef = useRef(null);
@@ -24,6 +24,22 @@ export const FileUpload = ({ addListItem, appStatuses, updateStatus }) => {
     const onFileSelect = (e) => {
         uploadFiles(e.target.files)
     }
+
+    //Add entry to list
+    const addFileListItem = useCallback(
+        (itemData) => {
+            setListItems(listItems => {
+                const updatedFiles = [...listItems]
+                updatedFiles.push({
+                    ...{id: listItems.length+1},
+                    ...itemData
+                })
+                refreshComparisons(updatedFiles)
+                return updatedFiles
+            })
+        },
+        [listItems],
+    )
 
     //Validate and add files to list
     const uploadFiles = (selectedFiles) => {
@@ -44,7 +60,7 @@ export const FileUpload = ({ addListItem, appStatuses, updateStatus }) => {
                             contents = cleanSplitsFile(contents)
                             let g = gatherSplitsDataByTag(contents, "GameName")
                             let c = gatherSplitsDataByTag(contents, "CategoryName")
-                            addListItem({
+                            addFileListItem({
                                 runName: gatherRunName(g, c),
                                 game: g,
                                 category: c,

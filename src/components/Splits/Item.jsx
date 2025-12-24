@@ -44,18 +44,18 @@ export const Item = ({ index, listSize, unmaskPaths, itemData, moveListItem, rem
 
     //Move + Remove item functions
     const moveItemUp = (event) => {
-            event.stopPropagation()
-            moveListItem(index, index-1)
-            index -= 1
+        event.stopPropagation()
+        moveListItem(index, index-1)
+        index -= 1
     }
     const moveItemDown = (event) => {
-            event.stopPropagation()
-            moveListItem(index, index+1)
-            index += 1
+        event.stopPropagation()
+        moveListItem(index, index+1)
+        index += 1
     }
     const removeItem = (event) => {
-            event.stopPropagation()
-            removeListItem(index)
+        event.stopPropagation()
+        removeListItem(index)
     }
 
     //Modal functions that disable dragging

@@ -1,10 +1,79 @@
 //Based on: https://medium.com/@liadshiran92/easy-drag-and-drop-in-react-22778b30ba37
-import React from 'react'
+import React, { useCallback } from 'react'
 import { Item } from './Item'
 import { FaSortAlphaUp, FaSortAlphaDownAlt, FaSortAmountDown } from "react-icons/fa";
 import '../../styles/style.scss'
 
-export const ItemList = ({ listItems, unmaskPaths, moveListItem, removeListItem, reverseEntries, sortEntries }) => {
+export const ItemList = ({ listItems, setListItems, unmaskPaths, refreshComparisons }) => {
+
+    //Pre-included move function
+    const moveFileListItem = useCallback(
+        (dragIndex, hoverIndex) => {
+            const dragItem = listItems[dragIndex]
+            const hoverItem = listItems[hoverIndex]
+            // Swap places of dragItem and hoverItem in the files array
+            setListItems(listItems => {
+                const updatedFiles = [...listItems]
+                updatedFiles[dragIndex] = hoverItem
+                updatedFiles[hoverIndex] = dragItem
+                refreshComparisons(updatedFiles)
+                return updatedFiles
+            })
+        },
+        [listItems],
+    )
+
+    //Remove entry from list and refresh keys
+    const removeFileListItem = useCallback(
+        (index) => {
+            setListItems(listItems => {
+                const updatedFiles = [...listItems]
+                updatedFiles.splice(index, 1)
+                for(let i = 0; i < updatedFiles.length; i++) {
+                    updatedFiles[i].id = i+1;
+                }
+                refreshComparisons(updatedFiles)
+                return updatedFiles
+            })
+        },
+        [listItems],
+    )
+
+    //Reverse entries
+    const reverseEntries = useCallback(
+        () => {
+            setListItems(listItems => {
+                const updatedFiles = [...listItems]
+                updatedFiles.reverse()
+                for(let i = 0; i < updatedFiles.length; i++) {
+                    updatedFiles[i].id = i+1;
+                }
+                refreshComparisons(updatedFiles)
+                return updatedFiles
+            })
+        },
+        [listItems],
+    )
+
+    //Sort entries
+    const sortEntries = useCallback(
+        (reversed) => {
+            setListItems(listItems => {
+                const updatedFiles = [...listItems]
+                const { compare } = Intl.Collator('en-US');
+                updatedFiles.sort((a, b) => compare(a.runName, b.runName));
+                if(reversed){
+                    updatedFiles.reverse()
+                }
+                for(let i = 0; i < updatedFiles.length; i++) {
+                    updatedFiles[i].id = i+1;
+                }
+                refreshComparisons(updatedFiles)
+                return updatedFiles
+            })
+        },
+        [listItems],
+    )
 
     return (
             <React.Fragment> 
@@ -26,8 +95,8 @@ export const ItemList = ({ listItems, unmaskPaths, moveListItem, removeListItem,
                                 listSize={listItems.length}
                                 unmaskPaths={unmaskPaths}
                                 itemData={file}
-                                moveListItem={moveListItem}
-                                removeListItem={removeListItem}
+                                moveListItem={moveFileListItem}
+                                removeListItem={removeFileListItem}
                             />
                         ))}
                         </div>
