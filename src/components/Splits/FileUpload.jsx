@@ -61,7 +61,7 @@ export const FileUpload = ({ addListItem, appStatuses, updateStatus }) => {
                                 message: uploadErrors
                             })
                         }
-                        //All items uploaded successfully where comparisons are also refreshed
+                        //All items uploaded successfully
                         if(newFile[0] == fileAmount-1){
                             if(uploadErrors.length == 0){
                                 updateStatus("upload", {

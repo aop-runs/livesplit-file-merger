@@ -1,9 +1,6 @@
 import React, { useState, useCallback } from 'react'
-import { FileDownload } from './Splits/FileDownload.jsx'
-import { FileUpload } from './Splits/FileUpload.jsx'
-import { ItemList } from './Splits/ItemList.jsx'
-import { OutputSettings } from './Splits/OutputSettings.jsx'
-import { MdOutlineResetTv } from "react-icons/md";
+import { SettingsColumn } from './Settings/SettingsColumn.jsx'
+import { SplitsColumn } from './Splits/SplitsColumn.jsx'
 import { defaultSetup, defaultPBComp, iconCache } from "../utils/livesplit.js";
 import '../styles/style.scss'
 
@@ -151,119 +148,6 @@ export const ContentContainer = () => {
         }
     }
 
-    //Refresh all comparisons after list is modified
-    const refreshComparisons = (files) => {
-        setOutputSettings(outputSettings => {
-            let updatedSettings = {...outputSettings}
-            let searchedComp = []
-            for(let file of Array.from(files).entries()){
-                searchedComp = file[0] != 0 ? searchedComp.filter(name => file[1].comparisons.includes(name)) : [...file[1].comparisons]
-            }
-            updatedSettings["usedComparisons"] = searchedComp.filter(name => name != defaultPBComp).map(
-                (comp) => {
-                    let nameIndex = outputSettings["usedComparisons"].findIndex(c => c.name === comp)
-                    return {name: comp, used: outputSettings["usedComparisons"].findIndex(c => c.name === comp) != -1 ? outputSettings["usedComparisons"][nameIndex].used : true}
-                }
-            )
-            checkGameComp(updatedSettings)
-            if(updatedSettings["usedComparisons"].length == 0 && files.length != 0){
-                updateStatus("found", {
-                    header: "Info",
-                    message: ["No comparisons found that exist in each entry"]
-                })
-            }
-            else{
-                updateStatus("found")
-            }
-            return updatedSettings
-        })
-    }
-
-    //Pre-included move function
-    const moveFileListItem = useCallback(
-        (dragIndex, hoverIndex) => {
-            const dragItem = files[dragIndex]
-            const hoverItem = files[hoverIndex]
-            // Swap places of dragItem and hoverItem in the files array
-            setFiles(files => {
-                const updatedFiles = [...files]
-                updatedFiles[dragIndex] = hoverItem
-                updatedFiles[hoverIndex] = dragItem
-                refreshComparisons(updatedFiles)
-                return updatedFiles
-            })
-        },
-        [files],
-    )
-
-    //Add entry to list
-    const addFileListItem = useCallback(
-        (itemData) => {
-            setFiles(files => {
-                const updatedFiles = [...files]
-                updatedFiles.push({
-                    ...{id: files.length+1},
-                    ...itemData
-                })
-                refreshComparisons(updatedFiles)
-                return updatedFiles
-            })
-        },
-        [files],
-    )
-
-    //Remove entry from list and refresh keys
-    const removeFileListItem = useCallback(
-        (index) => {
-            setFiles(files => {
-                const updatedFiles = [...files]
-                updatedFiles.splice(index, 1)
-                for(let i = 0; i < updatedFiles.length; i++) {
-                    updatedFiles[i].id = i+1;
-                }
-                refreshComparisons(updatedFiles)
-                return updatedFiles
-            })
-        },
-        [files],
-    )
-
-    //Reverse entries
-    const reverseEntries = useCallback(
-        () => {
-            setFiles(files => {
-                const updatedFiles = [...files]
-                updatedFiles.reverse()
-                for(let i = 0; i < updatedFiles.length; i++) {
-                    updatedFiles[i].id = i+1;
-                }
-                refreshComparisons(updatedFiles)
-                return updatedFiles
-            })
-        },
-        [files],
-    )
-
-    //Sort entries
-    const sortEntries = useCallback(
-        (reversed) => {
-            setFiles(files => {
-                const updatedFiles = [...files]
-                const { compare } = Intl.Collator('en-US');
-                updatedFiles.sort((a, b) => compare(a.runName, b.runName));
-                if(reversed){
-                    updatedFiles.reverse()
-                }
-                for(let i = 0; i < updatedFiles.length; i++) {
-                    updatedFiles[i].id = i+1;
-                }
-                refreshComparisons(updatedFiles)
-                return updatedFiles
-            })
-        },
-        [files],
-    )
-
     //Prompt to reset application
     const resetApplication = useCallback(
         () => {
@@ -283,62 +167,27 @@ export const ContentContainer = () => {
 
     return (
         <React.Fragment>
-
-            {/* Upload Files */}
             <div className="flex-container">
                 <div className="flex-item flex-item-1">
-                    {/* Application Settings */}
-                    <details open title="Click to open/close this section">
-                        <summary className="sectionTitle">
-                            Application Settings
-                        </summary>
-                        <label id="unmask" title="Choose whether to unhide absolute filepath names for LiveSplit layouts">
-                            <input type="checkbox" htmlFor="unmask" checked={unmaskPaths} onChange={(e) => setUnmaskPaths(e.target.checked)}/>
-                            Unmask Filepaths
-                        </label>
-                        <button className="reset-button" type="button" onClick={resetApplication} title="Remove all entries and revert all settings to default">
-                            <MdOutlineResetTv />
-                        </button>
-                        <br/>
-                    </details>
-                    <br/>
-                    <FileUpload
-                        addListItem={addFileListItem}
-                        appStatuses={appStatuses}
-                        updateStatus={updateStatus}
-                    />
-                    {/* List entries */}
-                    <br/>
-                    <ItemList
+                    <SplitsColumn
                         listItems={files}
+                        setListItems={setFiles}
                         unmaskPaths={unmaskPaths}
-                        moveListItem={moveFileListItem}
-                        removeListItem={removeFileListItem}
-                        reverseEntries={reverseEntries}
-                        sortEntries={sortEntries}
-                    />
-                    <br/>
-                    <FileDownload
-                        listItems={files}
-                        unmaskPaths={unmaskPaths}
+                        setUnmaskPaths={setUnmaskPaths}
+                        resetApplication={resetApplication}
                         outputSettings={outputSettings}
+                        setOutputSettings={setOutputSettings}
                         canDownload={canDownload}
                         updateCanDownload={updateCanDownload}
                         finalOutput={finalOutput}
                         setFinalOutput={setFinalOutput}
+                        checkGameComp={checkGameComp}
                         appStatuses={appStatuses}
                         updateStatus={updateStatus}
                     />
-                    <br/>
-                    <a className = "top-link" href = "#top" title="Click to go back to the top of the webpage">
-                        Back to Top
-                    </a>
                 </div>
-
-                {/* Download merged contents */}
                 <div className="flex-item flex-item-2">
-                    {/* Output Settings */}
-                    <OutputSettings
+                    <SettingsColumn
                         listItems={files}
                         unmaskPaths={unmaskPaths}
                         updateCanDownload={updateCanDownload}
@@ -350,10 +199,6 @@ export const ContentContainer = () => {
                         appStatuses={appStatuses}
                         updateStatus={updateStatus}
                     />
-                    <br/>
-                    <a className = "top-link" href = "#top" title="Click to go back to the top of the webpage">
-                        Back to Top
-                    </a>
                 </div>
             </div>
         </React.Fragment>

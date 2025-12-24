@@ -16,7 +16,7 @@ export const Item = ({ index, listSize, unmaskPaths, itemData, moveListItem, rem
         canDrag: isDraggingEnabled,
         collect: (monitor) => ({
             isDragging: monitor.isDragging(),
-        }),
+        })
     })
 
     // useDrop - the list item is also a drop area
@@ -25,6 +25,9 @@ export const Item = ({ index, listSize, unmaskPaths, itemData, moveListItem, rem
         hover: (item, monitor) => {
             const dragIndex = item.index
             const hoverIndex = index
+            if (dragIndex === hoverIndex) {
+                return
+            }
             const hoverBoundingRect = ref.current?.getBoundingClientRect()
             const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2
             const hoverActualY = monitor.getClientOffset().y - hoverBoundingRect.top
@@ -33,7 +36,7 @@ export const Item = ({ index, listSize, unmaskPaths, itemData, moveListItem, rem
             if (dragIndex < hoverIndex && hoverActualY < hoverMiddleY) return
             // if dragging up, continue only when hover is bigger than middle Y
             if (dragIndex > hoverIndex && hoverActualY > hoverMiddleY) return
-
+            
             moveListItem(dragIndex, hoverIndex)
             item.index = hoverIndex
         },
@@ -41,18 +44,18 @@ export const Item = ({ index, listSize, unmaskPaths, itemData, moveListItem, rem
 
     //Move + Remove item functions
     const moveItemUp = (event) => {
-        event.stopPropagation()
-        moveListItem(index, index-1)
-        index -= 1
+            event.stopPropagation()
+            moveListItem(index, index-1)
+            index -= 1
     }
     const moveItemDown = (event) => {
-        event.stopPropagation()
-        moveListItem(index, index+1)
-        index += 1
+            event.stopPropagation()
+            moveListItem(index, index+1)
+            index += 1
     }
     const removeItem = (event) => {
-        event.stopPropagation()
-        removeListItem(index)
+            event.stopPropagation()
+            removeListItem(index)
     }
 
     //Modal functions that disable dragging
