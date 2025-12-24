@@ -218,6 +218,8 @@ body {
 //Comparisons
 .comparison-icon {
   font-size: 20px;
+  position: absolute;
+  margin-top: -2px;
   color: $color;
   border: none;
   background-color: transparent;
@@ -228,17 +230,45 @@ body {
   cursor: pointer;
 }
 
+.comparison-icon-1 {
+  font-size: 20px;
+  color: $color;
+}
+
+.comparison-icon-2 {
+  font-size: 20px;
+  margin-left: 20px;
+  color: $color;
+}
+
 //Output & Download
+.download-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
 .download-splits-name:hover{
   color: $hover-color;
   cursor: pointer;
+  text-decoration: underline;
 }
 
 .download-button-icon {
+  border: none;
+  margin-top: -2px;
+  position: absolute;
+  background-color: transparent;
+}
+
+.download-button-1 {
   font-size: 20px;
   color: $color;
-  border: none;
-  background-color: transparent;
+}
+
+.download-button-2 {
+  margin-left: 25px;
+  font-size: 20px;
+  color: $color;
 }
 
 .download-button-icon:hover{

@@ -185,14 +185,14 @@ export const FileDownload = ({ listItems, unmaskPaths, outputSettings, canDownlo
                     header={appStatuses.download.header}
                     message={appStatuses.download.message}
                 />}
-                <div title="Download link for output splits file">
+                <div className="download-wrapper" title="Download link for output splits file">
                     <label className = "download-splits-name" onClick={() => openContentsInNewTab(finalOutput.output.data, gatherSplitsDataByTag(finalOutput.output.data, "LayoutPath"), !unmaskPaths)} title = "Click on the filename to view its raw contents before downloading">
                         {finalOutput.output.name}
-                    </label><br/>
-                    <button className = "download-button-icon" onClick={launchDownload} title="Prepares download for your output splits file">
+                    </label>
+                    <button className = "download-button-icon download-button-1" onClick={launchDownload} title="Prepares download for your output splits file">
                         <BsCloudDownload />
                     </button>
-                    <button className = "download-button-icon" onClick={clearOutputData} title="Clear data from your final output splits">
+                    <button className = "download-button-icon download-button-2" onClick={clearOutputData} title="Clear data from your final output splits">
                         <GoTrash />
                     </button>
                 </div>

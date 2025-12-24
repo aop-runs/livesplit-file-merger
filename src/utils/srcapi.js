@@ -11,7 +11,7 @@ export function fuzzySearchGames(game){
     return axios.get(encodeURI(`https://www.speedrun.com/api/v1/games?name=${game}`));
 }
 
-//Fuzzy search all availble games matching a name thorugh Speedrun.com
+//Fuzzy search all availble games matching a name through Speedrun.com
 export function searchCategoriesFromGame(id){
     const cache = gatherCache("Category", id);
     if(cache != null){

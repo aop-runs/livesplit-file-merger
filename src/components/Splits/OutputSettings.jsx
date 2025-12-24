@@ -3,7 +3,7 @@ import React, { useRef } from 'react'
 import { DropDown } from '../Inputs/DropDown.jsx'
 import { StatusPopUp } from '../Inputs/StatusPopUp.jsx'
 import { TextField } from '../Inputs/TextField.jsx'
-import { FaRegRectangleXmark } from "react-icons/fa6";
+import { BsList } from "react-icons/bs";
 import { LiaFileUploadSolid } from "react-icons/lia";
 import { TbListCheck } from "react-icons/tb";
 import { isAValidFile, layoutExtension } from '../../utils/file.js'
@@ -26,6 +26,9 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
         for(let i = 0; i < outputSettings["usedComparisons"].length; i++){
             toggleComparison(i, value)
         }
+    }
+    const checkIfAllComparisonsChecked = (check) => {
+        return (listItems.length < 2 || outputSettings["usedComparisons"].length == 0 || (Array.from(new Set(outputSettings["usedComparisons"].map((comp) => {return comp.used})))[0] == check && new Set(outputSettings["usedComparisons"].map((comp) => {return comp.used})).size == 1))
     }
 
     //Toggle whether to use custom layout and filepath or ones from the first LiveSplit file
@@ -630,7 +633,7 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
                 <label id="pbbox" title="Choose whether to carry over your pbs from your split files as a new comparison">
                     <input type="checkbox" disabled={listItems.length < 2} htmlFor="pbbox" checked={outputSettings["toggleSettings"]["pb"]} onChange={(e) => toggleCheckbox("pb", e.target.checked)}/>
                     Carry Over PBs
-                </label><br/>
+                </label><br/><br/>
 
                 {/* Game Comparison Name */}
                 {outputSettings["toggleSettings"]["pb"] && 
@@ -778,7 +781,18 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
                 {outputSettings["toggleSettings"]["comp"] && outputSettings["usedComparisons"].length != 0 &&
                     <div title="Comparisons present in every file that can be toggled whether they can be carried over to your output splits">
                         <br/>
-                        <label>Comparisons:</label><br/>
+                        <label>Comparisons:</label>
+                        {!checkIfAllComparisonsChecked(true) &&
+                            <button className = "comparison-icon comparison-icon-1" onClick={() => toggleAllComparisons(true)} title="Toogle all above comparison settings on">
+                                <TbListCheck />
+                            </button>
+                        }
+                        {!checkIfAllComparisonsChecked(false) &&
+                            <button className = {"comparison-icon " + (!checkIfAllComparisonsChecked(true) && !checkIfAllComparisonsChecked(false) ? "comparison-icon-2" : "comparison-icon-1")} onClick={() => toggleAllComparisons(false)} title="Toogle all above comparison settings off">
+                                <BsList />
+                            </button>
+                        }
+                        <br/>
                         {outputSettings["usedComparisons"].map((comp, index) => {
                             return (
                                 <label id={comp.name} key={index}>
@@ -787,16 +801,7 @@ export const OutputSettings = ({ listItems, unmaskPaths, updateCanDownload, outp
                                 </label>
                             );
                         })}
-                        {!(listItems.length < 2 || outputSettings["usedComparisons"].length == 0 || (Array.from(new Set(outputSettings["usedComparisons"].map((comp) => {return comp.used})))[0] == true && new Set(outputSettings["usedComparisons"].map((comp) => {return comp.used})).size == 1)) &&
-                            <button className = "comparison-icon" onClick={() => toggleAllComparisons(true)} title="Toogle all above comparison settings on">
-                                <TbListCheck />
-                            </button>
-                        }
-                        {!(listItems.length < 2 || outputSettings["usedComparisons"].length == 0 || (Array.from(new Set(outputSettings["usedComparisons"].map((comp) => {return comp.used})))[0] == false && new Set(outputSettings["usedComparisons"].map((comp) => {return comp.used})).size == 1)) &&
-                            <button className = "comparison-icon" onClick={() => toggleAllComparisons(false)} title="Toogle all above comparison settings off">
-                                <FaRegRectangleXmark />
-                            </button>
-                        }
+                        
                     </div>
                 }
             </details><br/>

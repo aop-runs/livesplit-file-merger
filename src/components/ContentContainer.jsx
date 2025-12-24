@@ -1,13 +1,13 @@
 import React, { useState, useCallback } from 'react'
-import { FileDownload } from './FileDownload.jsx'
-import { FileUpload } from './FileUpload.jsx'
-import { ItemList } from './ItemList.jsx'
-import { OutputSettings } from './OutputSettings.jsx'
+import { FileDownload } from './Splits/FileDownload.jsx'
+import { FileUpload } from './Splits/FileUpload.jsx'
+import { ItemList } from './Splits/ItemList.jsx'
+import { OutputSettings } from './Splits/OutputSettings.jsx'
 import { MdOutlineResetTv } from "react-icons/md";
-import { defaultSetup, defaultPBComp, iconCache } from "../../utils/livesplit.js";
-import '../../styles/style.scss'
+import { defaultSetup, defaultPBComp, iconCache } from "../utils/livesplit.js";
+import '../styles/style.scss'
 
-export const ListContainer = () => {
+export const ContentContainer = () => {
     
     //Shared states and variables
     const [files, setFiles] = useState([])
@@ -318,13 +318,6 @@ export const ListContainer = () => {
                         sortEntries={sortEntries}
                     />
                     <br/>
-                    <a className = "top-link" href = "#top" title="Click to go back to the top of the webpage">
-                        Back to Top
-                    </a>
-                </div>
-
-                {/* Download merged contents */}
-                <div className="flex-item flex-item-2">
                     <FileDownload
                         listItems={files}
                         unmaskPaths={unmaskPaths}
@@ -337,6 +330,13 @@ export const ListContainer = () => {
                         updateStatus={updateStatus}
                     />
                     <br/>
+                    <a className = "top-link" href = "#top" title="Click to go back to the top of the webpage">
+                        Back to Top
+                    </a>
+                </div>
+
+                {/* Download merged contents */}
+                <div className="flex-item flex-item-2">
                     {/* Output Settings */}
                     <OutputSettings
                         listItems={files}
