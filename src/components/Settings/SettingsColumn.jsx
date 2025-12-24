@@ -1,20 +1,63 @@
 import React from 'react'
-import { OutputSettings } from './OutputSettings.jsx'
+import { RunName } from './RunName.jsx'
+import { SplitSettings } from './SplitSettings.jsx'
+import { SplitTemplates } from './SplitTemplates.jsx'
+import { StartingProperties } from './StartingProperties.jsx'
+import { TimingMethods } from './TimingMethods.jsx'
+import { TransferableComparisons } from './TransferableComparisons.jsx'
 import '../../styles/style.scss'
 
 export const SettingsColumn = ({ listItems, unmaskPaths, updateCanDownload, outputSettings, setOutputSettings, requestData, setRequestData, checkGameComp, appStatuses, updateStatus }) => {
     
 return (
         <React.Fragment>
-            <OutputSettings
+            <SplitSettings
+                listItems={listItems}
+                updateCanDownload={updateCanDownload}
+                outputSettings={outputSettings}
+                setOutputSettings={setOutputSettings}
+                checkGameComp={checkGameComp}
+                appStatuses={appStatuses}
+                updateStatus={updateStatus}
+            />
+            <br/>
+            <StartingProperties
                 listItems={listItems}
                 unmaskPaths={unmaskPaths}
                 updateCanDownload={updateCanDownload}
                 outputSettings={outputSettings}
                 setOutputSettings={setOutputSettings}
+                appStatuses={appStatuses}
+                updateStatus={updateStatus}
+            />
+            <br/>
+            <TransferableComparisons
+                listItems={listItems}
+                outputSettings={outputSettings}
+                setOutputSettings={setOutputSettings}
+                checkGameComp={checkGameComp}
+                appStatuses={appStatuses}
+                updateStatus={updateStatus}
+            />
+            <br/>
+            <TimingMethods
+                listItems={listItems}
+                outputSettings={outputSettings}
+                setOutputSettings={setOutputSettings}
+            />
+            <br/>
+            <SplitTemplates
+                listItems={listItems}
+                outputSettings={outputSettings}
+                setOutputSettings={setOutputSettings}
+            />
+            <br/>
+            <RunName
+                listItems={listItems}
+                outputSettings={outputSettings}
+                setOutputSettings={setOutputSettings}
                 requestData={requestData}
                 setRequestData={setRequestData}
-                checkGameComp={checkGameComp}
                 appStatuses={appStatuses}
                 updateStatus={updateStatus}
             />

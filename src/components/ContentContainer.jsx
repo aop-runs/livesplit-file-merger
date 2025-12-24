@@ -37,6 +37,7 @@ export const ContentContainer = () => {
             runMetadata: {
                 region: "",
                 platform: "",
+                emu: false,
                 variables: []
             },
             toggleSettings: {
@@ -44,8 +45,7 @@ export const ContentContainer = () => {
                 sob: true,
                 comp: true,
                 icon: true,
-                subs: true,
-                emu: false
+                subs: true
             }
         }
     }

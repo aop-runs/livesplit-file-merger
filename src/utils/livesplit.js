@@ -190,7 +190,7 @@ function secondsToTime(time){
 export function createOutputSplits(files, outputSettings){
     
     //Everything outside segments
-    let finalOutput = new DOMParser().parseFromString(gatherFullTemplate(outputSettings["toggleSettings"].emu), validSpecifier.streamType);
+    let finalOutput = new DOMParser().parseFromString(gatherFullTemplate(outputSettings["runMetadata"].emu), validSpecifier.streamType);
     finalOutput.getElementsByTagName("GameName")[0].textContent = outputSettings["runName"].game;
     finalOutput.getElementsByTagName("CategoryName")[0].textContent = outputSettings["runName"].category;
     let layout = outputSettings["customInfo"].layout == null ? files[0].layoutPath : outputSettings["customInfo"].layout;
