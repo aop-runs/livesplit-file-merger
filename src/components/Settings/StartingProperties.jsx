@@ -191,7 +191,7 @@ export const StartingProperties = ({ listItems, unmaskPaths, updateCanDownload, 
                         }}
                         miscButton={{
                             function: promptLayoutFile,
-                            disableCon: outputSettings["customInfo"].layout.length == 0,
+                            disableCon: listItems.length < 2 || outputSettings["customInfo"].layout.length == 0,
                             description: "Select another layout that exists in your provided directory",
                             icon: <LiaFileUploadSolid />
                         }}

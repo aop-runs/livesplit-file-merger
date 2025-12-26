@@ -22,6 +22,13 @@ export const TextField = ({ title, unmaskCon, moveCursorToEnd, disableCon, place
         }
     }
 
+    //Run miscellaneous function if one is provided
+    const runMiscFunction = (miscFunc, canRun) => {
+        if(canRun){
+            miscFunc()
+        }
+    }
+
     //Run a requested function if the user has prsssed enter
     const checkForKey = (pressedKey) => {
         if(enterFunction !== undefined && enterFunction.enableCon && pressedKey == "Enter"){
@@ -39,7 +46,7 @@ export const TextField = ({ title, unmaskCon, moveCursorToEnd, disableCon, place
                 <label>{title}: </label><br/>
                 <div className="textfield-wrapper">
                     <input ref={inputRef} type={unmaskCon ? "text" : "password"} disabled={disableCon} placeholder={placeholderText} value={changeableValue} onChange={(e) => updateFieldValue(e.target.value, true)} onKeyDown={(e) => checkForKey(e.key)} onClick={setCursorToEnd}/>
-                    <button className={changeableValue.length != 0 ? "textfield-active-button" : ""} disabled={disableCon || changeableValue.length == 0} onClick={() => updateFieldValue("", true)}>
+                    <button className={!disableCon && changeableValue.length != 0 ? "textfield-active-clear" : "textfield-disabled-clear"} disabled={disableCon || changeableValue.length == 0} onClick={() => updateFieldValue("", true)}>
                         <TiDeleteOutline />
                     </button>
                 </div>
@@ -49,7 +56,7 @@ export const TextField = ({ title, unmaskCon, moveCursorToEnd, disableCon, place
                     </button>
                 }
                 {miscButton !== undefined &&
-                    <button className={"textfield-misc-button" + (miscButton.disableCon ? " textfield-disabled-button" : " textfield-active-button")} onClick={miscButton.function} title={miscButton.description}>
+                    <button className={"textfield-misc-button" + (miscButton.disableCon ? " textfield-disabled-button" : " textfield-active-button")} onClick={() => runMiscFunction(miscButton.function, !miscButton.disableCon)} title={miscButton.description}>
                         {miscButton.icon}
                     </button>
                 }
