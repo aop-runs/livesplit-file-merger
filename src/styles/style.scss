@@ -104,7 +104,7 @@ body {
 
 .upload:hover,
 .upload.dragover {
-    opacity: 0.4;
+    opacity: 0.5;
 }
 
 .uploadButton {
@@ -193,26 +193,6 @@ body {
 .list-entry-text {
   font-weight: bold;
   color: $section-color;
-}
-
-.moveCursor {
-  cursor: move;
-}
-
-.pointerCursor {
-  cursor: pointer;
-}
-
-.defaultCursor {
-  cursor: default;
-}
-
-.itemDrag {
-    opacity: 0
-}
-
-.itemNoDrag {
-    opacity: 1
 }
 
 //Comparisons
