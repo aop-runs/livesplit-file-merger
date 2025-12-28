@@ -112,6 +112,14 @@ export const SplitSettings = ({ listItems, updateCanDownload, outputSettings, se
             updateStatus("comp")
             updateCanDownload("comp", true)
         }
+        if(key == "full"){
+            setOutputSettings(outputSettings => {
+                const updatedSettings = {...outputSettings}
+                updatedSettings["templateText"]["final"] = ""
+                updatedSettings["toggleSettings"]["subs"] = true
+                return updatedSettings
+            })
+        }
     }
 
     return (
@@ -123,6 +131,10 @@ export const SplitSettings = ({ listItems, updateCanDownload, outputSettings, se
                 <summary className ="sectionTitle">
                     Split Settings
                 </summary>
+                <label id="iconbox" title="Choose whether use every split from a game or only use one game specific split per game">
+                    <input type="checkbox" disabled={listItems.length < 2} htmlFor="iconbox" checked={outputSettings["toggleSettings"]["full"]} onChange={(e) => toggleCheckbox("full", e.target.checked)}/>
+                    Use Full Game Splits
+                </label><br/>
                 <label id="iconbox" title="Choose whether to carry over segment icons from your splits files">
                     <input type="checkbox" disabled={listItems.length < 2} htmlFor="iconbox" checked={outputSettings["toggleSettings"]["icon"]} onChange={(e) => toggleCheckbox("icon", e.target.checked)}/>
                     Carry Over Segment Icons

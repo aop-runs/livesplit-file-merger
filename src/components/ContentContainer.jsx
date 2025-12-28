@@ -10,7 +10,7 @@ export const ContentContainer = () => {
     const [files, setFiles] = useState([])
     const [unmaskPaths, setUnmaskPaths] = useState(false)
     const [requestData, setRequestData] = useState({game: [], category: [], selectedGame: null, selectedCategory: null})
-    const [finalOutput, setFinalOutput] = useState({filename: "", output: {name: "", data: ""}})
+    const [finalOutput, setFinalOutput] = useState({filename: "", output: {name: "", data: "", timestamp: ""}})
 
     //Output settings for customizing splits
     const initializeSettings = () => {
@@ -45,7 +45,8 @@ export const ContentContainer = () => {
                 sob: true,
                 comp: true,
                 icon: true,
-                subs: true
+                subs: true,
+                full: true,
             }
         }
     }

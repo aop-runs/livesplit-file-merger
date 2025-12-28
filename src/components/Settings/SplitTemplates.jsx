@@ -40,12 +40,16 @@ export const SplitTemplates = ({ listItems, outputSettings, setOutputSettings })
                 <summary className ="sectionTitle">
                     Split Templates
                 </summary>
-                <label id="subsbox" title="Choose whether to create new subsplits for each game (Note: This setting will remove existing subsplits from your splits files if toggled on)">
-                    <input type="checkbox" disabled={listItems.length < 2} htmlFor="subsbox" checked={outputSettings["toggleSettings"]["subs"]} onChange={(e) => toggleCheckbox("subs", e.target.checked)}/>
-                    Create Subsplits for Each Game
-                </label>
+                {outputSettings["toggleSettings"]["full"] && 
+                <React.Fragment>
+                    <label id="subsbox" title="Choose whether to create new subsplits for each game (Note: This setting will remove existing subsplits from your splits files if toggled on)">
+                        <input type="checkbox" disabled={listItems.length < 2} htmlFor="subsbox" checked={outputSettings["toggleSettings"]["subs"]} onChange={(e) => toggleCheckbox("subs", e.target.checked)}/>
+                        Create Subsplits for Each Game
+                    </label>
+                    <br/><br/>
+                </React.Fragment>
+                }
                 
-                <br/><br/>
                 {/* Setup Template */}
                 <TextField
                     title={"Setup Split"}
@@ -72,7 +76,7 @@ export const SplitTemplates = ({ listItems, outputSettings, setOutputSettings })
                 />
                 
                 {/* Subsplit Template */}
-                {outputSettings["toggleSettings"]["subs"] && 
+                {outputSettings["toggleSettings"]["subs"] && outputSettings["toggleSettings"]["full"] && 
                 <React.Fragment>
                 <br/>
                 <TextField
@@ -84,11 +88,41 @@ export const SplitTemplates = ({ listItems, outputSettings, setOutputSettings })
                     changeableValue={outputSettings["templateText"]["final"]}
                     updateKey={"final"}
                     updateFunction={changeTemplateText}
-                    description={"The template that will be used for the last subsplit in each game"}
+                    description={"The template that will be used for the final subsplit in each game"}
                     dropDown={{
                         title: "Append Parameter",
                         updateFunction: addParamaterToText,
                         description: "Select parameters to add to the final subsplit template",
+                        choices: templateParameters.map((p, index) => {
+                            return (
+                                <option key={index} value={p.param}>
+                                    {p.name}
+                                </option>
+                            );
+                        })
+                    }}
+                />
+                </React.Fragment>
+                }
+
+                {/* Game Split Template */}
+                {!outputSettings["toggleSettings"]["full"] && 
+                <React.Fragment>
+                <br/>
+                <TextField
+                    title={"Game's Split Name"}
+                    unmaskCon={true}
+                    moveCursorToEnd={false}
+                    disableCon={listItems.length < 2}
+                    placeholderText={"Template Text"}
+                    changeableValue={outputSettings["templateText"]["final"]}
+                    updateKey={"final"}
+                    updateFunction={changeTemplateText}
+                    description={"The template that will be used for each game's split"}
+                    dropDown={{
+                        title: "Append Parameter",
+                        updateFunction: addParamaterToText,
+                        description: "Select parameters to add to the game split template",
                         choices: templateParameters.map((p, index) => {
                             return (
                                 <option key={index} value={p.param}>

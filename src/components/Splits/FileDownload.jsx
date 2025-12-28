@@ -91,7 +91,7 @@ export const FileDownload = ({ listItems, unmaskPaths, outputSettings, canDownlo
             //Update output data
             setFinalOutput(finalOutput => {
                 const updatedFinalOutput = {...finalOutput}
-                updatedFinalOutput.output = {name: filename + validSpecifier.extension, data: splitsData}
+                updatedFinalOutput.output = {name: filename + validSpecifier.extension, data: splitsData, timestamp: new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true}).format(new Date())}
                 return updatedFinalOutput
             })
         }, 0)
@@ -174,7 +174,7 @@ export const FileDownload = ({ listItems, unmaskPaths, outputSettings, canDownlo
                 />       
                 <br/>
                 <button type="button" disabled={listItems.length < 2 || finalOutput.filename.length == 0 || !(Array.from(new Set(Object.values(canDownload)))[0] == true && new Set(Object.values(canDownload)).size == 1)} onClick={() => prepareOutputSplits(finalOutput.filename.replace(validSpecifier.extension, ""))} title="Prepares output file for combined splits that can be downloaded">
-                        Prepare Output Splits
+                    Prepare Output Splits
                 </button>
 
             {/* File Download */}
@@ -186,6 +186,9 @@ export const FileDownload = ({ listItems, unmaskPaths, outputSettings, canDownlo
                     message={appStatuses.download.message}
                 />}
                 <div className="download-wrapper" title="Download link for output splits file">
+                    <label title = "Timestamp for output file's creation">
+                        {"Created: " + finalOutput.output.timestamp}
+                    </label><br/>
                     <label className = "download-splits-name" onClick={() => openContentsInNewTab(finalOutput.output.data, gatherSplitsDataByTag(finalOutput.output.data, "LayoutPath"), !unmaskPaths)} title = "Click on the filename to view its raw contents before downloading">
                         {finalOutput.output.name}
                     </label>
