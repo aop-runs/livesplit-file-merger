@@ -26,7 +26,7 @@ return (
                 </label><br/>
                 {message.map((line, index) => (
                     <label key={index}>
-                        {line}<br/>
+                        {line + "."}<br/>
                     </label>
                 ))}
             </div>

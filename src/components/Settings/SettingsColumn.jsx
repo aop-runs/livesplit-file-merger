@@ -1,18 +1,19 @@
 import React from 'react'
 import { RunName } from './RunName.jsx'
-import { SplitSettings } from './SplitSettings.jsx'
+import { OutputOptions } from './OutputOptions.jsx'
 import { SplitTemplates } from './SplitTemplates.jsx'
 import { StartingProperties } from './StartingProperties.jsx'
 import { TimingMethods } from './TimingMethods.jsx'
 import { TransferableComparisons } from './TransferableComparisons.jsx'
 import '../../styles/style.scss'
 
-export const SettingsColumn = ({ listItems, unmaskPaths, updateCanDownload, outputSettings, setOutputSettings, requestData, setRequestData, checkGameComp, appStatuses, updateStatus }) => {
+export const SettingsColumn = ({ listItems, setListItems, unmaskPaths, updateCanDownload, outputSettings, setOutputSettings, requestData, setRequestData, checkGameComp, appStatuses, updateStatus }) => {
     
 return (
         <React.Fragment>
-            <SplitSettings
+            <OutputOptions
                 listItems={listItems}
+                setListItems={setListItems}
                 updateCanDownload={updateCanDownload}
                 outputSettings={outputSettings}
                 setOutputSettings={setOutputSettings}

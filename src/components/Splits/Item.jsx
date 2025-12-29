@@ -8,7 +8,7 @@ import { GoTrash } from "react-icons/go";
 import { TbArrowMoveUp, TbArrowMoveDown } from "react-icons/tb";
 import '../../styles/style.scss'
 
-export const Item = ({ id, index, listSize, unmaskPaths, itemData, moveListItem, removeListItem }) => {
+export const Item = ({ id, index, listSize, unmaskPaths, canDownload, itemData, moveListItem, removeListItem }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: id, disabled: isModalOpen });
     const animation = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1, cursor: !isModalOpen ? (isDragging ? 'grabbing' : 'grab') : "default" };
@@ -64,6 +64,7 @@ export const Item = ({ id, index, listSize, unmaskPaths, itemData, moveListItem,
             itemData={itemData}
             index={index}
             unmaskPaths={unmaskPaths}
+            canDownload={canDownload}
             closeModal={closeModal}
         />}
         </div>

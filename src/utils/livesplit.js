@@ -347,7 +347,7 @@ export function createOutputSplits(files, outputSettings){
         runningGameGold = 0.0;
         
         //Create setup split if there are files remaining
-        if(fileIndex != files.length - 1){
+        if(fileIndex != files.length - 1 && files[fileIndex + 1].setup != ""){
             let newSegment = new DOMParser().parseFromString(gatherSegmentTemplate(), validSpecifier.streamType);
             newSegment.getElementsByTagName("Name")[0].textContent = adjustTemplateText(outputSettings["templateText"].setup, files[fileIndex + 1].game, files[fileIndex + 1].category, fileIndex + 2, fileIndex + 1, files.length);
             
@@ -356,7 +356,7 @@ export function createOutputSplits(files, outputSettings){
                 for(let timing of [ ["RealTime", outputSettings["usedTimings"].realTime], ["GameTime", outputSettings["usedTimings"].gameTime] ]){
                     if(timing[1]){
                         try{
-                            newSegment.getElementsByTagName("BestSegmentTime")[0].getElementsByTagName(timing[0])[0].textContent = outputSettings["setupTime"];
+                            newSegment.getElementsByTagName("BestSegmentTime")[0].getElementsByTagName(timing[0])[0].textContent = files[fileIndex + 1].setup;
                         }
                         catch{}
                     }
@@ -370,7 +370,7 @@ export function createOutputSplits(files, outputSettings){
                 for(let timing of ["real", "game"]){
                     if(comp[timing].check){
                         let compIndex = newSegment.getElementsByTagName("SplitTimes")[0].getElementsByTagName("SplitTime").length - 1;
-                        comp[timing].runningSeconds += timeToSeconds(outputSettings["setupTime"]);
+                        comp[timing].runningSeconds += timeToSeconds(files[fileIndex + 1].setup);
                         newSegment.getElementsByTagName("SplitTimes")[0].getElementsByTagName("SplitTime")[compIndex].getElementsByTagName(comp[timing].tag)[0].textContent = secondsToTime(comp[timing].runningSeconds);
                         comp[timing].setupTimestamp = comp[timing].runningSeconds;
                         comp[timing].runningSeconds = 0.0;

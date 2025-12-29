@@ -19,7 +19,7 @@ export const StartingProperties = ({ listItems, unmaskPaths, updateCanDownload, 
             })
             updateStatus("layout", {
                 header: "Info",
-                message: ["Due to JavaScript restrictions, selecting another layout name through the file picker will assume the new layout is in the same directory as before. You can always copy & paste the full filepath of the new layout too."]
+                message: ["Due to JavaScript restrictions, selecting another layout name through the file picker will assume the new layout is in the same directory as before. You can always copy & paste the full filepath of the new layout too"]
             })
         }
         else{

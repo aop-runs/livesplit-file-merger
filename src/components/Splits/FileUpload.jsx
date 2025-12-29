@@ -3,7 +3,7 @@ import React, { useRef, useCallback } from 'react';
 import { StatusPopUp } from '../Inputs/StatusPopUp.jsx'
 import { BsCloudUpload } from "react-icons/bs";
 import { gatherFileContents, validSpecifier } from '../../utils/file.js'
-import { cleanSplitsFile, gatherRunName, findCustomComparisons, gatherSplitsDataByTag } from '../../utils/livesplit.js'
+import { cleanSplitsFile, gatherRunName, findCustomComparisons, gatherSplitsDataByTag, defaultSetup } from '../../utils/livesplit.js'
 import '../../styles/style.scss'
 
 export const FileUpload = ({ listItems, setListItems, refreshComparisons, appStatuses, updateStatus }) => {
@@ -68,6 +68,7 @@ export const FileUpload = ({ listItems, setListItems, refreshComparisons, appSta
                                 layoutPath: gatherSplitsDataByTag(contents, "LayoutPath"),
                                 offset: gatherSplitsDataByTag(contents, "Offset"),
                                 comparisons: findCustomComparisons(contents),
+                                setup: defaultSetup,
                                 contents: contents
                             })
                         } catch (error) {

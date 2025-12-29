@@ -10,7 +10,7 @@ export const ContentContainer = () => {
     const [files, setFiles] = useState([])
     const [unmaskPaths, setUnmaskPaths] = useState(false)
     const [requestData, setRequestData] = useState({game: [], category: [], selectedGame: null, selectedCategory: null})
-    const [finalOutput, setFinalOutput] = useState({filename: "", output: {name: "", data: "", current: false, timestamp: ""}})
+    const [finalOutput, setFinalOutput] = useState({filename: "", output: {name: "", data: "", timestamp: ""}})
 
     //Output settings for customizing splits
     const initializeSettings = () => {
@@ -121,7 +121,7 @@ export const ContentContainer = () => {
     const checkGameComp = (settings) => {
         if(settings["gameComp"].length == 0){
             updateStatus("comp", {
-                header: "Warning",
+                header: "Error",
                 message: ["No game PB comparison name provided"]
             })
             updateCanDownload("comp", false)
@@ -190,6 +190,7 @@ export const ContentContainer = () => {
                 <div className="flex-item flex-item-2">
                     <SettingsColumn
                         listItems={files}
+                        setListItems={setFiles}
                         unmaskPaths={unmaskPaths}
                         updateCanDownload={updateCanDownload}
                         outputSettings={outputSettings}

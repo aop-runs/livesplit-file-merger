@@ -3,7 +3,7 @@ import { FaRegWindowClose } from "react-icons/fa";
 import { openContentsInNewTab } from '../../utils/file.js'
 import '../../styles/style.scss'
 
-export const ItemModal = ({ itemData, index, unmaskPaths, closeModal }) => {
+export const ItemModal = ({ itemData, index, unmaskPaths, canDownload, closeModal }) => {
     
     return (
             //Modal div upon item click
@@ -27,6 +27,9 @@ export const ItemModal = ({ itemData, index, unmaskPaths, closeModal }) => {
                         </p>
                         <p title="Every segment comparison found for this entry">
                             Found Comparisons:<br/>{itemData.comparisons.length != 0 ? itemData.comparisons.join(", ") : "N/A"}
+                        </p>
+                        <p title="The setup time required before this part of the run begins">
+                            Setup Time:<br/>{(index != 0 && canDownload["setup"] && itemData.setup != "") ? itemData.setup : "N/A"}
                         </p>
                         <button title="Open raw contents for this entry" type ='button' onClick={() => openContentsInNewTab(itemData.contents, itemData.layoutPath, !unmaskPaths)}>
                             Open Splits Contents

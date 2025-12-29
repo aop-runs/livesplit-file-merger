@@ -6,7 +6,7 @@ import { FaSortAlphaUp, FaSortAlphaDownAlt, FaSortAmountDown } from "react-icons
 import { Item } from './Item.jsx'
 import '../../styles/style.scss'
 
-export const ItemList = ({ listItems, setListItems, unmaskPaths, refreshComparisons }) => {
+export const ItemList = ({ listItems, setListItems, canDownload, unmaskPaths, refreshComparisons }) => {
 
     //Pre-included sensors for drag operations
     const sensors = useSensors(
@@ -126,6 +126,7 @@ const sortEntries = useCallback(
                                 index={index}
                                 listSize={listItems.length}
                                 unmaskPaths={unmaskPaths}
+                                canDownload={canDownload}
                                 itemData={file}
                                 moveListItem={moveFileListItem}
                                 removeListItem={removeFileListItem}
