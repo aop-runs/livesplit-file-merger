@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect }from 'react';
 import { BsCloudDownload } from "react-icons/bs";
 import { GoTrash } from "react-icons/go";
 import { StatusPopUp } from '../Inputs/StatusPopUp.jsx'
@@ -8,6 +8,20 @@ import { gatherSplitsDataByTag, createOutputSplits } from '../../utils/livesplit
 import '../../styles/style.scss'
 
 export const FileDownload = ({ listItems, unmaskPaths, outputSettings, canDownload, updateCanDownload, finalOutput, setFinalOutput, appStatuses, updateStatus }) => {
+
+    //Detect if splits are changed after editing and prompt user if an output file exists
+    useEffect(() => {
+        setFinalOutput(finalOutput => {
+            const updatedFinalOutput = {...finalOutput}
+            if(updatedFinalOutput["output"]["name"].length != 0){
+                updateStatus("download", {
+                    header: "Info",
+                    message: ["You have since modified your split entries and/or settings since you last generated output splits. If you like to use these changes, please click the above button to regenerate output splits."]
+                })
+            }
+            return updatedFinalOutput
+        })
+    }, [outputSettings])
 
     //Track filename
     const updateFilename = (name) => {
@@ -94,7 +108,6 @@ export const FileDownload = ({ listItems, unmaskPaths, outputSettings, canDownlo
                 updatedFinalOutput.output = {
                     name: filename + validSpecifier.extension,
                     data: splitsData,
-                    current: true,
                     timestamp: new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true}).format(new Date())
                     }
                 return updatedFinalOutput
