@@ -91,7 +91,12 @@ export const FileDownload = ({ listItems, unmaskPaths, outputSettings, canDownlo
             //Update output data
             setFinalOutput(finalOutput => {
                 const updatedFinalOutput = {...finalOutput}
-                updatedFinalOutput.output = {name: filename + validSpecifier.extension, data: splitsData, timestamp: new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true}).format(new Date())}
+                updatedFinalOutput.output = {
+                    name: filename + validSpecifier.extension,
+                    data: splitsData,
+                    current: true,
+                    timestamp: new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true}).format(new Date())
+                    }
                 return updatedFinalOutput
             })
         }, 0)

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { SettingsColumn } from './Settings/SettingsColumn.jsx'
 import { SplitsColumn } from './Splits/SplitsColumn.jsx'
 import { defaultSetup, defaultPBComp, iconCache } from "../utils/livesplit.js";
@@ -10,7 +10,7 @@ export const ContentContainer = () => {
     const [files, setFiles] = useState([])
     const [unmaskPaths, setUnmaskPaths] = useState(false)
     const [requestData, setRequestData] = useState({game: [], category: [], selectedGame: null, selectedCategory: null})
-    const [finalOutput, setFinalOutput] = useState({filename: "", output: {name: "", data: "", timestamp: ""}})
+    const [finalOutput, setFinalOutput] = useState({filename: "", output: {name: "", data: "", current: false, timestamp: ""}})
 
     //Output settings for customizing splits
     const initializeSettings = () => {
@@ -52,6 +52,21 @@ export const ContentContainer = () => {
     }
     const [outputSettings, setOutputSettings] = useState(initializeSettings())
     
+    //Detect if splits are changed after editing and prompt user if an output file exists
+    useEffect(() => {
+        setFinalOutput(finalOutput => {
+            const updatedFinalOutput = {...finalOutput}
+            updatedFinalOutput["output"]["current"] = false
+            if(updatedFinalOutput["output"]["name"].length != 0){
+                updateStatus("download", {
+                    header: "Info",
+                    message: ["You have since modified your split entries and/or settings since you last generated output splits. If you like to use these changes, please click the above button to regenerate output splits."]
+                })
+            }
+            return updatedFinalOutput
+        })
+    }, [outputSettings])
+
     //Status Boxes
     const initialStatus = {header: "", message: [""]}
     const [appStatuses, setAppStatuses] = useState(() => {
