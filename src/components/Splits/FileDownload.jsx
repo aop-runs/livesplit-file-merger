@@ -16,7 +16,7 @@ export const FileDownload = ({ listItems, unmaskPaths, outputSettings, canDownlo
             if(updatedFinalOutput["output"]["name"].length != 0){
                 updateStatus("download", {
                     header: "Info",
-                    message: ["You have since modified your split entries and/or settings since you last generated output splits. If you like to use these changes, please click the above button to regenerate output splits"]
+                    message: ["Your split entries and/or settings have been modified since you last generated output splits. If you like to use these changes, please click the above button to regenerate output splits"]
                 })
             }
             return updatedFinalOutput

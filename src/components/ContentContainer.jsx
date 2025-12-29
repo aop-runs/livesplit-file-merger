@@ -16,6 +16,7 @@ export const ContentContainer = () => {
     const initializeSettings = () => {
         return {
             usedComparisons: [],
+            entryIndex: "",
             setupTime: defaultSetup,
             gameComp: defaultPBComp,
             customInfo: {
@@ -47,6 +48,7 @@ export const ContentContainer = () => {
                 icon: true,
                 subs: true,
                 full: true,
+                same: true
             }
         }
     }
@@ -192,6 +194,7 @@ export const ContentContainer = () => {
                         listItems={files}
                         setListItems={setFiles}
                         unmaskPaths={unmaskPaths}
+                        canDownload={canDownload}
                         updateCanDownload={updateCanDownload}
                         outputSettings={outputSettings}
                         setOutputSettings={setOutputSettings}

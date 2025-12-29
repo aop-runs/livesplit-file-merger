@@ -63,12 +63,13 @@ export const TextField = ({ title, unmaskCon, moveCursorToEnd, disableCon, place
                 {dropDown !== undefined &&
                     <DropDown
                         title={dropDown.title}
-                        setValue={""}
-                        disableCon={disableCon}
-                        updateKey={updateKey}
+                        setValue={dropDown.setValue}
+                        disableCon={dropDown.disableCon}
+                        updateKey={dropDown.updateKey}
                         updateFunction={dropDown.updateFunction}
-                        canClickToRefresh={true}
+                        canClickToRefresh={dropDown.canClickToRefresh}
                         description={dropDown.description}
+                        shiftDropDown={defaultButton !== undefined}
                         choices={dropDown.choices}
                     />
                 }

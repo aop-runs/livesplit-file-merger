@@ -63,7 +63,11 @@ export const SplitTemplates = ({ listItems, outputSettings, setOutputSettings })
                     description={"The template that will be used for every setup split in between games"}
                     dropDown={{
                         title: "Append Parameter",
+                        setValue: "",
+                        disableCon: listItems.length < 2,
+                        updateKey: "setup",
                         updateFunction: addParamaterToText,
+                        canClickToRefresh: true,
                         description: "Select parameters to add to the setup split template",
                         choices: templateParameters.map((p, index) => {
                             return (
@@ -91,7 +95,11 @@ export const SplitTemplates = ({ listItems, outputSettings, setOutputSettings })
                     description={"The template that will be used for the final subsplit in each game"}
                     dropDown={{
                         title: "Append Parameter",
+                        setValue: "",
+                        disableCon: listItems.length < 2,
+                        updateKey: "final",
                         updateFunction: addParamaterToText,
+                        canClickToRefresh: true,
                         description: "Select parameters to add to the final subsplit template",
                         choices: templateParameters.map((p, index) => {
                             return (
@@ -121,7 +129,11 @@ export const SplitTemplates = ({ listItems, outputSettings, setOutputSettings })
                     description={"The template that will be used for each game's split"}
                     dropDown={{
                         title: "Append Parameter",
+                        setValue: "",
+                        disableCon: listItems.length < 2,
+                        updateKey: "final",
                         updateFunction: addParamaterToText,
+                        canClickToRefresh: true,
                         description: "Select parameters to add to the game split template",
                         choices: templateParameters.map((p, index) => {
                             return (

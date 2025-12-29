@@ -7,13 +7,14 @@ import { TimingMethods } from './TimingMethods.jsx'
 import { TransferableComparisons } from './TransferableComparisons.jsx'
 import '../../styles/style.scss'
 
-export const SettingsColumn = ({ listItems, setListItems, unmaskPaths, updateCanDownload, outputSettings, setOutputSettings, requestData, setRequestData, checkGameComp, appStatuses, updateStatus }) => {
+export const SettingsColumn = ({ listItems, setListItems, unmaskPaths, canDownload, updateCanDownload, outputSettings, setOutputSettings, requestData, setRequestData, checkGameComp, appStatuses, updateStatus }) => {
     
 return (
         <React.Fragment>
             <OutputOptions
                 listItems={listItems}
                 setListItems={setListItems}
+                canDownload={canDownload}
                 updateCanDownload={updateCanDownload}
                 outputSettings={outputSettings}
                 setOutputSettings={setOutputSettings}

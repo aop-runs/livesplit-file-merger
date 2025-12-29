@@ -55,6 +55,8 @@ return (
         <ItemList
             listItems={listItems}
             setListItems={setListItems}
+            outputSettings={outputSettings}
+            setOutputSettings={setOutputSettings}
             canDownload={canDownload}
             unmaskPaths={unmaskPaths}
             refreshComparisons={refreshComparisons}

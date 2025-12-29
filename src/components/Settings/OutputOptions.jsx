@@ -1,19 +1,43 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { StatusPopUp } from '../Inputs/StatusPopUp.jsx'
 import { TextField } from '../Inputs/TextField.jsx'
 import { defaultSetup, defaultPBComp, timeToSeconds } from "../../utils/livesplit.js";
 import '../../styles/style.scss'
 
-export const OutputOptions = ({ listItems, setListItems, updateCanDownload, outputSettings, setOutputSettings, checkGameComp, appStatuses, updateStatus }) => {
+export const OutputOptions = ({ listItems, setListItems, canDownload, updateCanDownload, outputSettings, setOutputSettings, checkGameComp, appStatuses, updateStatus }) => {
 
     //Update setup split time
-    const updateSetupTime = (value) => {
+    const updateSetupSplit = (value) => {
         setOutputSettings(outputSettings => {
             const updatedSettings = {...outputSettings}
             updatedSettings["setupTime"] = value
             return updatedSettings
         })
         checkSetup(value)
+    }
+
+    //Update each entry's setup split time 
+    const updateSelectedEntry = (value) => {
+        if(value != ""){
+            setOutputSettings(outputSettings => {
+                const updatedSettings = {...outputSettings}
+                updatedSettings["setupTime"] = listItems[value].setup
+                updatedSettings["entryIndex"] = value
+                return updatedSettings
+            })
+        } 
+    }
+    const updateAllSetupTimes = (value) => {
+        for(let i = 0; i < listItems.length; i++){
+            updateSetupTimeAt(i, value)
+        }
+    }
+    const updateSetupTimeAt = (index, value) => {
+        setListItems(listItems => {
+            const updatedFiles = [...listItems]
+            updatedFiles[index].setup = value
+            return updatedFiles
+        })
     }
 
     //Check setup split time
@@ -80,19 +104,18 @@ export const OutputOptions = ({ listItems, setListItems, updateCanDownload, outp
         if(value.length == 0){
             updateStatus("setup", {
                 header: "Warning",
-                message: ["Not providing a setup split time will skip creating setup splits before each run when generating your output splits"]
+                message: ["Not providing a setup split time will prevent creating " + (outputSettings.entryIndex != "" ? "a setup split for any game without one" : "setup splits before each run") + " when generating your output splits"]
             })
         }
         else{
             updateStatus("setup")
         }
-        setListItems(listItems => {
-            const updatedFiles = [...listItems]
-            for(let i = 0; i < updatedFiles.length; i++){
-                updatedFiles[i].setup = value
-            }
-            return updatedFiles
-        })
+        if(outputSettings.entryIndex != ""){
+            updateSetupTimeAt(outputSettings.entryIndex, value)
+        }
+        else{
+            updateAllSetupTimes(value)
+        }
     }
 
     //Update game PB comparison name
@@ -129,6 +152,25 @@ export const OutputOptions = ({ listItems, setListItems, updateCanDownload, outp
                 return updatedSettings
             })
         }
+        if(key == "same" && value){
+            updateSetupSplit(defaultSetup)
+            updateAllSetupTimes(defaultSetup)
+            setOutputSettings(outputSettings => {
+                const updatedSettings = {...outputSettings}
+                updatedSettings["entryIndex"] = ""
+                return updatedSettings
+            })
+        }
+        else if(key == "same" && !value){
+            if(!canDownload["setup"]){
+                updateSetupSplit(defaultSetup)
+            }
+            setOutputSettings(outputSettings => {
+                const updatedSettings = {...outputSettings}
+                updatedSettings["entryIndex"] = 1
+                return updatedSettings
+            })
+        }
     }
 
     return (
@@ -140,8 +182,8 @@ export const OutputOptions = ({ listItems, setListItems, updateCanDownload, outp
                 <summary className ="sectionTitle">
                     Output Options
                 </summary>
-                <label id="iconbox" title="Choose whether use every split from a game or only use one game specific split per game">
-                    <input type="checkbox" disabled={listItems.length < 2} htmlFor="iconbox" checked={outputSettings["toggleSettings"]["full"]} onChange={(e) => toggleCheckbox("full", e.target.checked)}/>
+                <label id="fullbox" title="Choose whether to use every split from a game or only use one game specific split per game">
+                    <input type="checkbox" disabled={listItems.length < 2} htmlFor="fullbox" checked={outputSettings["toggleSettings"]["full"]} onChange={(e) => toggleCheckbox("full", e.target.checked)}/>
                     Use Full Game Splits
                 </label><br/>
                 <label id="iconbox" title="Choose whether to carry over segment icons from your splits files">
@@ -186,20 +228,57 @@ export const OutputOptions = ({ listItems, setListItems, updateCanDownload, outp
                     header={appStatuses.setup.header}
                     message={appStatuses.setup.message}
                 />}
-                <TextField
-                    title={"Setup Split Time"}
-                    unmaskCon={true}
-                    moveCursorToEnd={false}
-                    disableCon={listItems.length < 2}
-                    placeholderText={"0.00:00:00.0000000"}
-                    changeableValue={listItems.length >= 2 ? outputSettings["setupTime"] : ""}
-                    updateFunction={updateSetupTime}
-                    description={"The time allotted for setup splits for split calculations"}
-                    defaultButton={{
-                        value: defaultSetup,
-                        description: "Revert back to default setup split time"
-                    }}
-                />
+                <label id="samebox" title="Choose whether to use the same split times for setting up the next run for each entry">
+                    <input type="checkbox" disabled={listItems.length < 2} htmlFor="samebox" checked={outputSettings["toggleSettings"]["same"]} onChange={(e) => toggleCheckbox("same", e.target.checked)}/>
+                    Use Same Setup Split for All Entries
+                </label><br/>
+                {outputSettings["toggleSettings"]["same"] && 
+                    <TextField
+                        title={"Setup Split Time"}
+                        unmaskCon={true}
+                        moveCursorToEnd={false}
+                        disableCon={listItems.length < 2}
+                        placeholderText={"0.00:00:00.0000000"}
+                        changeableValue={listItems.length >= 2 ? outputSettings["setupTime"] : ""}
+                        updateFunction={updateSetupSplit}
+                        description={"The time allotted for all setup splits for split calculations"}
+                        defaultButton={{
+                            value: defaultSetup,
+                            description: "Revert back to default setup split time"
+                        }}
+                    />
+                }
+                {!outputSettings["toggleSettings"]["same"] && 
+                    <TextField
+                        title={"Setup Split Time"}
+                        unmaskCon={true}
+                        moveCursorToEnd={false}
+                        disableCon={listItems.length < 2}
+                        placeholderText={"0.00:00:00.0000000"}
+                        changeableValue={listItems.length >= 2 ? outputSettings["setupTime"] : ""}
+                        updateFunction={updateSetupSplit}
+                        description={"The time allotted for this entry's setup split for split calculations"}
+                        defaultButton={{
+                            value: defaultSetup,
+                            description: "Revert back to default setup split time"
+                        }}
+                        dropDown={{
+                            title: "Change Split Entry",
+                            setValue: outputSettings["entryIndex"],
+                            disableCon: listItems.length < 2 || !canDownload["setup"],
+                            updateFunction: updateSelectedEntry,
+                            canClickToRefresh: false,
+                            description: "Change split entry to modify setup split times for",
+                            choices: listItems.map((entry, index) => {
+                                return (
+                                    <option key={index} value={index}>
+                                        {entry.runName}
+                                    </option>
+                                );
+                            })
+                        }}
+                    />
+                }
             </details>
 
         </React.Fragment>

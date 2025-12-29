@@ -6,7 +6,7 @@ import { FaSortAlphaUp, FaSortAlphaDownAlt, FaSortAmountDown } from "react-icons
 import { Item } from './Item.jsx'
 import '../../styles/style.scss'
 
-export const ItemList = ({ listItems, setListItems, canDownload, unmaskPaths, refreshComparisons }) => {
+export const ItemList = ({ listItems, setListItems, outputSettings, setOutputSettings, canDownload, unmaskPaths, refreshComparisons }) => {
 
     //Pre-included sensors for drag operations
     const sensors = useSensors(
@@ -30,6 +30,15 @@ export const ItemList = ({ listItems, setListItems, canDownload, unmaskPaths, re
                 updatedFiles.findIndex((it) => it.id == active.id),
                 updatedFiles.findIndex((it) => it.id == over.id)
             );
+            if(outputSettings["entryIndex"] == over.id - 1 || outputSettings["entryIndex"] == active.id - 1){
+                setOutputSettings(outputSettings => {
+                    const updatedSettings = {...outputSettings}
+                    if(!updatedSettings["toggleSettings"]["same"]){
+                        updatedSettings["setupTime"] = updatedFiles[active.id < over.id ? over.id - 1 : active.id - 1].setup
+                    }
+                    return updatedSettings
+                })
+            }
             refreshComparisons(updatedFiles)
             return updatedFiles
         });
@@ -44,6 +53,15 @@ const moveFileListItem = useCallback(
             const updatedFiles = [...listItems]
             updatedFiles[oldIndex] = newItem
             updatedFiles[newIndex] = oldItem
+            if(outputSettings["entryIndex"] == newIndex || outputSettings["entryIndex"] == oldIndex){
+                setOutputSettings(outputSettings => {
+                    const updatedSettings = {...outputSettings}
+                    if(!updatedSettings["toggleSettings"]["same"]){
+                        updatedSettings["setupTime"] = updatedFiles[oldIndex < newIndex ? newIndex : oldIndex].setup
+                    }
+                    return updatedSettings
+                })
+            }
             refreshComparisons(updatedFiles)
             return updatedFiles
         })
@@ -60,6 +78,20 @@ const removeFileListItem = useCallback(
             for(let i = 0; i < updatedFiles.length; i++) {
                 updatedFiles[i].id = i+1;
             }
+            setOutputSettings(outputSettings => {
+                const updatedSettings = {...outputSettings}
+                if(!updatedSettings["toggleSettings"]["same"]){
+                    if(index == updatedSettings["entryIndex"]){
+                        updatedSettings["setupTime"] = updatedFiles[index != 0 ? updatedSettings["entryIndex"] - 1 : updatedSettings["entryIndex"]].setup
+                        updatedSettings["entryIndex"] = index != 0 ? updatedSettings["entryIndex"] - 1 : updatedSettings["entryIndex"]
+                    }
+                    else if(index < updatedSettings["entryIndex"]){
+                        updatedSettings["setupTime"] = updatedFiles[updatedSettings["entryIndex"] - 1].setup
+                        updatedSettings["entryIndex"] -= 1
+                    }
+                }
+                return updatedSettings
+            })
             refreshComparisons(updatedFiles)
             return updatedFiles
         })
@@ -76,6 +108,13 @@ const reverseEntries = useCallback(
             for(let i = 0; i < updatedFiles.length; i++) {
                 updatedFiles[i].id = i+1;
             }
+            setOutputSettings(outputSettings => {
+                const updatedSettings = {...outputSettings}
+                if(!updatedSettings["toggleSettings"]["same"]){
+                    updatedSettings["setupTime"] = updatedFiles[updatedSettings["entryIndex"]].setup
+                }
+                return updatedSettings
+            })
             refreshComparisons(updatedFiles)
             return updatedFiles
         })
@@ -96,6 +135,13 @@ const sortEntries = useCallback(
             for(let i = 0; i < updatedFiles.length; i++) {
                 updatedFiles[i].id = i+1;
             }
+            setOutputSettings(outputSettings => {
+                const updatedSettings = {...outputSettings}
+                if(!updatedSettings["toggleSettings"]["same"]){
+                    updatedSettings["setupTime"] = updatedFiles[updatedSettings["entryIndex"]].setup
+                }
+                return updatedSettings
+            })
             refreshComparisons(updatedFiles)
             return updatedFiles
         })
