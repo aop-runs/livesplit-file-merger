@@ -5,10 +5,11 @@ import { CSS } from '@dnd-kit/utilities';
 import { ItemModal } from './ItemModal'
 import { BiWindowOpen } from "react-icons/bi";
 import { GoTrash } from "react-icons/go";
+import { GrDuplicate } from "react-icons/gr";
 import { TbArrowMoveUp, TbArrowMoveDown } from "react-icons/tb";
 import '../../styles/style.scss'
 
-export const Item = ({ id, index, listSize, unmaskPaths, canDownload, itemData, moveListItem, removeListItem }) => {
+export const Item = ({ id, index, listSize, unmaskPaths, canDownload, itemData, moveListItem, addListItem, removeListItem }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: id, disabled: isModalOpen });
     const animation = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1, cursor: !isModalOpen ? (isDragging ? 'grabbing' : 'grab') : "default" };
@@ -37,6 +38,10 @@ export const Item = ({ id, index, listSize, unmaskPaths, canDownload, itemData, 
             index += 1
         }
     }
+    const addItem = (event) => {
+        event.stopPropagation()
+        addListItem(itemData)
+    }
     const removeItem = (event) => {
         event.stopPropagation()
         removeListItem(index)
@@ -53,6 +58,9 @@ export const Item = ({ id, index, listSize, unmaskPaths, canDownload, itemData, 
         </button>
         <button className = {"list-icon" + (index == listSize-1 ? " list-icon-disabled" : " list-icon-active")} onPointerDown={(event) => moveItemDown(event, index != listSize-1)} data-no-dnd="true" disabled={index==listSize-1} title="Move this file down one spot in your entries">
             <TbArrowMoveDown />
+        </button>
+        <button className = "list-icon list-icon-active" onPointerDown={(event) => addItem(event)} data-no-dnd="true" title="Add a duplicate of this file to the end of your entries">
+            <GrDuplicate />
         </button>
         <button className = "list-icon list-icon-active" onPointerDown={(event) => removeItem(event)} data-no-dnd="true" title="Remove this file from your entries">
             <GoTrash />

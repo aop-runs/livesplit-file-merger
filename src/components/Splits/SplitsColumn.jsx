@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react';
 import { AppSettings } from './AppSettings.jsx'
 import { FileDownload } from './FileDownload.jsx'
 import { FileUpload } from './FileUpload.jsx'
@@ -6,7 +6,7 @@ import { ItemList } from './ItemList.jsx'
 import { defaultPBComp } from "../../utils/livesplit.js";
 import '../../styles/style.scss'
 
-export const SplitsColumn = ({ listItems, setListItems, unmaskPaths, setUnmaskPaths, resetApplication, outputSettings, setOutputSettings, canDownload, updateCanDownload, finalOutput, setFinalOutput, checkGameComp, appStatuses, updateStatus }) => {
+export const SplitsColumn = ({ listItems, setListItems, addListItem, unmaskPaths, setUnmaskPaths, resetApplication, outputSettings, setOutputSettings, canDownload, updateCanDownload, finalOutput, setFinalOutput, checkGameComp, appStatuses, updateStatus }) => {
 
     //Refresh all comparisons after list is modified
     const refreshComparisons = (listItems) => {
@@ -36,6 +36,26 @@ export const SplitsColumn = ({ listItems, setListItems, unmaskPaths, setUnmaskPa
         })
     }
 
+    //Add entry to list
+    const addFileListItem = useCallback(
+        (itemData) => {
+            setListItems(listItems => {
+                const updatedFiles = [...listItems]
+                let newData = {...itemData}
+                if("id" in itemData){
+                    delete newData.id
+                }
+                updatedFiles.push({
+                    ...{id: listItems.length+1},
+                    ...newData
+                })
+                refreshComparisons(updatedFiles)
+                return updatedFiles
+            })
+        },
+        [listItems],
+    )
+
 return (
         <React.Fragment>
         <AppSettings
@@ -45,9 +65,7 @@ return (
         />
         <br/>
         <FileUpload
-            listItems={listItems}
-            setListItems={setListItems}
-            refreshComparisons={refreshComparisons}
+            addListItem={addFileListItem}
             appStatuses={appStatuses}
             updateStatus={updateStatus}
         />
@@ -55,6 +73,7 @@ return (
         <ItemList
             listItems={listItems}
             setListItems={setListItems}
+            addListItem={addFileListItem}
             outputSettings={outputSettings}
             setOutputSettings={setOutputSettings}
             canDownload={canDownload}
