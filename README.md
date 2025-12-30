@@ -15,11 +15,11 @@ Click [here](https://aop-runs.github.io/livesplit-file-merger/) to open the tool
 ### Split Entry Management:
 * Aside from reordering your split files by dragging them, you can choose to reverse or sort them alphabetically by run name.
 * Remove unwanted runs from your entries and duplicate runs as needed.
-* View important properites about each entry in a seprate modal window.
+* View important properties about each entry in a seprate modal window.
 
 ### Split Template Creation:
 * Create templates for your setup splits and subsplit cutoffs so you don't have to manually add them.
-* Add optional paramaters to each template to record current information about each setup split and subsplit cutoff.
+* Add optional parameters to each template to record current information about each setup split and subsplit cutoff.
 
 ### Speedrun.com Integration:
 * Gather output game and category names utilizing the [Speedrun.com](https://www.speedrun.com/) API starting with a search of the requested game.
