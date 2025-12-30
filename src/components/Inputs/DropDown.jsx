@@ -22,7 +22,12 @@ export const DropDown = ({ title, header, setValue, disableCon, updateKey, updat
                 <label>{header}: </label><br/>
                 </React.Fragment>
             }
-            <select className={"dropdown" + (shiftDropDown !== undefined && shiftDropDown == true ? " dropdown-shift" : "")} value={setValue} disabled={disableCon} onChange={(e) => updateSelectValue(e.target.value)} title={description} onClick={(e) => refreshSelectValue(e.target.value)}>
+            {shiftDropDown !== undefined && shiftDropDown == true &&
+                <React.Fragment>
+                <br/>
+                </React.Fragment>
+            }
+            <select className="dropdown" value={setValue} disabled={disableCon} onChange={(e) => updateSelectValue(e.target.value)} title={description} onClick={(e) => refreshSelectValue(e.target.value)}>
                 <option value="">{title}</option>
                 {choices}
             </select>
