@@ -51,7 +51,7 @@ export const Item = ({ id, index, listSize, unmaskPaths, canDownload, itemData, 
         //Item contents
         <div ref={setNodeRef} style={animation} {...attributes} {...listeners} className={"list-entry"} title="Click to drag this entry to another position">
         <span className="list-entry-text">
-            {itemData.runName}
+            {itemData.runName + (itemData.initialRepeats != 0 ? " (" + itemData.initialRepeats.toString() + ")" : "")}
         </span><br/>
         <button className = {"list-icon" + (index == 0 ? " list-icon-disabled" : " list-icon-active")} onPointerDown={(event) => moveItemUp(event, index != 0)} data-no-dnd="true" disabled={index==0} title="Move this file up one spot in your entries">
             <TbArrowMoveUp />

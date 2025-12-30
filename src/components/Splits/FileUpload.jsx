@@ -6,7 +6,7 @@ import { gatherFileContents, validSpecifier } from '../../utils/file.js'
 import { cleanSplitsFile, gatherRunName, findCustomComparisons, gatherSplitsDataByTag, defaultSetup } from '../../utils/livesplit.js'
 import '../../styles/style.scss'
 
-export const FileUpload = ({ addListItem, appStatuses, updateStatus }) => {
+export const FileUpload = ({ findRepeats, addListItem, appStatuses, updateStatus }) => {
 
     //Pre-included wrappers
     const wrapperRef = useRef(null);
@@ -44,8 +44,10 @@ export const FileUpload = ({ addListItem, appStatuses, updateStatus }) => {
                             contents = cleanSplitsFile(contents)
                             let g = gatherSplitsDataByTag(contents, "GameName")
                             let c = gatherSplitsDataByTag(contents, "CategoryName")
+                            let name = gatherRunName(g, c)
                             addListItem({
-                                runName: gatherRunName(g, c),
+                                runName: name,
+                                initialRepeats: findRepeats(name),
                                 game: g,
                                 category: c,
                                 filename: newFile[1].name,

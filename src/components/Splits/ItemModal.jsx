@@ -14,7 +14,7 @@ export const ItemModal = ({ itemData, index, unmaskPaths, canDownload, closeModa
                             <FaRegWindowClose />
                         </span>
                         <h3 title="Full run name for this entry">
-                            {(index + 1).toString() + ". " + itemData.runName}
+                            {(index + 1).toString() + ". " + itemData.runName + (itemData.initialRepeats != 0 ? " (" + itemData.initialRepeats.toString() + ")" : "")}
                         </h3>
                         <p title="Splits filename for this entry">
                             Filename:<br/>{itemData.filename}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { StatusPopUp } from '../Inputs/StatusPopUp.jsx'
 import { TextField } from '../Inputs/TextField.jsx'
 import { defaultSetup, defaultPBComp, timeToSeconds } from "../../utils/livesplit.js";
@@ -272,7 +272,7 @@ export const OutputOptions = ({ listItems, setListItems, canDownload, updateCanD
                             choices: listItems.map((entry, index) => {
                                 return (
                                     <option key={index} value={index}>
-                                        {entry.runName}
+                                        {entry.runName + (entry.initialRepeats != 0 ? " (" + entry.initialRepeats.toString() + ")" : "")}
                                     </option>
                                 );
                             })

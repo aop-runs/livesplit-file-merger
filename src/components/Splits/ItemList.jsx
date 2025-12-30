@@ -44,15 +44,13 @@ export const ItemList = ({ listItems, setListItems, addListItem, outputSettings,
         });
     };
 
-//Pre-included move function
+//Move item inside list
 const moveFileListItem = useCallback(
     (oldIndex, newIndex) => {
-        const oldItem = listItems[oldIndex]
-        const newItem = listItems[newIndex]
         setListItems(listItems => {
             const updatedFiles = [...listItems]
-            updatedFiles[oldIndex] = newItem
-            updatedFiles[newIndex] = oldItem
+            updatedFiles[oldIndex] = listItems[newIndex]
+            updatedFiles[newIndex] = listItems[oldIndex]
             if(outputSettings["entryIndex"] == newIndex || outputSettings["entryIndex"] == oldIndex){
                 setOutputSettings(outputSettings => {
                     const updatedSettings = {...outputSettings}
@@ -128,9 +126,11 @@ const sortEntries = useCallback(
         setListItems(listItems => {
             const updatedFiles = [...listItems]
             const { compare } = Intl.Collator('en-US');
-            updatedFiles.sort((a, b) => compare(a.runName, b.runName));
-            if(reversed){
-                updatedFiles.reverse()
+            if(!reversed){
+                updatedFiles.sort((a, b) => compare(a.runName, b.runName) || a.initialRepeats - b.initialRepeats);
+            }
+            else{
+                updatedFiles.sort((a, b) => compare(b.runName, a.runName) || b.initialRepeats - a.initialRepeats);
             }
             for(let i = 0; i < updatedFiles.length; i++) {
                 updatedFiles[i].id = i+1;

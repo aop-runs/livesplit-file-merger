@@ -44,6 +44,7 @@ export const SplitsColumn = ({ listItems, setListItems, addListItem, unmaskPaths
                 let newData = {...itemData}
                 if("id" in itemData){
                     delete newData.id
+                    newData.initialRepeats = findRepeats(newData.runName)
                 }
                 updatedFiles.push({
                     ...{id: listItems.length+1},
@@ -56,6 +57,22 @@ export const SplitsColumn = ({ listItems, setListItems, addListItem, unmaskPaths
         [listItems],
     )
 
+    //Get number of repeated run names
+    const findRepeats = (runName) => {
+        let count = listItems.filter(item => item.runName == runName).length
+        if(count != 0){
+            while(true){
+                if(listItems.filter(item => item.runName == runName && item.initialRepeats == count).length == 0){
+                    break
+                }
+                else{
+                    count++
+                }
+            }
+        }
+        return count
+    }
+
 return (
         <React.Fragment>
         <AppSettings
@@ -65,6 +82,7 @@ return (
         />
         <br/>
         <FileUpload
+            findRepeats={findRepeats}
             addListItem={addFileListItem}
             appStatuses={appStatuses}
             updateStatus={updateStatus}
