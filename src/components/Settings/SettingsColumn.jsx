@@ -52,6 +52,8 @@ return (
                 listItems={listItems}
                 outputSettings={outputSettings}
                 setOutputSettings={setOutputSettings}
+                appStatuses={appStatuses}
+                updateStatus={updateStatus}
             />
             <br/>
             <RunName

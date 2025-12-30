@@ -1,6 +1,7 @@
 import React from 'react'
 import { FaRegWindowClose } from "react-icons/fa";
 import { openContentsInNewTab } from '../../utils/file.js'
+import { timeToSeconds } from "../../utils/livesplit.js";
 import '../../styles/style.scss'
 
 export const ItemModal = ({ itemData, index, unmaskPaths, canDownload, closeModal }) => {
@@ -29,7 +30,7 @@ export const ItemModal = ({ itemData, index, unmaskPaths, canDownload, closeModa
                             Found Comparisons:<br/>{itemData.comparisons.length != 0 ? itemData.comparisons.join(", ") : "N/A"}
                         </p>
                         <p title="The setup time required before this part of the run begins">
-                            Setup Time:<br/>{(index != 0 && canDownload["setup"] && itemData.setup != "") ? itemData.setup : "N/A"}
+                            Setup Time:<br/>{(index != 0 && canDownload["setup"] && itemData.setup != "" && timeToSeconds(itemData.setup) != 0) ? itemData.setup : "N/A"}
                         </p>
                         <button title="Open raw contents for this entry" type ='button' onClick={() => openContentsInNewTab(itemData.contents, itemData.layoutPath, !unmaskPaths)}>
                             Open Splits Contents

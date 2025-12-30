@@ -58,11 +58,17 @@ export const ContentContainer = () => {
     const initialStatus = {header: "", message: [""]}
     const [appStatuses, setAppStatuses] = useState(() => {
         const obj = {}
-        for(let key of ["upload", "layout", "offset", "setup", "found", "comp", "game", "category", "output", "download"]){
+        for(let key of ["upload", "layout", "offset", "setup", "found", "comp", "game", "category", "subsplit", "output", "download"]){
             if(key == "upload"){
                 obj[key] = {
                     header: "Info",
                     message: ["Upload some split files below to get started"]
+                }
+            }
+            else if(key == "subsplit"){
+                obj[key] = {
+                    header: "Info",
+                    message: ["This setting will remove existing subsplits from your split entries if toggled on"]
                 }
             }
             else{

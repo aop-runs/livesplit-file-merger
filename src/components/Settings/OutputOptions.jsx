@@ -84,11 +84,6 @@ export const OutputOptions = ({ listItems, setListItems, canDownload, updateCanD
                     hasInvalid = true
                 }
             }
-
-            //Time provided is not 0
-            if(!hasInvalid && timeToSeconds(value) == 0){
-                hasInvalid = true
-            }
         }
         if(hasInvalid){
             updateStatus("setup", {
@@ -101,7 +96,7 @@ export const OutputOptions = ({ listItems, setListItems, canDownload, updateCanD
 
         //Update setup time for all files or just specified file
         updateCanDownload("setup", true)
-        if(value.length == 0){
+        if(value.length == 0 || timeToSeconds(value) == 0){
             updateStatus("setup", {
                 header: "Warning",
                 message: ["Not providing a setup split time will prevent creating " + (outputSettings.entryIndex != "" ? "a setup split for any game without one" : "setup splits before each run") + " when generating your output splits"]

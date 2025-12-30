@@ -347,7 +347,7 @@ export function createOutputSplits(files, outputSettings){
         runningGameGold = 0.0;
         
         //Create setup split if there are files remaining
-        if(fileIndex != files.length - 1 && files[fileIndex + 1].setup != ""){
+        if(fileIndex != files.length - 1 && files[fileIndex + 1].setup != "" && timeToSeconds(files[fileIndex + 1].setup) != 0){
             let newSegment = new DOMParser().parseFromString(gatherSegmentTemplate(), validSpecifier.streamType);
             newSegment.getElementsByTagName("Name")[0].textContent = adjustTemplateText(outputSettings["templateText"].setup, files[fileIndex + 1].game, files[fileIndex + 1].category, fileIndex + 2, fileIndex + 1, files.length);
             

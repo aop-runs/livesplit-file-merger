@@ -1,9 +1,10 @@
 import React from 'react'
+import { StatusPopUp } from '../Inputs/StatusPopUp.jsx'
 import { TextField } from '../Inputs/TextField.jsx'
 import { templateParameters } from "../../utils/livesplit.js";
 import '../../styles/style.scss'
 
-export const SplitTemplates = ({ listItems, outputSettings, setOutputSettings }) => {
+export const SplitTemplates = ({ listItems, outputSettings, setOutputSettings, appStatuses, updateStatus }) => {
 
     //Toggle checkbox
     const toggleCheckbox = (key, value) => {
@@ -14,6 +15,13 @@ export const SplitTemplates = ({ listItems, outputSettings, setOutputSettings })
         })
         if(key == "subs" && !value){
             changeTemplateText("final", "")
+            updateStatus("subsplit")
+        }
+        else{
+            updateStatus("subsplit", {
+                header: "Info",
+                message: ["This setting will remove existing subsplits from your split entries if toggled on"]
+            })
         }
     }
 
@@ -42,7 +50,11 @@ export const SplitTemplates = ({ listItems, outputSettings, setOutputSettings })
                 </summary>
                 {outputSettings["toggleSettings"]["full"] && 
                 <React.Fragment>
-                    <label id="subsbox" title="Choose whether to create new subsplits for each game (Note: This setting will remove existing subsplits from your splits files if toggled on)">
+                    {(appStatuses.subsplit.header.length > 0) && <StatusPopUp
+                        header={appStatuses.subsplit.header}
+                        message={appStatuses.subsplit.message}
+                    />}
+                    <label id="subsbox" title="Choose whether to create new subsplits for each game">
                         <input type="checkbox" disabled={listItems.length < 2} htmlFor="subsbox" checked={outputSettings["toggleSettings"]["subs"]} onChange={(e) => toggleCheckbox("subs", e.target.checked)}/>
                         Create Subsplits for Each Game
                     </label>
