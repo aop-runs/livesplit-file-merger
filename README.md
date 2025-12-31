@@ -1,5 +1,3 @@
-[Link](https://github.com/gitname/react-gh-pages) to deployment tutorial. (Remove this once tutorial and/or GithubActions workflow is made)
-
 # LiveSplit File Merger
 
 A simple React tool that allows you to combine multiple [LiveSplit](https://livesplit.org/) files from different speedruns into one big splits file that you can then download. You can use this tool for multi-game speedruns, main board/all category marathons, and even for longer categories that consist of multiple smaller ones. Everything is performed on the client-side within your web browser so nothing will ever be sent or stored onto a server.
@@ -32,3 +30,10 @@ Click [here](https://aop-runs.github.io/livesplit-file-merger/) to open the tool
 * Determine your starting LiveSplit layout and offset for your output run or simply use both properties from the first run in your entries.
 * Pick which additional comparisons present in each splits entry can be carried over.
 * Choose whether to carry over real time and/or game time split times.
+
+## Contributing
+
+Want to help make this project better? Feel free to work on an existing issue from [here](https://github.com/aop-runs/livesplit-file-merger/issues) or create a new issue relevant to the project.
+
+1. Once [forking](https://github.com/aop-runs/livesplit-file-merger/fork) your copy of the project, you may clone it in your desired directory by running<br>
+`git clone https://github.com/YOUR-USERNAME/livesplit-file-merger.git`
