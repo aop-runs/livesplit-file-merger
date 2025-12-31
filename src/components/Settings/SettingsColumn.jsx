@@ -66,7 +66,7 @@ return (
                 updateStatus={updateStatus}
             />
             <br/>
-            <a className = "top-link" href = "#top" title="Click to go back to the top of the webpage">
+            <a className = "web-link" href = "#top" title="Click here to go back to the top of the webpage">
                 Back to Top
             </a>
         </React.Fragment>

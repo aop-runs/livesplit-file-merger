@@ -1,3 +1,4 @@
+//Based on: https://www.dhiwise.com/blog/design-converter/how-to-use-react-beforeunload-for-user-alerts
 import React, { useEffect }from 'react';
 import { BsCloudDownload } from "react-icons/bs";
 import { GoTrash } from "react-icons/go";
@@ -9,8 +10,20 @@ import '../../styles/style.scss'
 
 export const FileDownload = ({ listItems, unmaskPaths, outputSettings, canDownload, updateCanDownload, finalOutput, setFinalOutput, appStatuses, updateStatus }) => {
 
-    //Detect if splits are changed after editing and prompt user if an output file exists
+    //Detect if output settings are changed
     useEffect(() => {
+        
+        //Alert user if any split entries exist before refreshing or unloading website
+        const alertUser = (event) => {
+            if(listItems == 0){
+                return
+            }
+            event.preventDefault()
+            event.returnValue = ''
+        }
+        window.addEventListener("beforeunload", alertUser);
+
+        //If anything is changed after editing and prompt user if an output file exists
         setFinalOutput(finalOutput => {
             const updatedFinalOutput = {...finalOutput}
             if(updatedFinalOutput["output"]["name"].length != 0){
@@ -21,6 +34,11 @@ export const FileDownload = ({ listItems, unmaskPaths, outputSettings, canDownlo
             }
             return updatedFinalOutput
         })
+
+        //Unload event listener if leaving page
+        return () => {
+            window.removeEventListener("beforeunload", alertUser);
+        };
     }, [outputSettings])
 
     //Track filename

@@ -1,8 +1,8 @@
 import React, { useState, useCallback } from 'react'
-import { SettingsColumn } from './Settings/SettingsColumn.jsx'
-import { SplitsColumn } from './Splits/SplitsColumn.jsx'
-import { defaultSetup, defaultPBComp, iconCache } from "../utils/livesplit.js";
-import '../styles/style.scss'
+import { SettingsColumn } from '../Settings/SettingsColumn.jsx'
+import { SplitsColumn } from '../Splits/SplitsColumn.jsx'
+import { defaultSetup, defaultPBComp, iconCache } from "../../utils/livesplit.js";
+import '../../styles/style.scss'
 
 export const ContentContainer = () => {
     
@@ -118,12 +118,6 @@ export const ContentContainer = () => {
             updateCanDownload(key, true)
         }
     }
-    
-    //Alert user if they make any changes before refreshing or unloading website
-    const alertUser = (event) => {
-        event.preventDefault()
-    }
-    window.addEventListener("beforeunload", alertUser);
     
     //Check game PB comparison name
     const checkGameComp = (settings) => {
