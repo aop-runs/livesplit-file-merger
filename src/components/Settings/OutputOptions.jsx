@@ -23,6 +23,15 @@ export const OutputOptions = ({ listItems, setListItems, canDownload, updateCanD
                 const updatedSettings = {...outputSettings}
                 updatedSettings["setupTime"] = listItems[value].setup
                 updatedSettings["entryIndex"] = value
+                if(timeToSeconds(listItems[value].setup) == 0.0){
+                    updateStatus("setup", {
+                        header: "Warning",
+                        message: ["Not providing a setup split time will prevent creating " + (outputSettings.entryIndex != "" ? "a setup split for any game without one" : "setup splits before each run") + " when generating your output splits"]
+                    })
+                }
+                else{
+                    updateStatus("setup")
+                }
                 return updatedSettings
             })
         } 
