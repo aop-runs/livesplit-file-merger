@@ -35,5 +35,12 @@ Click [here](https://aop-runs.github.io/livesplit-file-merger/) to open the tool
 
 Want to help make this project better? Feel free to work on an existing issue from [here](https://github.com/aop-runs/livesplit-file-merger/issues) or create a new issue relevant to the project.
 
-1. Once [forking](https://github.com/aop-runs/livesplit-file-merger/fork) your copy of the project, you may clone it in your desired directory by running<br>
+1. Once [forking](https://github.com/aop-runs/livesplit-file-merger/fork) your own copy of the project, you may clone it in your desired worksapce by running<br>
 `git clone https://github.com/YOUR-USERNAME/livesplit-file-merger.git`
+2. Open the newly created project directory by running<br>
+`cd livesplit-file-merger`
+3. Ensure NodeJS is involved and then setup the Vite project and all of its dependencies by running<br>
+`npm install`
+4. Work off your local development server by running<br>
+`npm run dev`
+5. If everything is working correctly, you may open the localhost link returned from the last step in your desired browser and then start contributing.
