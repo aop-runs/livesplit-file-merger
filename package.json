@@ -2,7 +2,7 @@
   "name": "livesplit-file-merger",
   "private": true,
   "version": "0.0.0",
-  "homepage": "https://github.com/aop-runs/livesplit-file-merger",
+  "homepage": "https://aop-runs.github.io/livesplit-file-merger/",
   "type": "module",
   "scripts": {
     "predeploy": "npm run build",
