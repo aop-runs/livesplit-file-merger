@@ -5,7 +5,11 @@ export const defaultSetup = "00:00:30.0000000"
 export const defaultPBComp = "Game PBs"
 export const templateParameters = [
     {param: "%NG%", name: "Game Name"},
+    {param: "%NGP%", name: "Game Name (Previous)"},
+    {param: "%NGN%", name: "Game Name (Next)"},
     {param: "%NC%", name: "Category Name"},
+    {param: "%NCP%", name: "Category Name (Previous)"},
+    {param: "%NCN%", name: "Category Name (Next)"},
     {param: "%GN%", name: "Current Game Number"},
     {param: "%GC%", name: "Current Games Completed"},
     {param: "%TC%", name: "Total Game Count"}
@@ -151,7 +155,7 @@ export function cleanSplitsFile(contents){
 }
 
 //Create template split for setup splits and final subsplits with parameter support
-function adjustTemplateText(template, game, category, currentNumber, gamesCompleted, totalGames){
+function adjustTemplateText(template, game, gameP, gameN, category, categoryP, categoryN, currentNumber, gamesCompleted, totalGames){
     let parameters = templateParameters.map(
         (obj, index) => {
             return {param: obj.param, value: arguments[index + 1]}
@@ -247,7 +251,9 @@ export function createOutputSplits(files, outputSettings){
                     let splitName = child.getElementsByTagName("Name")[0].textContent;
                     if(childIndex == segmentContents.getElementsByTagName("Segments")[0].children.length - 1){
                         splitName = splitName.includes("}") ? splitName.slice(splitName.indexOf("}") + 1) : splitName;
-                        splitName = "{" + adjustTemplateText(outputSettings["templateText"].final, splitFile.game, splitFile.category, fileIndex + 1, fileIndex, files.length) + "}" + splitName;
+                        splitName = "{" +
+                        adjustTemplateText(outputSettings["templateText"].final, splitFile.game, (fileIndex > 0 ? files[fileIndex - 1].game : ""), (fileIndex < files.length-1 ? files[fileIndex + 1].game : ""), splitFile.category, (fileIndex > 0 ? files[fileIndex - 1].category : ""), (fileIndex < files.length-1 ? files[fileIndex + 1].category : ""), fileIndex + 1, fileIndex, files.length)
+                        + "}" + splitName;
                     }
                     else{
                         splitName = splitName.startsWith("-") ? splitName.slice(1) : splitName;
@@ -315,7 +321,8 @@ export function createOutputSplits(files, outputSettings){
                 
                 //Match icon from cache if one exists and name split after game split template
                 newSegment.getElementsByTagName("Icon")[0].textContent = (outputSettings["toggleSettings"].icon && segmentContents.getElementsByTagName("GameIcon")[0].textContent.length != 0) ? iconCache[parseInt(segmentContents.getElementsByTagName("GameIcon")[0].textContent) - 1] : "";
-                newSegment.getElementsByTagName("Name")[0].textContent = adjustTemplateText(outputSettings["templateText"].final, splitFile.game, splitFile.category, fileIndex + 1, fileIndex, files.length);
+                newSegment.getElementsByTagName("Name")[0].textContent =
+                adjustTemplateText(outputSettings["templateText"].final, splitFile.game, (fileIndex > 0 ? files[fileIndex - 1].game : ""), (fileIndex < files.length-1 ? files[fileIndex + 1].game : ""), splitFile.category, (fileIndex > 0 ? files[fileIndex - 1].category : ""), (fileIndex < files.length-1 ? files[fileIndex + 1].category : ""), fileIndex + 1, fileIndex, files.length);
 
                 //Set split's gold to game's sum of best segments
                 for(let timing of [ ["RealTime", runningRealGold != null && runningRealGold != 0.0, runningRealGold], ["GameTime", runningGameGold != null && runningGameGold != 0.0 , runningGameGold] ]){
@@ -349,8 +356,9 @@ export function createOutputSplits(files, outputSettings){
         //Create setup split if there are files remaining
         if(fileIndex != files.length - 1 && files[fileIndex + 1].setup != "" && timeToSeconds(files[fileIndex + 1].setup) != 0){
             let newSegment = new DOMParser().parseFromString(gatherSegmentTemplate(), validSpecifier.streamType);
-            newSegment.getElementsByTagName("Name")[0].textContent = adjustTemplateText(outputSettings["templateText"].setup, files[fileIndex + 1].game, files[fileIndex + 1].category, fileIndex + 2, fileIndex + 1, files.length);
-            
+            newSegment.getElementsByTagName("Name")[0].textContent =
+            adjustTemplateText(outputSettings["templateText"].setup, files[fileIndex + 1].game, files[fileIndex].game, (fileIndex < files.length-2 ? files[fileIndex + 2].game : ""), files[fileIndex + 1].category, files[fileIndex].category, (fileIndex < files.length-2 ? files[fileIndex + 2].category : ""), fileIndex + 2, fileIndex + 1, files.length)
+
             //Assign setup time as a default gold for setup split
             if(outputSettings["toggleSettings"].sob){
                 for(let timing of [ ["RealTime", outputSettings["usedTimings"].realTime], ["GameTime", outputSettings["usedTimings"].gameTime] ]){

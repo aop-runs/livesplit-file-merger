@@ -6,7 +6,7 @@ import { ItemList } from './ItemList.jsx'
 import { defaultPBComp } from "../../utils/livesplit.js";
 import '../../styles/style.scss'
 
-export const SplitsColumn = ({ listItems, setListItems, addListItem, unmaskPaths, setUnmaskPaths, resetApplication, outputSettings, setOutputSettings, canDownload, updateCanDownload, finalOutput, setFinalOutput, checkGameComp, appStatuses, updateStatus }) => {
+export const SplitsColumn = ({ listItems, setListItems, unmaskPaths, setUnmaskPaths, resetApplication, outputSettings, setOutputSettings, canDownload, updateCanDownload, finalOutput, setFinalOutput, checkGameComp, appStatuses, updateStatus }) => {
 
     //Refresh all comparisons after list is modified
     const refreshComparisons = (listItems) => {
