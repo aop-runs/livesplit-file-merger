@@ -5,13 +5,13 @@ import { Header } from './Header.jsx'
 
 export const App = () => {
   return (
-      <React.Fragment>
-        <Header />
-        <br/><br/><br/>
-        <ContentContainer />
-        <br/><br/><br/>
-        <Footer />
-      </React.Fragment>
+        <React.Fragment>
+          <Header />
+          <br/><br/><br/>
+          <ContentContainer />
+          <br/><br/><br/>
+          <Footer />
+        </React.Fragment>
   )
 }
 

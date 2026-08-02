@@ -1,24 +1,42 @@
-//Variables
-$color: white;
-$bg-color: black;
-$hover-color: grey;
-$section-color: #99ccff;
-
 //Body
 body {
-  background-color: $bg-color;
-  color: $color;
+
+  //Default
   font-family: Arial, Helvetica, sans-serif;
+  --hover-color: #7F7F7F;
+
+  //Dark mode by default
+  --bg-color: black;
+  --text-color: white;
+  --section-color: #99ccff;
+  --info-color: #b3b3ff;
+  --success-color: #99ffcc;
+  --error-color: #ff9999;
+  --warning-color: #ffcc99;
+  
+  //Light mode if enabled
+  &.light-mode {
+    --bg-color: white;
+    --text-color: black;
+    --section-color: color-mix(in srgb, #99ccff, black 50%);
+    --info-color: color-mix(in srgb, #b3b3ff, black 50%);
+    --success-color: color-mix(in srgb, #99ffcc, black 50%);
+    --error-color: color-mix(in srgb, #ff9999, black 35%);
+    --warning-color: color-mix(in srgb, #ffcc99, black 35%);
+  }
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  
 }
 
 .web-link{
-  color: $color;
+  color: var(--text-color);
   font-weight: bold;
   text-decoration: none;
 }
 
 .web-link:hover{
-  color: $hover-color;
+  color: var(--hover-color);
   text-decoration: underline;
 }
 
@@ -39,7 +57,7 @@ body {
 }
 
 .clipboard:hover{
-  color: $hover-color;
+  color: var(--hover-color);
   cursor: pointer;
   text-decoration: underline;
 }
@@ -88,21 +106,21 @@ body {
 
 .sectionTitle{
   font-weight: bold;
-  color: $section-color;
+  color: var(--section-color);;
   margin-bottom: 0px;
 }
 
 //Reset
 .reset-button{
   position: absolute;
-  color: $color;
+  color: var(--text-color);
   font-size: 20px;
   border: none;
   background-color: transparent;
 }
 
 .reset-button:hover{
-  color: $hover-color;
+  color: var(--hover-color);
   cursor: pointer;
 }
 
@@ -112,25 +130,25 @@ body {
 }
 
 .status-red {
-  color: #ff9999;
+  color: var(--error-color);
 }
 
 .status-green {
-  color: #99ffcc;
+  color: var(--success-color);
 }
 
 .status-yellow {
-  color: #ffcc99;
+  color: var(--warning-color);
 }
 
 .status-blue {
-  color: #b3b3ff;
+  color: var(--info-color);
 }
 
 //File Upload
 .upload {
     position: relative;
-    border: 1px solid $color;
+    border: 1px solid var(--text-color);
     padding-top: 40px;
     padding-bottom: 30px;
     display: flex;
@@ -173,31 +191,31 @@ body {
   width: 100%;
   height: 100%;
   overflow: auto;
-  background-color: $color;
+  background-color: var(--text-color);
   background-color: rgba(0,0,0,0.4);
 }
 
 .modal-entry {
-  background-color: $bg-color;
+  background-color: var(--bg-color);
   margin: auto;
   padding: 10px;
-  border: 1px solid $color;
+  border: 1px solid var(--text-color);
   width: 50%;
 }
 
 .modal-entry h3{
-  color: $section-color;
+  color: var(--section-color);;
 }
 
 .modal-close-button {
-  color: $color;
+  color: var(--text-color);
   float: right;
   font-size: 25px;
   font-weight: bold;
 }
 
 .modal-close-button:hover{
-  color: $hover-color;
+  color: var(--hover-color);
   text-decoration: none;
   cursor: pointer;
 }
@@ -205,28 +223,28 @@ body {
 //List
 .list-icon {
   font-size: 20px;
-  color: $color;
+  color: var(--text-color);
   border: none;
   background-color: transparent;
 }
 
 .list-icon-active:hover{
-  color: $hover-color;
+  color: var(--hover-color);
   cursor: pointer;
 }
 
 .list-icon-disabled{
-  color: $hover-color;
+  color: var(--hover-color);
   cursor: default;
 }
 
 .list-box {
-  border: 1px solid $color;
+  border: 1px solid var(--text-color);
   padding: 0.5rem 0.5rem;
 }
 
 .list-entry {
-  border: 1px solid $color;
+  border: 1px solid var(--text-color);
   margin-bottom: 1px;
   padding-left: 0.5rem;
   padding-right: 0.5rem;
@@ -236,7 +254,7 @@ body {
 
 .list-entry-text {
   font-weight: bold;
-  color: $section-color;
+  color: var(--section-color);;
 }
 
 //Comparisons
@@ -244,25 +262,25 @@ body {
   font-size: 20px;
   position: absolute;
   margin-top: -2px;
-  color: $color;
+  color: var(--text-color);
   border: none;
   background-color: transparent;
 }
 
 .comparison-icon:hover{
-  color: $hover-color;
+  color: var(--hover-color);
   cursor: pointer;
 }
 
 .comparison-icon-1 {
   font-size: 20px;
-  color: $color;
+  color: var(--text-color);
 }
 
 .comparison-icon-2 {
   font-size: 20px;
   margin-left: 20px;
-  color: $color;
+  color: var(--text-color);
 }
 
 //Output & Download
@@ -272,7 +290,7 @@ body {
 }
 
 .download-splits-name:hover{
-  color: $hover-color;
+  color: var(--hover-color);
   cursor: pointer;
   text-decoration: underline;
 }
@@ -286,17 +304,17 @@ body {
 
 .download-button-1 {
   font-size: 20px;
-  color: $color;
+  color: var(--text-color);
 }
 
 .download-button-2 {
   margin-left: 25px;
   font-size: 20px;
-  color: $color;
+  color: var(--text-color);
 }
 
 .download-button-icon:hover{
-  color: $hover-color;
+  color: var(--hover-color);
   cursor: pointer;
 }
 
@@ -307,7 +325,7 @@ body {
 
 .dropdown-clear-icon{
   font-size: 20px;
-  color: $color;
+  color: var(--text-color);
   border: none;
   margin-left: -5px;
   vertical-align: middle;
@@ -315,7 +333,7 @@ body {
 }
 
 .dropdown-clear-icon:hover{
-  color: $hover-color;
+  color: var(--hover-color);
   cursor: pointer;
 }
 
@@ -344,29 +362,29 @@ body {
 }
 
 .textfield-active-button{
-  color: $color;
+  color: var(--text-color);
 }
 
 .textfield-active-button:hover{
-  color: $hover-color;
+  color: var(--hover-color);
   cursor: pointer;
 }
 
 .textfield-disabled-button{
-  color: $hover-color;
+  color: var(--hover-color);
 }
 
 .textfield-active-clear{
-  color: $bg-color;
+  color: var(--bg-color);
 }
 
 .textfield-active-clear:hover{
-  color: $hover-color;
+  color: var(--hover-color);
   cursor: pointer;
 }
 
 .textfield-disabled-clear{
-  color: $hover-color;
+  color: var(--hover-color);
 }
 
 .textfield-extra-button {

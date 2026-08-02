@@ -29,7 +29,7 @@ Click [here](https://aop-runs.github.io/livesplit-file-merger/) to open the tool
 * Decide if you like to use subsplits for each run (Note: This will remove existing subsplits from your entries).
 * Determine your starting LiveSplit layout and offset for your output run or simply use both properties from the first run in your entries.
 * Pick which additional comparisons present in each splits entry can be carried over.
-* Choose whether to carry over real time and/or game time split times.
+* Choose whether to carry over real time and/or game time splits.
 
 ## Contributing
 
