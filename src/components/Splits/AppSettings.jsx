@@ -1,7 +1,8 @@
 import React from 'react'
+import { DropDown } from '../Inputs/DropDown.jsx'
 import { MdOutlineResetTv } from "react-icons/md";
 
-export const AppSettings = ({ unmaskPaths, setUnmaskPaths, resetApplication }) => {
+export const AppSettings = ({ unmaskPaths, setUnmaskPaths, updateTheme, resetApplication }) => {
 
     //Update whether to unmask filepaths
     const updatePathUnmasking = (value) => {
@@ -16,6 +17,23 @@ export const AppSettings = ({ unmaskPaths, setUnmaskPaths, resetApplication }) =
                 <summary className="sectionTitle">
                     Application Settings
                 </summary>
+                <label title="Switch theme used for application">
+                    Website Theme:
+                </label><br/>
+                <DropDown
+                    title={"Select Theme"}
+                    description={"Current theme used for application"}
+                    updateFunction={updateTheme}
+                    canClickToRefresh={false}
+                    choices={["Light Mode", "Dark Mode", "Browser (Default)"].map((t, index) => {
+                        return (
+                            <option key={index} value={t}>
+                                {t}
+                            </option>
+                        );
+                    })}
+                />
+                <br/><br/>
                 <label id="unmask" title="Choose whether to unhide absolute filepath names for LiveSplit layouts">
                     <input type="checkbox" htmlFor="unmask" checked={unmaskPaths} onChange={(e) => updatePathUnmasking(e.target.checked)}/>
                     Unmask Filepaths

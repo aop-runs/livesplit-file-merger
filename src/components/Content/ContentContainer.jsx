@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { SettingsColumn } from '../Settings/SettingsColumn.jsx'
 import { SplitsColumn } from '../Splits/SplitsColumn.jsx'
 import { defaultSetup, defaultPBComp, iconCache } from "../../utils/livesplit.js";
@@ -8,9 +8,31 @@ export const ContentContainer = () => {
     
     //Shared states and variables
     const [files, setFiles] = useState([])
+    const [useLightMode, setUseLightMode] = useState(window.matchMedia('(prefers-color-scheme: light)').matches)
     const [unmaskPaths, setUnmaskPaths] = useState(false)
     const [requestData, setRequestData] = useState({game: [], category: [], selectedGame: null, selectedCategory: null})
     const [finalOutput, setFinalOutput] = useState({filename: "", output: {name: "", data: "", timestamp: ""}})
+
+    //Light mode toggle
+    const updateTheme = (theme) => {
+        if(theme == ""){
+            return
+        }
+        else if(theme.startsWith("Browser")){
+            setUseLightMode(window.matchMedia('(prefers-color-scheme: light)').matches)
+        }
+        else{
+            setUseLightMode(theme == "Light Mode")
+        }
+    }
+    useEffect(() => {
+        if(useLightMode){
+            document.body.classList.add('light-mode');
+        }
+        else{
+            document.body.classList.remove('light-mode');
+        }
+    }, [useLightMode]);
 
     //Output settings for customizing splits
     const initializeSettings = () => {
@@ -177,6 +199,7 @@ export const ContentContainer = () => {
                         setListItems={setFiles}
                         unmaskPaths={unmaskPaths}
                         setUnmaskPaths={setUnmaskPaths}
+                        updateTheme={updateTheme}
                         resetApplication={resetApplication}
                         outputSettings={outputSettings}
                         setOutputSettings={setOutputSettings}
