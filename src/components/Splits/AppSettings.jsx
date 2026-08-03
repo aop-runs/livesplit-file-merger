@@ -25,7 +25,7 @@ export const AppSettings = ({ unmaskPaths, setUnmaskPaths, updateTheme, resetApp
                     description={"Current theme used for application"}
                     updateFunction={updateTheme}
                     canClickToRefresh={false}
-                    choices={["Light Mode", "Dark Mode", "Browser (Default)"].map((t, index) => {
+                    choices={["Browser (Default)", "Light Mode", "Dark Mode"].map((t, index) => {
                         return (
                             <option key={index} value={t}>
                                 {t}
