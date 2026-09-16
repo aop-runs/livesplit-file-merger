@@ -8,6 +8,7 @@ body {
   //Dark mode by default
   --bg-color: black;
   --text-color: white;
+  --selected-color: #222222;
   --section-color: #99ccff;
   --info-color: #b3b3ff;
   --success-color: #99ffcc;
@@ -18,6 +19,7 @@ body {
   &.light-mode {
     --bg-color: white;
     --text-color: black;
+    --selected-color: #DDDDDD;
     --section-color: color-mix(in srgb, #99ccff, black 50%);
     --info-color: color-mix(in srgb, #b3b3ff, black 50%);
     --success-color: color-mix(in srgb, #99ffcc, black 50%);
@@ -252,9 +254,13 @@ body {
   padding-bottom: 0rem;
 }
 
+.list-entry-selected {
+  background-color: var(--selected-color);
+}
+
 .list-entry-text {
   font-weight: bold;
-  color: var(--section-color);;
+  color: var(--section-color);
 }
 
 //Comparisons

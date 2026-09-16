@@ -55,7 +55,8 @@ export const FileUpload = ({ findRepeats, addListItem, appStatuses, updateStatus
                                 offset: gatherSplitsDataByTag(contents, "Offset"),
                                 comparisons: findCustomComparisons(contents),
                                 setup: defaultSetup,
-                                contents: contents
+                                contents: contents,
+                                isSelected: false
                             })
                         } catch (error) {
                             uploadErrors.push("Unable to upload: " + newFile[1].name + " - " + error)
