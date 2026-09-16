@@ -12,7 +12,7 @@ Click [here](https://aop-runs.github.io/livesplit-file-merger/) to open the tool
 
 ### Split Entry Management:
 * Aside from reordering your split files by dragging them, you can choose to reverse or sort them alphabetically by run name.
-* Remove unwanted runs from your entries and duplicate runs as needed.
+* Remove unwanted runs from your entries and duplicate runs as needed with the ability to select multiple items at once.
 * View important properties about each entry in a seprate modal window.
 
 ### Split Template Creation:
