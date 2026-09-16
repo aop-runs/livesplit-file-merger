@@ -1,4 +1,5 @@
 import React from 'react'
+import { IconButton } from '../Inputs/IconButton.jsx'
 import { MdOutlinePlaylistRemove } from "react-icons/md";
 import '../../styles/style.scss'
 
@@ -32,9 +33,12 @@ export const DropDown = ({ title, header, setValue, disableCon, updateKey, updat
                 {choices}
             </select>
             {clearButton !== undefined &&
-                <button className = "dropdown-clear-icon" onClick={clearButton.clearFunction} title={clearButton.description}>
-                    <MdOutlinePlaylistRemove />
-                </button>
+                <IconButton
+                    classes={"dropdown-clear-icon"}
+                    action={clearButton.clearFunction}
+                    description={clearButton.description}
+                    icon={<MdOutlinePlaylistRemove />}
+                />
             }
         </React.Fragment>
     )

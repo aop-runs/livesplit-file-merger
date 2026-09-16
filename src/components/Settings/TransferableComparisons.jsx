@@ -1,4 +1,5 @@
 import React from 'react'
+import { IconButton } from '../Inputs/IconButton.jsx'
 import { StatusPopUp } from '../Inputs/StatusPopUp.jsx'
 import { BsList } from "react-icons/bs";
 import { TbListCheck } from "react-icons/tb";
@@ -80,14 +81,20 @@ export const TransferableComparisons = ({ listItems, outputSettings, setOutputSe
                         <br/>
                         <label>Comparisons:</label>
                         {!checkIfAllComparisonsChecked(true) &&
-                            <button className = "comparison-icon comparison-icon-1" onClick={() => toggleAllComparisons(true)} title="Toogle all above comparison settings on">
-                                <TbListCheck />
-                            </button>
+                            <IconButton
+                                classes={"comparison-icon comparison-icon-1"}
+                                action={() => toggleAllComparisons(true)}
+                                description={"Toogle all above comparison settings on"}
+                                icon={<TbListCheck />}
+                            />
                         }
                         {!checkIfAllComparisonsChecked(false) &&
-                            <button className = {"comparison-icon " + (!checkIfAllComparisonsChecked(true) && !checkIfAllComparisonsChecked(false) ? "comparison-icon-2" : "comparison-icon-1")} onClick={() => toggleAllComparisons(false)} title="Toogle all above comparison settings off">
-                                <BsList />
-                            </button>
+                            <IconButton
+                                classes={"comparison-icon " + (!checkIfAllComparisonsChecked(true) && !checkIfAllComparisonsChecked(false) ? "comparison-icon-2" : "comparison-icon-1")}
+                                action={() => toggleAllComparisons(false)}
+                                description={"Toogle all above comparison settings off"}
+                                icon={<BsList />}
+                            />
                         }
                         <br/>
                         {outputSettings["usedComparisons"].map((comp, index) => {

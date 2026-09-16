@@ -2,6 +2,7 @@
 import React, { useCallback } from 'react';
 import { SortableContext, rectSortingStrategy, sortableKeyboardCoordinates, arrayMove } from '@dnd-kit/sortable';
 import { DndContext, PointerSensor, KeyboardSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { IconButton } from '../Inputs/IconButton.jsx'
 import { FaSortAlphaUp, FaSortAlphaDownAlt, FaSortAmountDown } from "react-icons/fa";
 import { GoTrash } from "react-icons/go";
 import { GrDuplicate } from "react-icons/gr";
@@ -208,7 +209,7 @@ const sortEntries = useCallback(
                 </label>
                 {listItems.reduce((count, item) => item.isSelected == true ? count + 1 : count, 0) != 0 &&
                     <label title="Number of entries selected">
-                        {(" (" + (listItems.reduce((count, item) => item.isSelected == true ? count + 1 : count, 0) == listItems.length ? "All" : listItems.reduce((count, item) => item.isSelected == true ? count + 1 : count, 0)) + " Entr" + (listItems.reduce((count, item) => item.isSelected == true ? count + 1 : count, 0) == 1 ? "y" : "ies") + " Selected)")}
+                        {(" (" + (listItems.reduce((count, item) => item.isSelected == true ? count + 1 : count, 0) == listItems.length && listItems.reduce((count, item) => item.isSelected == true ? count + 1 : count, 0) > 1 ? "All" : listItems.reduce((count, item) => item.isSelected == true ? count + 1 : count, 0)) + " Entr" + (listItems.reduce((count, item) => item.isSelected == true ? count + 1 : count, 0) == 1 ? "y" : "ies") + " Selected)")}
                     </label>
                 }<br/>
                 
@@ -216,18 +217,35 @@ const sortEntries = useCallback(
                     <React.Fragment>
                     
                     {/* Buttons for entry selection */}
-                    <button className = {"list-icon" + (listItems.reduce((count, item) => item.isSelected == true ? count + 1 : count, 0) == 0 ? " list-icon-disabled" : " list-icon-active")} disabled={listItems.reduce((count, item) => item.isSelected == true ? count + 1 : count, 0) == 0} onClick={() => toggleAllItemSelection(false)} title="Unselect all of your entries">
-                        <RiCheckboxMultipleBlankLine />
-                    </button>
-                    <button className = {"list-icon" + (listItems.reduce((count, item) => item.isSelected == true ? count + 1 : count, 0) == listItems.length ? " list-icon-disabled" : " list-icon-active")} disabled={listItems.reduce((count, item) => item.isSelected == true ? count + 1 : count, 0) == listItems.length} onClick={() => toggleAllItemSelection(true)} title="Select all of your entries">
-                        <RiCheckboxMultipleLine />
-                    </button>
-                    <button className = {"list-icon" + (listItems.reduce((count, item) => item.isSelected == true ? count + 1 : count, 0) == 0 ? " list-icon-disabled" : " list-icon-active")} disabled={listItems.reduce((count, item) => item.isSelected == true ? count + 1 : count, 0) == 0} onClick={addAllSelectedItems} title="Add a duplicate of all selected items to the end of your entries">
-                        <GrDuplicate />
-                    </button>
-                    <button className = {"list-icon" + (listItems.reduce((count, item) => item.isSelected == true ? count + 1 : count, 0) == 0 ? " list-icon-disabled" : " list-icon-active")} disabled={listItems.reduce((count, item) => item.isSelected == true ? count + 1 : count, 0) == 0} onClick={removeAllSelectedItems} title="Remove all selected items from your entries">
-                        <GoTrash />
-                    </button><br/>
+                    <IconButton
+                        classes={"list-icon" + (listItems.reduce((count, item) => item.isSelected == true ? count + 1 : count, 0) == 0 ? " list-icon-disabled" : " list-icon-active")}
+                        action={() => toggleAllItemSelection(false)}
+                        disableCon={listItems.reduce((count, item) => item.isSelected == true ? count + 1 : count, 0) == 0}
+                        description={"Unselect all of your entries"}
+                        icon={<RiCheckboxMultipleBlankLine />}
+                    />
+                    <IconButton
+                        classes={"list-icon" + (listItems.reduce((count, item) => item.isSelected == true ? count + 1 : count, 0) == listItems.length ? " list-icon-disabled" : " list-icon-active")}
+                        action={() => toggleAllItemSelection(true)}
+                        disableCon={listItems.reduce((count, item) => item.isSelected == true ? count + 1 : count, 0) == listItems.length}
+                        description={"Select all of your entries"}
+                        icon={<RiCheckboxMultipleLine />}
+                    />
+                    <IconButton
+                        classes={"list-icon" + (listItems.reduce((count, item) => item.isSelected == true ? count + 1 : count, 0) == 0 ? " list-icon-disabled" : " list-icon-active")}
+                        action={addAllSelectedItems}
+                        disableCon={listItems.reduce((count, item) => item.isSelected == true ? count + 1 : count, 0) == 0}
+                        description={"Add a duplicate of all selected items to the end of your entries"}
+                        icon={<GrDuplicate />}
+                    />
+                    <IconButton
+                        classes={"list-icon" + (listItems.reduce((count, item) => item.isSelected == true ? count + 1 : count, 0) == 0 ? " list-icon-disabled" : " list-icon-active")}
+                        action={removeAllSelectedItems}
+                        disableCon={listItems.reduce((count, item) => item.isSelected == true ? count + 1 : count, 0) == 0}
+                        description={"Remove all selected items from your entries"}
+                        icon={<GoTrash />}
+                    />
+                    <br/>
 
                     {/* Box where all entries are located */}
                     <br/>
@@ -255,15 +273,28 @@ const sortEntries = useCallback(
 
                     {/* Buttons for list reordering */}
                     <br/>
-                    <button className = {"list-icon" + (listItems.length < 2 ? " list-icon-disabled" : " list-icon-active")} disabled={listItems.length < 2} onClick={reverseEntries} title="Reverses all of your entries">
-                        <FaSortAmountDown />
-                    </button>
-                    <button className = {"list-icon" + (listItems.length < 2 ? " list-icon-disabled" : " list-icon-active")} disabled={listItems.length < 2} onClick={() => sortEntries(false)} title="Sort all of your entries A-Z">
-                        <FaSortAlphaUp />
-                    </button>
-                    <button className = {"list-icon" + (listItems.length < 2 ? " list-icon-disabled" : " list-icon-active")} disabled={listItems.length < 2} onClick={() => sortEntries(true)} title="Sort all of your entries Z-A">
-                        <FaSortAlphaDownAlt />
-                    </button><br/>
+                    <IconButton
+                        classes={"list-icon" + (listItems.length < 2 ? " list-icon-disabled" : " list-icon-active")}
+                        action={reverseEntries}
+                        disableCon={listItems.length < 2}
+                        description={"Reverses all of your entries"}
+                        icon={<FaSortAmountDown />}
+                    />
+                    <IconButton
+                        classes={"list-icon" + (listItems.length < 2 ? " list-icon-disabled" : " list-icon-active")}
+                        action={() => sortEntries(false)}
+                        disableCon={listItems.length < 2}
+                        description={"Sort all of your entries A-Z"}
+                        icon={<FaSortAlphaUp />}
+                    />
+                    <IconButton
+                        classes={"list-icon" + (listItems.length < 2 ? " list-icon-disabled" : " list-icon-active")}
+                        action={() => sortEntries(true)}
+                        disableCon={listItems.length < 2}
+                        description={"Sort all of your entries Z-A"}
+                        icon={<FaSortAlphaDownAlt />}
+                    />
+                    <br/>
                     </React.Fragment>
                 }
             </details>

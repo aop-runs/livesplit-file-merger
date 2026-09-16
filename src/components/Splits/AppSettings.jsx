@@ -1,5 +1,6 @@
 import React from 'react'
 import { DropDown } from '../Inputs/DropDown.jsx'
+import {IconButton } from '../Inputs/IconButton.jsx'
 import { MdOutlineResetTv } from "react-icons/md";
 
 export const AppSettings = ({ unmaskPaths, setUnmaskPaths, updateTheme, resetApplication }) => {
@@ -38,9 +39,12 @@ export const AppSettings = ({ unmaskPaths, setUnmaskPaths, updateTheme, resetApp
                     <input type="checkbox" htmlFor="unmask" checked={unmaskPaths} onChange={(e) => updatePathUnmasking(e.target.checked)}/>
                     Unmask Filepaths
                 </label>
-                <button className="reset-button" type="button" onClick={resetApplication} title="Remove all entries and revert all settings to default">
-                    <MdOutlineResetTv />
-                </button>
+                <IconButton
+                    classes={"reset-button"}
+                    action={resetApplication}
+                    description={"Remove all entries and revert all settings to default"}
+                    icon={<MdOutlineResetTv />}
+                />
                 <br/>
             </details>
         </React.Fragment>

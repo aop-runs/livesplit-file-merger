@@ -2,6 +2,7 @@
 import React, { useEffect }from 'react';
 import { BsCloudDownload } from "react-icons/bs";
 import { GoTrash } from "react-icons/go";
+import { IconButton } from '../Inputs/IconButton.jsx'
 import { StatusPopUp } from '../Inputs/StatusPopUp.jsx'
 import { TextField } from '../Inputs/TextField.jsx'
 import { downloadFile, downloadFileAs, validSpecifier, isAValidFile, openContentsInNewTab } from '../../utils/file.js'
@@ -228,12 +229,18 @@ export const FileDownload = ({ listItems, unmaskPaths, outputSettings, canDownlo
                     <label className = "download-splits-name" onClick={() => openContentsInNewTab(finalOutput.output.data, gatherSplitsDataByTag(finalOutput.output.data, "LayoutPath"), !unmaskPaths)} title = "Click on the filename to view its raw contents before downloading">
                         {finalOutput.output.name}
                     </label>
-                    <button className = "download-button-icon download-button-1" onClick={launchDownload} title="Prepares download for your output splits file">
-                        <BsCloudDownload />
-                    </button>
-                    <button className = "download-button-icon download-button-2" onClick={clearOutputData} title="Clear data from your final output splits">
-                        <GoTrash />
-                    </button>
+                    <IconButton
+                        classes={"download-button-icon download-button-1"}
+                        action={launchDownload}
+                        description={"Prepares download for your output splits file"}
+                        icon={<BsCloudDownload />}
+                    />
+                    <IconButton
+                        classes={"download-button-icon download-button-2"}
+                        action={clearOutputData}
+                        description={"Clear data from your final output splits"}
+                        icon={<GoTrash />}
+                    />
                 </div>
                 </React.Fragment>
             }

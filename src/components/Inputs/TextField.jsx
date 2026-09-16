@@ -1,6 +1,7 @@
 //Based on: https://www.geeksforgeeks.org/html/how-to-add-button-inside-an-input-field-in-html/ & https://www.geeksforgeeks.org/reactjs/how-to-get-the-enter-key-in-reactjs/
 import React, { useRef } from 'react'
 import { DropDown } from '../Inputs/DropDown.jsx'
+import { IconButton } from '../Inputs/IconButton.jsx'
 import { HiArrowPath } from "react-icons/hi2";
 import { TiDeleteOutline } from "react-icons/ti";
 import '../../styles/style.scss'
@@ -46,19 +47,29 @@ export const TextField = ({ title, unmaskCon, moveCursorToEnd, disableCon, place
                 <label>{title}: </label><br/>
                 <div className="textfield-wrapper">
                     <input ref={inputRef} type={unmaskCon ? "text" : "password"} disabled={disableCon} placeholder={placeholderText} value={changeableValue} onChange={(e) => updateFieldValue(e.target.value, true)} onKeyDown={(e) => checkForKey(e.key)} onClick={setCursorToEnd}/>
-                    <button className={!disableCon && changeableValue.length != 0 ? "textfield-active-clear" : "textfield-disabled-clear"} disabled={disableCon || changeableValue.length == 0} onClick={() => updateFieldValue("", true)}>
-                        <TiDeleteOutline />
-                    </button>
+                    <IconButton
+                        classes={!disableCon && changeableValue.length != 0 ? "textfield-active-clear" : "textfield-disabled-clear"}
+                        action={() => updateFieldValue("", true)}
+                        disableCon={disableCon || changeableValue.length == 0}
+                        description={"Clear this textfield"}
+                        icon={<TiDeleteOutline />}
+                    />
                 </div>
                 {defaultButton !== undefined &&
-                    <button className={"textfield-extra-button" + (disableCon ? " textfield-disabled-button" : " textfield-active-button")} onClick={() => updateFieldValue(defaultButton.value, !disableCon)} title={defaultButton.description}>
-                        <HiArrowPath />
-                    </button>
+                    <IconButton
+                        classes={"textfield-extra-button" + (disableCon ? " textfield-disabled-button" : " textfield-active-button")}
+                        action={() => updateFieldValue(defaultButton.value, !disableCon)}
+                        description={defaultButton.description}
+                        icon={<HiArrowPath />}
+                    />
                 }
                 {miscButton !== undefined &&
-                    <button className={"textfield-misc-button" + (miscButton.disableCon ? " textfield-disabled-button" : " textfield-active-button")} onClick={() => runMiscFunction(miscButton.function, !miscButton.disableCon)} title={miscButton.description}>
-                        {miscButton.icon}
-                    </button>
+                    <IconButton
+                        classes={"textfield-misc-button" + (miscButton.disableCon ? " textfield-disabled-button" : " textfield-active-button")}
+                        action={() => runMiscFunction(miscButton.function, !miscButton.disableCon)}
+                        description={miscButton.description}
+                        icon={miscButton.icon}
+                    />
                 }
                 {dropDown !== undefined &&
                     <DropDown

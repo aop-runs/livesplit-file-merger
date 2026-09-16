@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { ItemModal } from './ItemModal'
+import { IconButton } from '../Inputs/IconButton.jsx'
 import { BiWindowOpen } from "react-icons/bi";
 import { GoTrash } from "react-icons/go";
 import { GrDuplicate } from "react-icons/gr";
@@ -60,24 +61,50 @@ export const Item = ({ id, index, listSize, unmaskPaths, canDownload, itemData, 
         <span className="list-entry-text">
             {itemData.runName + (itemData.initialRepeats != 0 ? " (" + itemData.initialRepeats.toString() + ")" : "")}
         </span><br/>
-        <button className = {"list-icon" + (index == 0 ? " list-icon-disabled" : " list-icon-active")} onPointerDown={(event) => moveItemUp(event, index != 0)} data-no-dnd="true" disabled={index==0} title="Move this file up one spot in your entries">
-            <TbArrowMoveUp />
-        </button>
-        <button className = {"list-icon" + (index == listSize-1 ? " list-icon-disabled" : " list-icon-active")} onPointerDown={(event) => moveItemDown(event, index != listSize-1)} data-no-dnd="true" disabled={index==listSize-1} title="Move this file down one spot in your entries">
-            <TbArrowMoveDown />
-        </button>
-        <button className = "list-icon list-icon-active" onPointerDown={(event) => addItem(event)} data-no-dnd="true" title="Add a duplicate of this file to the end of your entries">
-            <GrDuplicate />
-        </button>
-        <button className = "list-icon list-icon-active" onPointerDown={(event) => removeItem(event)} data-no-dnd="true" title="Remove this file from your entries">
-            <GoTrash />
-        </button>
-        <button className = "list-icon list-icon-active" onPointerDown={(event) => openModal(event)} data-no-dnd="true" title="Open important contents for this entry">
-            <BiWindowOpen />
-        </button>
-        <button className = "list-icon list-icon-active" onPointerDown={(event) => toggleItemSelection(event, !itemData.isSelected)} data-no-dnd="true" title={(!itemData.isSelected ? "Select" : "Unselect") + " this entry"}>
-            {itemData.isSelected ? <MdOutlineCheckBox /> : <MdCheckBoxOutlineBlank />}
-        </button>
+        <IconButton
+            entryButton={true}
+            classes={"list-icon" + (index == 0 ? " list-icon-disabled" : " list-icon-active")}
+            action={(event) => moveItemUp(event, index != 0)}
+            disableCon={index == 0}
+            description={"Move this file down one spot in your entries"}
+            icon={<TbArrowMoveUp />}
+        />
+        <IconButton
+            entryButton={true}
+            classes={"list-icon" + (index == listSize-1 ? " list-icon-disabled" : " list-icon-active")}
+            action={(event) => moveItemDown(event, index != listSize-1)}
+            disableCon={index == listSize-1}
+            description={"Move this file down one spot in your entries"}
+            icon={<TbArrowMoveDown />}
+        />
+        <IconButton
+            entryButton={true}
+            classes={"list-icon list-icon-active"}
+            action={(event) => toggleItemSelection(event, addItem(event))}
+            description={"Add a duplicate of this file to the end of your entries"}
+            icon={<GrDuplicate />}
+        />
+        <IconButton
+            entryButton={true}
+            classes={"list-icon list-icon-active"}
+            action={(event) => toggleItemSelection(event, removeItem(event))}
+            description={"Remove this file from your entries"}
+            icon={<GoTrash />}
+        />
+        <IconButton
+            entryButton={true}
+            classes={"list-icon list-icon-active"}
+            action={(event) => toggleItemSelection(event, openModal(event))}
+            description={"Open important contents for this entry"}
+            icon={<BiWindowOpen />}
+        />
+        <IconButton
+            entryButton={true}
+            classes={"list-icon list-icon-active"}
+            action={(event) => toggleItemSelection(event, !itemData.isSelected)}
+            description={(!itemData.isSelected ? "Select" : "Unselect") + " this entry"}
+            icon={itemData.isSelected ? <MdOutlineCheckBox /> : <MdCheckBoxOutlineBlank />}
+        />
         {isModalOpen && <ItemModal
             itemData={itemData}
             index={index}

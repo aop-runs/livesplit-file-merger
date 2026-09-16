@@ -18,7 +18,6 @@ export const StatusPopUp = ({ header, message }) => {
     }
 
 return (
-        //Modal div upon item click
         <React.Fragment>
             <div className={"status " + getColorClass(header)} title="Status Pop-Up">
                 <label className="status-header">
