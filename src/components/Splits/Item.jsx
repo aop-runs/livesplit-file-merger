@@ -80,21 +80,21 @@ export const Item = ({ id, index, listSize, unmaskPaths, canDownload, itemData, 
         <IconButton
             entryButton={true}
             classes={"list-icon list-icon-active"}
-            action={(event) => toggleItemSelection(event, addItem(event))}
+            action={(event) => addItem(event)}
             description={"Add a duplicate of this file to the end of your entries"}
             icon={<GrDuplicate />}
         />
         <IconButton
             entryButton={true}
             classes={"list-icon list-icon-active"}
-            action={(event) => toggleItemSelection(event, removeItem(event))}
+            action={(event) => removeItem(event)}
             description={"Remove this file from your entries"}
             icon={<GoTrash />}
         />
         <IconButton
             entryButton={true}
             classes={"list-icon list-icon-active"}
-            action={(event) => toggleItemSelection(event, openModal(event))}
+            action={(event) => openModal(event)}
             description={"Open important contents for this entry"}
             icon={<BiWindowOpen />}
         />
