@@ -16,9 +16,6 @@ export const ContentContainer = () => {
     //Light mode toggle
     const updateTheme = (theme) => {
         if(theme == ""){
-            return
-        }
-        else if(theme.startsWith("Browser")){
             setUseLightMode(window.matchMedia('(prefers-color-scheme: light)').matches)
         }
         else{

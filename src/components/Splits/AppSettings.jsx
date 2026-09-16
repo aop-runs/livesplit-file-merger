@@ -21,11 +21,11 @@ export const AppSettings = ({ unmaskPaths, setUnmaskPaths, updateTheme, resetApp
                     Website Theme:
                 </label><br/>
                 <DropDown
-                    title={"Select Theme"}
+                    title={"Browser (Default)"}
                     description={"Current theme used for application"}
                     updateFunction={updateTheme}
                     canClickToRefresh={false}
-                    choices={["Browser (Default)", "Light Mode", "Dark Mode"].map((t, index) => {
+                    choices={["Light Mode", "Dark Mode"].map((t, index) => {
                         return (
                             <option key={index} value={t}>
                                 {t}
