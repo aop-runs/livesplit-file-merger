@@ -6,10 +6,11 @@ import { ItemModal } from './ItemModal'
 import { BiWindowOpen } from "react-icons/bi";
 import { GoTrash } from "react-icons/go";
 import { GrDuplicate } from "react-icons/gr";
+import { MdOutlineCheckBox, MdCheckBoxOutlineBlank } from "react-icons/md";
 import { TbArrowMoveUp, TbArrowMoveDown } from "react-icons/tb";
 import '../../styles/style.scss'
 
-export const Item = ({ id, index, listSize, unmaskPaths, canDownload, itemData, moveListItem, addListItem, removeListItem }) => {
+export const Item = ({ id, index, listSize, unmaskPaths, canDownload, itemData, moveListItem, addListItem, removeListItem, toggleListItemSelection }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: id, disabled: isModalOpen });
     const animation = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1, cursor: !isModalOpen ? (isDragging ? 'grabbing' : 'grab') : "default" };
@@ -47,9 +48,15 @@ export const Item = ({ id, index, listSize, unmaskPaths, canDownload, itemData, 
         removeListItem(index)
     }
 
+    //Toggle selection for item
+    const toggleItemSelection = (event, value) => {
+        event.stopPropagation()
+        toggleListItemSelection(index, value)
+    }
+
     return (
         //Item contents
-        <div ref={setNodeRef} style={animation} {...attributes} {...listeners} className={"list-entry"} title="Click to drag this entry to another position">
+        <div ref={setNodeRef} style={animation} {...attributes} {...listeners} className={"list-entry" + (itemData.isSelected ? " list-entry-selected" : "")} title="Click to drag this entry to another position">
         <span className="list-entry-text">
             {itemData.runName + (itemData.initialRepeats != 0 ? " (" + itemData.initialRepeats.toString() + ")" : "")}
         </span><br/>
@@ -67,6 +74,9 @@ export const Item = ({ id, index, listSize, unmaskPaths, canDownload, itemData, 
         </button>
         <button className = "list-icon list-icon-active" onPointerDown={(event) => openModal(event)} data-no-dnd="true" title="Open important contents for this entry">
             <BiWindowOpen />
+        </button>
+        <button className = "list-icon list-icon-active" onPointerDown={(event) => toggleItemSelection(event, !itemData.isSelected)} data-no-dnd="true" title={(!itemData.isSelected ? "Select" : "Unselect") + " this entry"}>
+            {itemData.isSelected ? <MdOutlineCheckBox /> : <MdCheckBoxOutlineBlank />}
         </button>
         {isModalOpen && <ItemModal
             itemData={itemData}

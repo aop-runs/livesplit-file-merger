@@ -50,6 +50,7 @@ export const SplitsColumn = ({ listItems, setListItems, unmaskPaths, setUnmaskPa
                     ...{id: listItems.length+1},
                     ...newData
                 })
+                updatedFiles[updatedFiles.length - 1].isSelected = false
                 refreshComparisons(updatedFiles)
                 return updatedFiles
             })

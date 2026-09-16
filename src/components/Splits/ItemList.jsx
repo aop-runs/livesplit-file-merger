@@ -3,6 +3,9 @@ import React, { useCallback } from 'react';
 import { SortableContext, rectSortingStrategy, sortableKeyboardCoordinates, arrayMove } from '@dnd-kit/sortable';
 import { DndContext, PointerSensor, KeyboardSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { FaSortAlphaUp, FaSortAlphaDownAlt, FaSortAmountDown } from "react-icons/fa";
+import { GoTrash } from "react-icons/go";
+import { GrDuplicate } from "react-icons/gr";
+import { RiCheckboxMultipleLine, RiCheckboxMultipleBlankLine } from "react-icons/ri";
 import { Item } from './Item.jsx'
 import '../../styles/style.scss'
 
@@ -97,6 +100,48 @@ const removeFileListItem = useCallback(
     [listItems],
 )
 
+//Toggle selection for current entry
+const toggleFileListItemSelection = useCallback(
+    (index, value) => {
+        setListItems(listItems => {
+            const updatedFiles = [...listItems]
+            updatedFiles[index].isSelected = value
+            return updatedFiles
+        })
+    },
+    [listItems],
+)
+
+//Toggle selection for all entries
+const toggleAllItemSelection =
+    (value) => {
+        for(let i = 0; i < listItems.length; i++) {
+            toggleFileListItemSelection(i, value)
+        }
+    }
+
+//Add duplicate entries for all selected items
+const addAllSelectedItems = 
+    () => {
+        for(let i = 0; i < listItems.length; i++) {
+            if(listItems[i].isSelected){
+                addListItem(listItems[i])
+            }
+        }
+    }
+
+//Remove all selected items
+const removeAllSelectedItems = 
+    () => {
+        if(confirm("Are you sure you want to remove all of your currently selected entries?")){
+            for(let i = listItems.length - 1; i >= 0; i--) {
+                if(listItems[i].isSelected){
+                    removeFileListItem(i)
+                }
+            }
+        }
+    }
+
 //Reverse entries
 const reverseEntries = useCallback(
     () => {
@@ -156,11 +201,35 @@ const sortEntries = useCallback(
                 <summary className ="sectionTitle">
                     Split Entries
                 </summary>
+
+                {/* Number of items and slected entries if any exist */}
                 <br/><label title="Number of files used for output splits">
                     Entries: {listItems.length}
-                </label><br/>
+                </label>
+                {listItems.reduce((count, item) => item.isSelected == true ? count + 1 : count, 0) != 0 &&
+                    <label title="Number of entries selected">
+                        {(" (" + (listItems.reduce((count, item) => item.isSelected == true ? count + 1 : count, 0) == listItems.length ? "All" : listItems.reduce((count, item) => item.isSelected == true ? count + 1 : count, 0)) + " Entr" + (listItems.reduce((count, item) => item.isSelected == true ? count + 1 : count, 0) == 1 ? "y" : "ies") + " Selected)")}
+                    </label>
+                }<br/>
+                
                 {listItems.length != 0 &&
                     <React.Fragment>
+                    
+                    {/* Buttons for entry selection */}
+                    <button className = {"list-icon" + (listItems.reduce((count, item) => item.isSelected == true ? count + 1 : count, 0) == 0 ? " list-icon-disabled" : " list-icon-active")} disabled={listItems.reduce((count, item) => item.isSelected == true ? count + 1 : count, 0) == 0} onClick={() => toggleAllItemSelection(false)} title="Unselect all of your entries">
+                        <RiCheckboxMultipleBlankLine />
+                    </button>
+                    <button className = {"list-icon" + (listItems.reduce((count, item) => item.isSelected == true ? count + 1 : count, 0) == listItems.length ? " list-icon-disabled" : " list-icon-active")} disabled={listItems.reduce((count, item) => item.isSelected == true ? count + 1 : count, 0) == listItems.length} onClick={() => toggleAllItemSelection(true)} title="Select all of your entries">
+                        <RiCheckboxMultipleLine />
+                    </button>
+                    <button className = {"list-icon" + (listItems.reduce((count, item) => item.isSelected == true ? count + 1 : count, 0) == 0 ? " list-icon-disabled" : " list-icon-active")} disabled={listItems.reduce((count, item) => item.isSelected == true ? count + 1 : count, 0) == 0} onClick={addAllSelectedItems} title="Add a duplicate of all selected items to the end of your entries">
+                        <GrDuplicate />
+                    </button>
+                    <button className = {"list-icon" + (listItems.reduce((count, item) => item.isSelected == true ? count + 1 : count, 0) == 0 ? " list-icon-disabled" : " list-icon-active")} disabled={listItems.reduce((count, item) => item.isSelected == true ? count + 1 : count, 0) == 0} onClick={removeAllSelectedItems} title="Remove all selected items from your entries">
+                        <GoTrash />
+                    </button><br/>
+
+                    {/* Box where all entries are located */}
                     <br/>
                     <div className="list-box" title="All entries for LiveSplit files that will be included for your output splits in order">
                     <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
@@ -177,6 +246,7 @@ const sortEntries = useCallback(
                                 moveListItem={moveFileListItem}
                                 addListItem={addListItem}
                                 removeListItem={removeFileListItem}
+                                toggleListItemSelection={toggleFileListItemSelection}
                             />
                         ))}
                         </SortableContext>
