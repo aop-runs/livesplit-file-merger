@@ -116,6 +116,23 @@ export function gatherRunName(game, category){
     return nameValues.join(" - ");
 }
 
+//Gather PB from splits which can either be real time or game time
+export function gatherPB(contents){
+    let splits = new DOMParser().parseFromString(contents, validSpecifier.streamType);
+    try{
+        let pbSegment = splits.getElementsByTagName("Segment")[splits.getElementsByTagName("Segment").length - 1].getElementsByTagName("SplitTimes")[0];
+        if(pbSegment.getElementsByTagName("RealTime").length > 0 && pbSegment.getElementsByTagName("GameTime").length > 0){
+            return Math.min(timeToSeconds(pbSegment.getElementsByTagName("RealTime")[0].textContent), timeToSeconds(pbSegment.getElementsByTagName("GameTime")[0].textContent));
+        }
+        else{
+            return Math.max(pbSegment.getElementsByTagName("RealTime").length ? timeToSeconds(pbSegment.getElementsByTagName("RealTime")[0].textContent) : 0.0, pbSegment.getElementsByTagName("GameTime").length ? timeToSeconds(pbSegment.getElementsByTagName("GameTime")[0].textContent) : 0.0);
+        } 
+    }
+    catch{
+        return 0.0;
+    }
+}
+
 //Clean splits file to remove irrelevant data for quicker DOM parsing and add reusable segment icons to cache
 export function cleanSplitsFile(contents){
     let splits = new DOMParser().parseFromString(contents, validSpecifier.streamType);
@@ -182,7 +199,7 @@ export function timeToSeconds(time){
 }
 
 //Convert seconds to split time
-function secondsToTime(time){
+export function secondsToTime(time, useDecimals){
     let dayN = Math.floor(time / 86400);
     let hourN = Math.floor(time / 3600);
     let hour = "";
@@ -196,7 +213,7 @@ function secondsToTime(time){
     let min = minN < 10 ? "0" + minN.toString() : minN.toString();
     let secN = Math.floor((time % 3600) % 60);
     let decimals = time - Math.floor(time);
-    let sec = (secN < 10 ? "0" + secN.toString() : secN.toString()) + "." + decimals.toFixed(7).toString().split(".")[1];
+    let sec = (secN < 10 ? "0" + secN.toString() : secN.toString()) + (useDecimals ? "." + decimals.toFixed(7).toString().split(".")[1] : "");
     return [hour, min, sec].join(":");
 }
 
@@ -274,7 +291,7 @@ export function createOutputSplits(files, outputSettings){
                             try{
                                 let time = timeToSeconds(child.getElementsByTagName("SplitTimes")[0].getElementsByTagName("SplitTime")[0].getElementsByTagName(comp[timing].tag)[0].textContent);
                                 comp[timing].runningSeconds += (time - comp[timing].runningSeconds) + comp[timing].setupTimestamp;
-                                newSegment.getElementsByTagName("SplitTimes")[0].getElementsByTagName("SplitTime")[1].getElementsByTagName(comp[timing].tag)[0].textContent = secondsToTime(comp[timing].runningSeconds);
+                                newSegment.getElementsByTagName("SplitTimes")[0].getElementsByTagName("SplitTime")[1].getElementsByTagName(comp[timing].tag)[0].textContent = secondsToTime(comp[timing].runningSeconds, true);
                             }
                             catch{}
                         }
@@ -327,7 +344,7 @@ export function createOutputSplits(files, outputSettings){
                 //Set split's gold to game's sum of best segments
                 for(let timing of [ ["RealTime", runningRealGold != null && runningRealGold != 0.0, runningRealGold], ["GameTime", runningGameGold != null && runningGameGold != 0.0 , runningGameGold] ]){
                     if(timing[1]){
-                        newSegment.getElementsByTagName("BestSegmentTime")[0].getElementsByTagName(timing[0])[0].textContent = secondsToTime(timing[2])
+                        newSegment.getElementsByTagName("BestSegmentTime")[0].getElementsByTagName(timing[0])[0].textContent = secondsToTime(timing[2], true)
                     }
                 }
 
@@ -340,7 +357,7 @@ export function createOutputSplits(files, outputSettings){
                             try{
                                 let time = timeToSeconds(child.getElementsByTagName("SplitTimes")[0].getElementsByTagName("SplitTime")[0].getElementsByTagName(comp[timing].tag)[0].textContent);
                                 comp[timing].runningSeconds += (time - comp[timing].runningSeconds) + comp[timing].setupTimestamp;
-                                newSegment.getElementsByTagName("SplitTimes")[0].getElementsByTagName("SplitTime")[1].getElementsByTagName(comp[timing].tag)[0].textContent = secondsToTime(comp[timing].runningSeconds);
+                                newSegment.getElementsByTagName("SplitTimes")[0].getElementsByTagName("SplitTime")[1].getElementsByTagName(comp[timing].tag)[0].textContent = secondsToTime(comp[timing].runningSeconds, true);
                             }
                             catch{}
                         }
@@ -379,7 +396,7 @@ export function createOutputSplits(files, outputSettings){
                     if(comp[timing].check){
                         let compIndex = newSegment.getElementsByTagName("SplitTimes")[0].getElementsByTagName("SplitTime").length - 1;
                         comp[timing].runningSeconds += timeToSeconds(files[fileIndex + 1].setup);
-                        newSegment.getElementsByTagName("SplitTimes")[0].getElementsByTagName("SplitTime")[compIndex].getElementsByTagName(comp[timing].tag)[0].textContent = secondsToTime(comp[timing].runningSeconds);
+                        newSegment.getElementsByTagName("SplitTimes")[0].getElementsByTagName("SplitTime")[compIndex].getElementsByTagName(comp[timing].tag)[0].textContent = secondsToTime(comp[timing].runningSeconds, true);
                         comp[timing].setupTimestamp = comp[timing].runningSeconds;
                         comp[timing].runningSeconds = 0.0;
                     }

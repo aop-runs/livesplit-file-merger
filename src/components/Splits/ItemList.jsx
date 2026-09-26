@@ -6,6 +6,7 @@ import { IconButton } from '../Inputs/IconButton.jsx'
 import { FaSortAlphaUp, FaSortAlphaDownAlt, FaSortAmountDown } from "react-icons/fa";
 import { GoTrash } from "react-icons/go";
 import { GrDuplicate } from "react-icons/gr";
+import { LuClockArrowUp, LuClockArrowDown } from "react-icons/lu";
 import { RiCheckboxMultipleLine, RiCheckboxMultipleBlankLine } from "react-icons/ri";
 import { Item } from './Item.jsx'
 import '../../styles/style.scss'
@@ -167,15 +168,15 @@ const reverseEntries = useCallback(
 
 //Sort entries
 const sortEntries = useCallback(
-    (reversed) => {
+    (reversed, useName) => {
         setListItems(listItems => {
             const updatedFiles = [...listItems]
             const { compare } = Intl.Collator('en-US');
             if(!reversed){
-                updatedFiles.sort((a, b) => compare(a.runName, b.runName) || a.initialRepeats - b.initialRepeats);
+                useName ? updatedFiles.sort((a, b) => compare(a.runName, b.runName) || a.initialRepeats - b.initialRepeats) : updatedFiles.sort((a, b) => a.time - b.time);
             }
             else{
-                updatedFiles.sort((a, b) => compare(b.runName, a.runName) || b.initialRepeats - a.initialRepeats);
+                useName ? updatedFiles.sort((a, b) => compare(b.runName, a.runName) || b.initialRepeats - a.initialRepeats) : updatedFiles.sort((a, b) => b.time - a.time);
             }
             for(let i = 0; i < updatedFiles.length; i++) {
                 updatedFiles[i].id = i+1;
@@ -281,17 +282,31 @@ const sortEntries = useCallback(
                     />
                     <IconButton
                         classes={"list-icon" + (listItems.length < 2 ? " list-icon-disabled" : " list-icon-active")}
-                        action={() => sortEntries(false)}
+                        action={() => sortEntries(false, true)}
                         disableCon={listItems.length < 2}
                         description={"Sort all of your entries A-Z"}
                         icon={<FaSortAlphaUp />}
                     />
                     <IconButton
                         classes={"list-icon" + (listItems.length < 2 ? " list-icon-disabled" : " list-icon-active")}
-                        action={() => sortEntries(true)}
+                        action={() => sortEntries(true, true)}
                         disableCon={listItems.length < 2}
                         description={"Sort all of your entries Z-A"}
                         icon={<FaSortAlphaDownAlt />}
+                    />
+                    <IconButton
+                        classes={"list-icon" + (listItems.length < 2 ? " list-icon-disabled" : " list-icon-active")}
+                        action={() => sortEntries(false, false)}
+                        disableCon={listItems.length < 2}
+                        description={"Sort all of your entries by run length in ascending order"}
+                        icon={<LuClockArrowUp />}
+                    />
+                    <IconButton
+                        classes={"list-icon" + (listItems.length < 2 ? " list-icon-disabled" : " list-icon-active")}
+                        action={() => sortEntries(true, false)}
+                        disableCon={listItems.length < 2}
+                        description={"Sort all of your entries by run length in descending order"}
+                        icon={<LuClockArrowDown />}
                     />
                     <br/>
                     </React.Fragment>

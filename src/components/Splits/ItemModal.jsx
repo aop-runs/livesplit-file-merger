@@ -1,7 +1,7 @@
 import React from 'react'
 import { FaRegWindowClose } from "react-icons/fa";
 import { openContentsInNewTab } from '../../utils/file.js'
-import { timeToSeconds } from "../../utils/livesplit.js";
+import { timeToSeconds, secondsToTime } from "../../utils/livesplit.js";
 import '../../styles/style.scss'
 
 export const ItemModal = ({ itemData, index, unmaskPaths, canDownload, closeModal }) => {
@@ -15,7 +15,7 @@ export const ItemModal = ({ itemData, index, unmaskPaths, canDownload, closeModa
                             <FaRegWindowClose />
                         </span>
                         <h3 title="Full run name for this entry">
-                            {(index + 1).toString() + ". " + itemData.runName + (itemData.initialRepeats != 0 ? " (" + itemData.initialRepeats.toString() + ")" : "")}
+                            {(index + 1).toString() + ". " + itemData.runName + (itemData.initialRepeats != 0 ? " (" + itemData.initialRepeats.toString() + ")" : "") + (Math.trunc(itemData.time) != 0 ? " in " + secondsToTime(itemData.time, false) : "")}
                         </h3>
                         <p title="Splits filename for this entry">
                             Filename:<br/>{itemData.filename}

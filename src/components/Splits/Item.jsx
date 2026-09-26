@@ -9,6 +9,7 @@ import { GoTrash } from "react-icons/go";
 import { GrDuplicate } from "react-icons/gr";
 import { MdOutlineCheckBox, MdCheckBoxOutlineBlank } from "react-icons/md";
 import { TbArrowMoveUp, TbArrowMoveDown } from "react-icons/tb";
+import { secondsToTime } from '../../utils/livesplit.js'
 import '../../styles/style.scss'
 
 export const Item = ({ id, index, listSize, unmaskPaths, canDownload, itemData, moveListItem, addListItem, removeListItem, toggleListItemSelection }) => {
@@ -59,7 +60,7 @@ export const Item = ({ id, index, listSize, unmaskPaths, canDownload, itemData, 
         //Item contents
         <div ref={setNodeRef} style={animation} {...attributes} {...listeners} className={"list-entry" + (itemData.isSelected ? " list-entry-selected" : "")} title="Click to drag this entry to another position">
         <span className="list-entry-text">
-            {itemData.runName + (itemData.initialRepeats != 0 ? " (" + itemData.initialRepeats.toString() + ")" : "")}
+            {itemData.runName + (itemData.initialRepeats != 0 ? " (" + itemData.initialRepeats.toString() + ")" : "") + (Math.trunc(itemData.time) != 0 ? " in " + secondsToTime(itemData.time, false) : "")}
         </span><br/>
         <IconButton
             entryButton={true}
