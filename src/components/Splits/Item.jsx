@@ -42,7 +42,7 @@ export const Item = ({ id, index, listSize, unmaskPaths, canDownload, itemData, 
     }
     const addItem = (event) => {
         event.stopPropagation()
-        addListItem(itemData)
+        addListItem(itemData, 0)
     }
     const removeItem = (event) => {
         event.stopPropagation()

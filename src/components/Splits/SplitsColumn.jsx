@@ -38,13 +38,13 @@ export const SplitsColumn = ({ listItems, setListItems, unmaskPaths, setUnmaskPa
 
     //Add entry to list
     const addFileListItem = useCallback(
-        (itemData) => {
+        (itemData, predeterminedRepeats) => {
             setListItems(listItems => {
                 const updatedFiles = [...listItems]
                 let newData = {...itemData}
                 if("id" in itemData){
                     delete newData.id
-                    newData.initialRepeats = findRepeats(newData.runName)
+                    newData.initialRepeats = findRepeats(newData.runName) + predeterminedRepeats
                 }
                 updatedFiles.push({
                     ...{id: listItems.length+1},

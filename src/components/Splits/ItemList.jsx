@@ -124,10 +124,9 @@ const toggleAllItemSelection =
 //Add duplicate entries for all selected items
 const addAllSelectedItems = 
     () => {
-        for(let i = 0; i < listItems.length; i++) {
-            if(listItems[i].isSelected){
-                addListItem(listItems[i])
-            }
+        let selected = listItems.filter(item => item.isSelected == true)
+        for(let i = 0; i < selected.length; i++) {
+            addListItem(selected[i], selected.slice(0, i).reduce((count, item) => item.runName == selected[i].runName ? count + 1 : count, 0))
         }
     }
 
