@@ -205,8 +205,8 @@ export function createOutputSplits(files, outputSettings){
     
     //Everything outside segments
     let finalOutput = new DOMParser().parseFromString(gatherFullTemplate(outputSettings["runMetadata"].emu), validSpecifier.streamType);
-    finalOutput.getElementsByTagName("GameName")[0].textContent = outputSettings["runName"].game;
-    finalOutput.getElementsByTagName("CategoryName")[0].textContent = outputSettings["runName"].category;
+    finalOutput.getElementsByTagName("GameName")[0].textContent = outputSettings["runName"].game.trim().length != 0 ? outputSettings["runName"].game : "Multi-Game Leaderboard";
+    finalOutput.getElementsByTagName("CategoryName")[0].textContent = outputSettings["runName"].category.trim().length != 0 ? outputSettings["runName"].category : "Multi-Game Category";
     let layout = outputSettings["customInfo"].layout == null ? files[0].layoutPath : outputSettings["customInfo"].layout;
     let offset = outputSettings["customInfo"].offset == null ? files[0].offset : outputSettings["customInfo"].offset;
     finalOutput.getElementsByTagName("LayoutPath")[0].textContent = layout;
