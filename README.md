@@ -11,7 +11,7 @@ Click [here](https://aop-runs.github.io/livesplit-file-merger/) to open the tool
 * Reorder your split files by smoothly dragging each entry to its desired spot within your run using [@dnd-kit](https://docs.dndkit.com/) functionality.
 
 ### Split Entry Management:
-* Aside from reordering your split files by dragging them, you can choose to reverse or sort them alphabetically by run name.
+* Aside from reordering your split files by dragging them, you can choose to reverse or sort your entries by run name or run length.
 * Remove unwanted runs from your entries and duplicate runs as needed with the ability to select multiple items at once.
 * View important properties about each entry in a seprate modal window.
 
