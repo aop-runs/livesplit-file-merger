@@ -4,6 +4,7 @@ import { SortableContext, rectSortingStrategy, sortableKeyboardCoordinates, arra
 import { DndContext, PointerSensor, KeyboardSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { IconButton } from '../Inputs/IconButton.jsx'
 import { FaSortAlphaUp, FaSortAlphaDownAlt, FaSortAmountDown } from "react-icons/fa";
+import { FaShuffle } from "react-icons/fa6";
 import { GoTrash } from "react-icons/go";
 import { GrDuplicate } from "react-icons/gr";
 import { LuClockArrowUp, LuClockArrowDown } from "react-icons/lu";
@@ -23,7 +24,7 @@ export const ItemList = ({ listItems, setListItems, addListItem, outputSettings,
         })
     );
 
-    //Pre-included functionality to end
+    //Pre-included functionality to end dragging
     const handleDragEnd = ({ active, over }) => {
         if (!over || active.id == over.id) {
             return;
@@ -173,10 +174,10 @@ const sortEntries = useCallback(
             const updatedFiles = [...listItems]
             const { compare } = Intl.Collator('en-US');
             if(!reversed){
-                useName ? updatedFiles.sort((a, b) => compare(a.runName, b.runName) || a.initialRepeats - b.initialRepeats) : updatedFiles.sort((a, b) => a.time - b.time);
+                useName ? updatedFiles.sort((a, b) => compare(a.runName, b.runName) || a.initialRepeats - b.initialRepeats) : updatedFiles.sort((a, b) => a.time - b.time || a.initialRepeats - b.initialRepeats);
             }
             else{
-                useName ? updatedFiles.sort((a, b) => compare(b.runName, a.runName) || b.initialRepeats - a.initialRepeats) : updatedFiles.sort((a, b) => b.time - a.time);
+                useName ? updatedFiles.sort((a, b) => compare(b.runName, a.runName) || b.initialRepeats - a.initialRepeats) : updatedFiles.sort((a, b) => b.time - a.time || b.initialRepeats - a.initialRepeats);
             }
             for(let i = 0; i < updatedFiles.length; i++) {
                 updatedFiles[i].id = i+1;
@@ -194,6 +195,33 @@ const sortEntries = useCallback(
     },
     [listItems],
 )
+
+//Shuffle entries
+const shuffleEntries = useCallback(
+    () => {
+        setListItems(listItems => {
+            const updatedFiles = [...listItems]
+            for(let i = updatedFiles.length - 1; i > 0; i--) {
+                let r = Math.floor(Math.random() * (i + 1));
+                [updatedFiles[i], updatedFiles[r]] = [updatedFiles[r], updatedFiles[i]];
+            }
+            for(let i = 0; i < updatedFiles.length; i++) {
+                updatedFiles[i].id = i+1;
+            }
+            setOutputSettings(outputSettings => {
+                const updatedSettings = {...outputSettings}
+                if(!updatedSettings["toggleSettings"]["same"]){
+                    updatedSettings["setupTime"] = updatedFiles[updatedSettings["entryIndex"]].setup
+                }
+                return updatedSettings
+            })
+            refreshComparisons(updatedFiles)
+            return updatedFiles
+        })
+    },
+    [listItems],
+)
+
 
   return (
     <React.Fragment> 
@@ -307,6 +335,13 @@ const sortEntries = useCallback(
                         disableCon={listItems.length < 2}
                         description={"Sort all of your entries by run length in descending order"}
                         icon={<LuClockArrowDown />}
+                    />
+                    <IconButton
+                        classes={"list-icon" + (listItems.length < 2 ? " list-icon-disabled" : " list-icon-active")}
+                        action={shuffleEntries}
+                        disableCon={listItems.length < 2}
+                        description={"Shuffle all of your entries into a random order"}
+                        icon={<FaShuffle />}
                     />
                     <br/>
                     </React.Fragment>
