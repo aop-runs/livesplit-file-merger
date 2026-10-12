@@ -232,7 +232,7 @@ export const FileDownload = ({ listItems, unmaskPaths, outputSettings, canDownlo
                     <IconButton
                         classes={"download-button-icon download-button-1"}
                         action={launchDownload}
-                        description={"Prepares download for your output splits file"}
+                        description={"Prepare download for your output splits file"}
                         icon={<BsCloudDownload />}
                     />
                     <IconButton
