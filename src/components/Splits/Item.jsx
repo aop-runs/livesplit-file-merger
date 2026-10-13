@@ -14,6 +14,7 @@ import '../../styles/style.scss'
 
 export const Item = ({ id, index, listSize, unmaskPaths, canDownload, itemData, moveListItem, addListItem, removeListItem, toggleListItemSelection }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [iconsLoaded, setIconsLoaded] = useState(false);
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: id, disabled: isModalOpen });
     const animation = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1, cursor: !isModalOpen ? (isDragging ? 'grabbing' : 'grab') : "default" };
     
@@ -23,6 +24,7 @@ export const Item = ({ id, index, listSize, unmaskPaths, canDownload, itemData, 
         setIsModalOpen(true)
     }
     const closeModal = () => {
+        setIconsLoaded(false)
         setIsModalOpen(false)
     }
     
@@ -111,6 +113,8 @@ export const Item = ({ id, index, listSize, unmaskPaths, canDownload, itemData, 
             index={index}
             unmaskPaths={unmaskPaths}
             canDownload={canDownload}
+            iconsLoaded={iconsLoaded}
+            setIconsLoaded={setIconsLoaded}
             closeModal={closeModal}
         />}
         </div>
