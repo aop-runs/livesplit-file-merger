@@ -44,3 +44,5 @@ Want to help make this tool better? Feel free to work on an existing issue from 
 4. Work off your local development server by running<br>
 `npm run dev`
 5. If everything is working correctly, you may open the localhost link returned from the last step in your desired browser and then start contributing.
+
+Note: Due to inconsistencies with the bulit-in browser for Visual Studio Code involving some of the UI and functionality; It is recommended to just test your code on an official browser instead.
