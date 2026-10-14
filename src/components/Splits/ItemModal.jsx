@@ -1,10 +1,11 @@
 import React from 'react'
 import { FaRegWindowClose } from "react-icons/fa";
 import { openContentsInNewTab } from '../../utils/file.js'
+import { gatherIconFromStream } from '../../utils/images.js'
 import { timeToSeconds, secondsToTime } from "../../utils/livesplit.js";
 import '../../styles/style.scss'
 
-export const ItemModal = ({ itemData, index, unmaskPaths, canDownload, closeModal }) => {
+export const ItemModal = ({ itemData, index, unmaskPaths, canDownload, iconsLoaded, setIconsLoaded, closeModal }) => {
     
     return (
             //Modal div upon item click
@@ -32,9 +33,41 @@ export const ItemModal = ({ itemData, index, unmaskPaths, canDownload, closeModa
                         <p title="The setup time required before this part of the run begins">
                             Setup Time:<br/>{(index != 0 && canDownload["setup"] && itemData.setup != "" && timeToSeconds(itemData.setup) != 0) ? itemData.setup : "N/A"}
                         </p>
+                        {(itemData.iconIDs.length == 0) &&
+                        <p title="No icons are present in this entry">
+                            Split Icons:<br/>N/A
+                        </p>
+                        }
+                        {(itemData.iconIDs.length != 0) &&
+                        <React.Fragment>
+                            <details title={"Click to " + (iconsLoaded ? "un" : "") + "load this entry's split icons"} open={iconsLoaded} onToggle={(e) => setIconsLoaded(e.currentTarget.open)}>
+                            <summary>
+                                Split Icons:<br/>
+                            </summary>
+                            {iconsLoaded &&
+                                <div className = "icon-preview">
+                                    {itemData.iconIDs.map((icon, index) => (
+                                        <img
+                                        key={index}
+                                        src={gatherIconFromStream(icon)}
+                                        title={"Icon at ID #" + icon}
+                                        alt={"Icon at ID #" + icon}
+                                        />
+                                    ))}
+                                </div>
+                            }
+                            </details>
+                            <br/>
+                        </React.Fragment>
+                        }
                         <button title="Open raw contents for this entry" type ='button' onClick={() => openContentsInNewTab(itemData.contents, itemData.layoutPath, !unmaskPaths)}>
                             Open Splits Contents
                         </button>
+                        {iconsLoaded &&
+                            <button title="Unload this entry's split icons" type ='button' onClick={() => setIconsLoaded(false)}>
+                                Close Icon Preview
+                            </button>
+                        }
                         <button title="Close this entry's information modal" type ='button' onClick={closeModal}>
                             Close Modal
                         </button>

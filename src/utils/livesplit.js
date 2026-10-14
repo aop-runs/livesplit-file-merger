@@ -171,6 +171,27 @@ export function cleanSplitsFile(contents){
     return new XMLSerializer().serializeToString(splits);
 }
 
+//Gather icon IDs for each splits file
+export function gatherIconIDs(contents){
+    let iconIDs = [];
+    let splits = new DOMParser().parseFromString(contents, validSpecifier.streamType);
+    
+    //Game Icon
+    let id = splits.getElementsByTagName("GameIcon")[0].textContent;
+    if(!iconCache.includes(id) && id.length != 0){
+        iconIDs.push(id);
+    }
+
+    //Split Icons
+    for(let i = 0; i < splits.getElementsByTagName("Segment").length; i++){
+        let id = splits.getElementsByTagName("Segment")[i].getElementsByTagName("Icon")[0].textContent;
+        if(!iconCache.includes(id) && id.length != 0){
+            iconIDs.push(id);
+        }
+    }
+    return iconIDs;
+}
+
 //Create template split for setup splits and final subsplits with parameter support
 function adjustTemplateText(template, game, gameP, gameN, category, categoryP, categoryN, currentNumber, gamesCompleted, totalGames){
     let parameters = templateParameters.map(
