@@ -187,12 +187,13 @@ body {
   display: block;
   position: fixed;
   z-index: 1;
-  padding-top: 200px;
+  padding-top: 250px;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
   overflow: auto;
+  align-items: flex-start;
   background-color: var(--text-color);
   background-color: rgba(0,0,0,0.4);
 }
@@ -200,6 +201,8 @@ body {
 .modal-entry {
   background-color: var(--bg-color);
   margin: auto;
+  overflow: auto;
+  max-height: calc(65vh);
   padding: 10px;
   border: 1px solid var(--text-color);
   width: 50%;
@@ -220,6 +223,21 @@ body {
   color: var(--hover-color);
   text-decoration: none;
   cursor: pointer;
+}
+
+//Icon Display
+.icon-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  width: 100%;
+}
+
+.icon-preview img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border: 2px solid var(--text-color);
 }
 
 //List

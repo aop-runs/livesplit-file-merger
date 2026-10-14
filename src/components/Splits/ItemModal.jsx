@@ -1,6 +1,7 @@
 import React from 'react'
 import { FaRegWindowClose } from "react-icons/fa";
 import { openContentsInNewTab } from '../../utils/file.js'
+import { gatherIconFromStream } from '../../utils/images.js'
 import { timeToSeconds, secondsToTime } from "../../utils/livesplit.js";
 import '../../styles/style.scss'
 
@@ -44,9 +45,16 @@ export const ItemModal = ({ itemData, index, unmaskPaths, canDownload, iconsLoad
                                 Split Icons:<br/>
                             </summary>
                             {iconsLoaded &&
-                            <React.Fragment>
-                                {itemData.iconIDs.join(", ")}<br/>
-                            </React.Fragment>
+                                <div className = "icon-preview">
+                                    {Array.from({ length: 100 }).map((_, index) => (
+                                        <img
+                                        key={index}
+                                        src={gatherIconFromStream()}
+                                        title={"Placeholder " + (index + 1).toString()}
+                                        alt={"Placeholder " + (index + 1).toString()}
+                                        />
+                                    ))}
+                                </div>
                             }
                             </details>
                             <br/>
@@ -55,6 +63,11 @@ export const ItemModal = ({ itemData, index, unmaskPaths, canDownload, iconsLoad
                         <button title="Open raw contents for this entry" type ='button' onClick={() => openContentsInNewTab(itemData.contents, itemData.layoutPath, !unmaskPaths)}>
                             Open Splits Contents
                         </button>
+                        {iconsLoaded &&
+                            <button title="Unload this entry's split icons" type ='button' onClick={() => setIconsLoaded(false)}>
+                                Close Icon Preview
+                            </button>
+                        }
                         <button title="Close this entry's information modal" type ='button' onClick={closeModal}>
                             Close Modal
                         </button>
