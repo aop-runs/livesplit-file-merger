@@ -46,12 +46,12 @@ export const ItemModal = ({ itemData, index, unmaskPaths, canDownload, iconsLoad
                             </summary>
                             {iconsLoaded &&
                                 <div className = "icon-preview">
-                                    {Array.from({ length: 100 }).map((_, index) => (
+                                    {itemData.iconIDs.map((icon, index) => (
                                         <img
                                         key={index}
-                                        src={gatherIconFromStream()}
-                                        title={"Placeholder " + (index + 1).toString()}
-                                        alt={"Placeholder " + (index + 1).toString()}
+                                        src={gatherIconFromStream(icon)}
+                                        title={"Icon at ID #" + icon}
+                                        alt={"Icon at ID #" + icon}
                                         />
                                     ))}
                                 </div>

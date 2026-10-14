@@ -175,6 +175,14 @@ export function cleanSplitsFile(contents){
 export function gatherIconIDs(contents){
     let iconIDs = [];
     let splits = new DOMParser().parseFromString(contents, validSpecifier.streamType);
+    
+    //Game Icon
+    let id = splits.getElementsByTagName("GameIcon")[0].textContent;
+    if(!iconCache.includes(id) && id.length != 0){
+        iconIDs.push(id);
+    }
+
+    //Split Icons
     for(let i = 0; i < splits.getElementsByTagName("Segment").length; i++){
         let id = splits.getElementsByTagName("Segment")[i].getElementsByTagName("Icon")[0].textContent;
         if(!iconCache.includes(id) && id.length != 0){
